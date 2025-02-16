@@ -238,7 +238,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             switch quizResult {
             case .success(let quiz):
                 // Return success with the generated quiz information
-                print("Generated Quiz: \(quiz)")
+//                print("Generated Quiz: \(quiz)")
                 return .success(quiz) // Return success with the quiz result
             case .failure(let error):
                 // Return failure if quiz generation fails

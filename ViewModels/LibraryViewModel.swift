@@ -17,8 +17,6 @@ class LibraryViewModel: ObservableObject {
             
             switch quizResult {
             case .success(let quiz):
-                print("Generated quiz: \(quiz)")
-                // Return success with quiz result as a string
                 return .success(quiz)
                 
             case .failure(let error):
