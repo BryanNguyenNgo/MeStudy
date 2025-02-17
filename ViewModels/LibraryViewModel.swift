@@ -7,32 +7,33 @@ class LibraryViewModel: ObservableObject {
     func createLessonQuiz(planID: String) async -> Result<String, NSError> {
         print("Creating quiz for plan ID: \(planID)")
         
-        // Fetch or generate the quiz data for the given planID
-        let quizResult = await Quiz.shared.decodeQuiz(from: planID)
-                        
-                        switch quizResult {
-                        case .success(let quizOptional):
-                            guard let quiz = quizOptional else {
-                                let error = NSError(domain: "QuizError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Decoded quiz is nil"])
-                                return .failure(error)
-                            }
 
-                            // 4. Save the generated lesson plan to the database
-                            let saveQuizResult = await Quiz.shared.saveToDatabase(from: quiz)
-                            switch saveQuizResult {
-                            case .success:
-                                return .success("Quiz successfully created and saved.")
-                            case .failure(let error):
-                                // Handle failure to save the quiz
-                                print("Failed to save the quiz: \(error.localizedDescription)")
-                                return .failure(error as NSError)
-                            }
-                        
-                        case .failure(let error):
-                            // Handle failure to decode the quiz
-                            print("Failed to decode quiz: \(error.localizedDescription)")
-                            return .failure(error as NSError)
-                        }
+        // 1. Fetch the lesson plan (assuming you have a method to get it)
+        let lessonPlanResult = await LessonPlan.shared.getLessonPlan(studyPlanId: planID)
+        
+        switch lessonPlanResult {
+        case .success(let lessonPlan):
+            // 2. Generate the quiz for the fetched lesson plan
+            let quizResult = await lessonPlan.createLessonQuiz()
+            
+            switch quizResult {
+            case .success(let quiz):
+                let quizResult = await Quiz.shared.decodeQuiz(from: quiz)
+                
+                return .success(quiz)
+               
+            case .failure(let error):
+                // Handle failure to save the quiz
+                print("Failed to save the quiz: \(error.localizedDescription)")
+                return .failure(error as NSError)
+            }
+
+        case .failure(let error):
+            // Handle failure to decode the quiz
+            print("Failed to decode quiz: \(error.localizedDescription)")
+            return .failure(error as NSError)
+        }
+
     }
 
     func processQuizResults(from quizResults: String) {

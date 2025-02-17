@@ -91,6 +91,7 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
         do {
             print("data: \(data)")
             let decoder = JSONDecoder()
+            // error below //
             let quiz = try decoder.decode(Quiz.self, from: jsonData)
             
             print("Quiz Title: \(quiz.quizTitle)")

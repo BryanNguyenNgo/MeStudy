@@ -54,7 +54,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E88D4D9F-2CD4-46FF-BA4B-266C58B37DAB"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Views/LibraryView.swift"
@@ -64,50 +64,6 @@
             endingLineNumber = "17"
             landmarkName = "handleStudyPlanAction(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E88D4D9F-2CD4-46FF-BA4B-266C58B37DAB - ee87fe066a060f1a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for MeStudy.LibraryView.handleStudyPlanAction(MeStudy.StudyPlan) async -&gt; ()"
-                  moduleName = "MeStudy.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bryannguyen/01_Coding/LearnSwift/SwiftStudentChallenge/MeStudy.swiftpm/Views/LibraryView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "17"
-                  endingLineNumber = "17">
-               </Location>
-               <Location
-                  uuid = "E88D4D9F-2CD4-46FF-BA4B-266C58B37DAB - 5dcecc30459e4b10"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for MeStudy.LibraryView.handleStudyPlanAction(MeStudy.StudyPlan) async -&gt; ()"
-                  moduleName = "MeStudy.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bryannguyen/01_Coding/LearnSwift/SwiftStudentChallenge/MeStudy.swiftpm/Views/LibraryView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "17"
-                  endingLineNumber = "17">
-               </Location>
-               <Location
-                  uuid = "E88D4D9F-2CD4-46FF-BA4B-266C58B37DAB - 332b545800dd4318"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for MeStudy.LibraryView.handleStudyPlanAction(MeStudy.StudyPlan) async -&gt; ()"
-                  moduleName = "MeStudy.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bryannguyen/01_Coding/LearnSwift/SwiftStudentChallenge/MeStudy.swiftpm/Views/LibraryView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "17"
-                  endingLineNumber = "17">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
