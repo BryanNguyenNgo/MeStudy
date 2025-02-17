@@ -77,7 +77,7 @@ class Timetable: Identifiable, ObservableObject, Codable, Equatable {
 // Define the main "LessonPlan" class
 class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     let id: String
-    var lessonPlanStudyPlanId: String
+    var studyPlanId: String
     var grade: String
     var subject: String
     var topic: String
@@ -87,11 +87,11 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     var resources: String
     var timetable: Timetable
     
-    static let shared = LessonPlan(lessonPlanStudyPlanId: "", grade:"", subject: "", topic: "", week: "", goals: "", milestones: "", resources: "", timetable: Timetable(session: "", learning_tasks: [], practice_tasks: []))
+    static let shared = LessonPlan(studyPlanId: "", grade:"", subject: "", topic: "", week: "", goals: "", milestones: "", resources: "", timetable: Timetable(session: "", learning_tasks: [], practice_tasks: []))
     
-    init(lessonPlanStudyPlanId: String, grade: String,subject: String,topic: String, week: String, goals: String, milestones: String, resources: String, timetable: Timetable) {
+    init(studyPlanId: String, grade: String,subject: String,topic: String, week: String, goals: String, milestones: String, resources: String, timetable: Timetable) {
         self.id = UUID().uuidString  // Correct UUID conversion
-        self.lessonPlanStudyPlanId = lessonPlanStudyPlanId
+        self.studyPlanId = studyPlanId
         self.grade = grade
         self.subject = subject
         self.topic = topic
@@ -105,7 +105,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Required for Equatable
     static func == (lhs: LessonPlan, rhs: LessonPlan) -> Bool {
         return lhs.id == rhs.id &&
-        lhs.lessonPlanStudyPlanId == rhs.lessonPlanStudyPlanId &&
+        lhs.studyPlanId == rhs.studyPlanId &&
                 lhs.grade == rhs.grade &&
                 lhs.subject == rhs.subject &&
                 lhs.topic == rhs.topic &&
@@ -118,7 +118,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     
     // CodingKeys to exclude the id from decoding
     enum CodingKeys: String, CodingKey {
-        case lessonPlanStudyPlanId
+        case studyPlanId
         case grade
         case subject
         case topic
@@ -132,7 +132,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Required initializer for Decodable
     required convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let lessonPlanStudyPlanId = try container.decode(String.self, forKey: .lessonPlanStudyPlanId)
+        let studyPlanId = try container.decode(String.self, forKey: .studyPlanId)
         let grade = try container.decode(String.self, forKey: .grade)
         let subject = try container.decode(String.self, forKey: .subject)
         let topic = try container.decode(String.self, forKey: .topic)
@@ -142,7 +142,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
         let resources = try container.decode(String.self, forKey: .resources)
         let timetable = try container.decode(Timetable.self, forKey: .timetable)
         
-        self.init(lessonPlanStudyPlanId: lessonPlanStudyPlanId, grade: grade, subject: subject, topic: topic, week: week, goals: goals, milestones: milestones, resources: resources, timetable: timetable)
+        self.init(studyPlanId: studyPlanId, grade: grade, subject: subject, topic: topic, week: week, goals: goals, milestones: milestones, resources: resources, timetable: timetable)
     }
     // Decode from JSON string
     func decodeLessonPlan(from data: String) async -> Result<LessonPlan?, NSError> {
@@ -158,7 +158,8 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             let lessonPlan = try decoder.decode(LessonPlan.self, from: jsonData)
             
             // Print out the decoded values
-            print("Study Plan for: \(lessonPlan.grade)")
+            print("Study Plan for: \(lessonPlan.studyPlanId)")
+            print("Grade: \(lessonPlan.grade)")
             print("subject: \(lessonPlan.subject)")
             print("topic : \(lessonPlan.topic)")
             print("week \(lessonPlan.week)")
@@ -178,6 +179,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Simulate saving to a database asynchronously
     func saveToDatabase(from lessonPlan: LessonPlan) async -> Result<String, NSError> {
         print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
+        print("Grade: \(lessonPlan.studyPlanId)")
         print("Grade: \(lessonPlan.grade)")
         print("Subject: \(lessonPlan.subject)")
         print("Topic: \(lessonPlan.topic)")
@@ -190,7 +192,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
         // Call the database save logic
         guard let insertedId: String = await DatabaseManager.shared.insertLessonPlan(
             id: lessonPlan.id,
-            lessonPlanStudyPlanId:lessonPlan.lessonPlanStudyPlanId,
+            studyPlanId:lessonPlan.studyPlanId,
             grade: lessonPlan.grade,
             subject: lessonPlan.subject,
             topic: lessonPlan.topic,
@@ -216,9 +218,9 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     }
     
     // Function to get lesson plan from the database
-    func getLessonPlan(lessonPlanStudyPlanId: String) async -> Result<LessonPlan, NSError> {
+    func getLessonPlan(studyPlanId: String) async -> Result<LessonPlan, NSError> {
         do {
-            if let lessonPlan = await DatabaseManager.shared.getLessonPlan(lessonPlanStudyPlanId: lessonPlanStudyPlanId) {
+            if let lessonPlan = await DatabaseManager.shared.getLessonPlan(studyPlanId: studyPlanId) {
                 return .success(lessonPlan)
             } else {
                 let error = NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "Lesson plan not found."])
@@ -268,15 +270,15 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
                - Task 2: \(self.timetable.practice_tasks[safe: 1]?.task ?? "N/A")
 
         The quiz should contain the following:
-        1. Multiple choice questions to assess understanding of the eight parts of speech in English grammar.
-        2. A few short-answer questions that require the student to define each part of speech.
-        3. A practice task where the student identifies parts of speech in example sentences.
+        1. Multiple choice questions to assess understanding of the \(self.goals).
+        2. A few short-answer questions for above mentioned Learning Tasks.
+        3. A practice task for above mentioned Practice Tasks.
 
         Output the quiz in **valid JSON format** with this structure, do not return the word "json":
         Sample 
         {
             "quiz_title": "Grammar Quiz on Parts of Speech",
-            "lessonPlanStudyPlanId": "\(self.lessonPlanStudyPlanId)",
+            "studyPlanId": "\(self.studyPlanId)",
             "questions": [
                 {
                     "type": "multiple_choice",
@@ -306,7 +308,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             ]
         }
         """
-        
+        print("\(prompt)")
       
                // Call the API and await the result
                let apiResult = await APIManager.shared.callOpenAIAPI(prompt: prompt)

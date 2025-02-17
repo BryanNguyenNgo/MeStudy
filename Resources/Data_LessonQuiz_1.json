@@ -1,77 +1,70 @@
 {
-    "quiz_title": "Optics Quiz: Nature of Light, Reflection, and Refraction",
-    "lessonPlanStudyPlanId": "123E4567-E89B-12D3-A456-426614174000",
+    "quiz_title": "Optics Quiz for Grade 11 Physics - Week 1",
+    "studyPlanId": "12345678-1234-1234-1234-1234567890ab",
     "questions": [
         {
             "type": "multiple_choice",
             "question": "Which statement best describes the dual nature of light?",
             "options": [
-                "Light exhibits only wave properties.",
-                "Light exhibits only particle properties.",
-                "Light exhibits both wave and particle properties.",
-                "Light does not exhibit any wave or particle properties."
+                "Light behaves only as a wave.",
+                "Light behaves only as a particle.",
+                "Light behaves sometimes as a wave and sometimes as a particle.",
+                "Light behaves neither as a wave nor as a particle."
             ],
-            "correct_answer": "Light exhibits both wave and particle properties."
-        },
-        {
-            "type": "multiple_choice",
-            "question": "What is the speed of light in a vacuum?",
-            "options": [
-                "Approximately 3.00 × 10^8 meters per second",
-                "Approximately 3.00 × 10^6 meters per second",
-                "Approximately 1.50 × 10^8 meters per second",
-                "Approximately 1.50 × 10^6 meters per second"
-            ],
-            "correct_answer": "Approximately 3.00 × 10^8 meters per second"
+            "correct_answer": "Light behaves sometimes as a wave and sometimes as a particle."
         },
         {
             "type": "multiple_choice",
             "question": "According to the law of reflection, the angle of incidence is:",
             "options": [
-                "Greater than the angle of reflection",
-                "Less than the angle of reflection",
-                "Equal to the angle of reflection",
-                "Not related to the angle of reflection"
+                "Greater than the angle of reflection.",
+                "Equal to the angle of reflection.",
+                "Less than the angle of reflection.",
+                "Dependent on the wavelength of light."
             ],
-            "correct_answer": "Equal to the angle of reflection"
+            "correct_answer": "Equal to the angle of reflection."
         },
         {
             "type": "multiple_choice",
-            "question": "Snell's Law relates to which optical phenomenon?",
+            "question": "Snell's Law relates which of the following quantities?",
             "options": [
-                "Reflection",
-                "Refraction",
-                "Diffraction",
-                "Interference"
+                "The angle of incidence and the angle of reflection.",
+                "The angle of incidence and the angle of refraction.",
+                "The speed of light in a vacuum and the speed in a medium.",
+                "The wavelength and frequency of light."
             ],
-            "correct_answer": "Refraction"
+            "correct_answer": "The angle of incidence and the angle of refraction."
         },
         {
             "type": "multiple_choice",
             "question": "When light passes from a medium with a lower refractive index to a higher refractive index, it:",
             "options": [
-                "Speeds up and bends away from the normal",
-                "Slows down and bends towards the normal",
-                "Speeds up and bends towards the normal",
-                "Slows down and bends away from the normal"
+                "Speeds up and bends away from the normal.",
+                "Slows down and bends towards the normal.",
+                "Speeds up and bends towards the normal.",
+                "Slows down and bends away from the normal."
             ],
-            "correct_answer": "Slows down and bends towards the normal"
+            "correct_answer": "Slows down and bends towards the normal."
         },
         {
             "type": "short_answer",
-            "question": "Define the term 'electromagnetic spectrum'."
+            "question": "Explain the electromagnetic spectrum and where visible light fits within it."
         },
         {
             "type": "short_answer",
-            "question": "Explain what is meant by the 'angle of incidence' in the context of reflection."
+            "question": "State the laws of reflection."
         },
         {
             "type": "short_answer",
-            "question": "State Snell's Law and explain each term in the equation."
+            "question": "Define Snell's Law and explain its significance in refraction."
         },
         {
             "type": "practice_task",
-            "task": "A light ray passes from air into glass at an angle of incidence of 30 degrees. If the refractive index of air is 1.00 and that of glass is 1.50, calculate the angle of refraction using Snell's Law."
+            "task": "Draw and label the electromagnetic spectrum, indicating the position of visible light and the various types of electromagnetic radiation."
+        },
+        {
+            "type": "practice_task",
+            "task": "Use a diagram to demonstrate the law of reflection, showing the incident ray, reflected ray, normal line, angle of incidence, and angle of reflection."
         }
     ]
 }

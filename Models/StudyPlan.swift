@@ -88,7 +88,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
 
             Output the response in **valid JSON format** with this structure, do not return "json" word:
             {
-                "lessonPlanStudyPlanId": "\(self.id)",
+                "studyPlanId": "\(self.id)",
                 "grade": "\(self.grade)",
                 "subject": "\(self.subject)",
                 "topic": "\(self.topic)",

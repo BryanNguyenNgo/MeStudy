@@ -103,8 +103,10 @@ class StudyPlanViewModel: ObservableObject {
         do {
             print("UserId at generateStudyPlan: \(userId)")
             // Create StudyPlan object
+            let id = UUID().uuidString
+            print("Prepared StudyPlan at generateStudyPlan id: \(id)")
             let studyPlan = StudyPlan(
-                id: UUID().uuidString,
+                id: id,
                 userId: userId,
                 grade: grade,
                 subject: subject,
@@ -118,10 +120,8 @@ class StudyPlanViewModel: ObservableObject {
             let saveResult = await studyPlan.saveToDatabase()
             switch saveResult {
             case .success(let studyPlanInsertedId):
-                print("Save successful? \(studyPlanInsertedId)")
+                print("StudyPlan saved successful \(studyPlanInsertedId)")
                 
-                // Generate a unique lessonPlanStudyPlanId
-                let lessonPlanStudyPlanId = UUID().uuidString
                 
                 // 2. Generate study plan
                 let generatedPlanResult = await studyPlan.generatePlan()
@@ -143,6 +143,8 @@ class StudyPlanViewModel: ObservableObject {
                         }
 
                         // 4. Save the generated lesson plan to the database
+                        print("decodeLessonPlan success")
+                        print("lessonPlan.studyPlanId: \(lessonPlan.studyPlanId)")
                         let saveLessonResult = await LessonPlan.shared.saveToDatabase(from: lessonPlan)
                         switch saveLessonResult {
                         case .success:

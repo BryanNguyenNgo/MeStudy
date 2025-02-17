@@ -8,7 +8,7 @@ struct MenuView: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            StudyPlanView()
+            CreateStudyPlanView()
                 .tabItem {
                     Label("Create", systemImage: "plus.circle")
                 }

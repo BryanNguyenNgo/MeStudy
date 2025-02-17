@@ -36,7 +36,7 @@ struct HomeView: View {
                 
                 // Navigation Buttons
                 HStack {
-                    NavigationLink(destination: StudyPlanView()) {
+                    NavigationLink(destination: CreateStudyPlanView()) {
                         HomeButton(icon: "plus.circle.fill", label: "Create")
                     }
                     NavigationLink(destination: LibraryView()) {

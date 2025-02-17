@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct StudyPlanView: View {
+struct CreateStudyPlanView: View {
     @EnvironmentObject var userSession: UserSession // Access userSession from the environment
     @StateObject private var viewModel = StudyPlanViewModel()
     

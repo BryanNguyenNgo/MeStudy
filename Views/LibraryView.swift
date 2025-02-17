@@ -5,6 +5,7 @@ struct LibraryView: View {
     @EnvironmentObject var userSession: UserSession // Access the user from the environment
     @StateObject private var viewModel = StudyPlanViewModel()  // ViewModel as a @StateObject
     @StateObject private var libraryViewModel = LibraryViewModel()  // ViewModel as a @StateObject
+    @State private var goEachPlanView = false
     
     private func handleStudyPlanAction(_ plan: StudyPlan) async {
         switch plan.status {
@@ -20,6 +21,8 @@ struct LibraryView: View {
                 case .success(let quiz):
                     // Do something with the successful quiz result
                     print("Quiz created successfully: \(quiz)")
+//                    goEachPlanView = true
+                    
                 case .failure(let error):
                     // Handle the error case
                     print("Failed to create quiz: \(error.localizedDescription)")
@@ -97,6 +100,9 @@ struct LibraryView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)  // Ensures ScrollView takes full available space
             }
         }
+        .navigationDestination(isPresented: $goEachPlanView) {
+                    EachPlanView()
+                }
         .onAppear {
             // Unwrap the currentUser's ID and check if it's empty
             if let userId = userSession.currentUser?.id, userId.isEmpty {
