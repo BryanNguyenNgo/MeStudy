@@ -1,0 +1,88 @@
+{
+    "quiz_title": "Literature Quiz on Basic Elements and 'The Gift of the Magi'",
+    "studyPlanId": "12345678-1234-1234-1234-1234567890AB",
+    "questions": [
+        {
+            "type": "multiple_choice",
+            "question": "Which of the following is a definition of 'theme' in literature?",
+            "options": [
+                "The time and place in which the story occurs.",
+                "The central idea or message in a work of literature.",
+                "A character's struggle against an opposing force.",
+                "The sequence of events in a story."
+            ],
+            "correct_answer": "The central idea or message in a work of literature."
+        },
+        {
+            "type": "multiple_choice",
+            "question": "What is the 'plot' of a story?",
+            "options": [
+                "The main character's traits.",
+                "The underlying message.",
+                "The sequence of events that make up the story.",
+                "The time and location of the story."
+            ],
+            "correct_answer": "The sequence of events that make up the story."
+        },
+        {
+            "type": "multiple_choice",
+            "question": "In literature, 'setting' refers to:",
+            "options": [
+                "The use of figurative language.",
+                "The central message.",
+                "The time and place of the story.",
+                "The series of conflicts."
+            ],
+            "correct_answer": "The time and place of the story."
+        },
+        {
+            "type": "multiple_choice",
+            "question": "Which of the following is considered a literary device?",
+            "options": [
+                "Irony",
+                "Character",
+                "Theme",
+                "Setting"
+            ],
+            "correct_answer": "Irony"
+        },
+        {
+            "type": "multiple_choice",
+            "question": "A 'protagonist' is:",
+            "options": [
+                "The time and place of the story.",
+                "The main character in a story, often a hero.",
+                "A struggle between opposing forces.",
+                "An insight about human life revealed in a literary work."
+            ],
+            "correct_answer": "The main character in a story, often a hero."
+        },
+        {
+            "type": "multiple_choice",
+            "question": "The 'climax' of a story refers to:",
+            "options": [
+                "The introduction of characters and setting.",
+                "The highest point of tension or turning point in the story.",
+                "The conclusion of the story.",
+                "Background information provided."
+            ],
+            "correct_answer": "The highest point of tension or turning point in the story."
+        },
+        {
+            "type": "short_answer",
+            "question": "In 'The Gift of the Magi', identify one example of irony and explain its significance."
+        },
+        {
+            "type": "short_answer",
+            "question": "Describe the main theme of 'The Gift of the Magi'."
+        },
+        {
+            "type": "short_answer",
+            "question": "Explain how the setting of 'The Gift of the Magi' contributes to the overall story."
+        },
+        {
+            "type": "practice_task",
+            "task": "Re-read 'The Gift of the Magi' by O. Henry and create a diagram that outlines the plot structure, identifying the exposition, rising action, climax, falling action, and resolution."
+        }
+    ]
+}

@@ -276,34 +276,43 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
 
         Output the quiz in **valid JSON format** with this structure, do not return the word "json":
         Sample 
-        {
-            "quiz_title": "Grammar Quiz on Parts of Speech",
+        {   
+            "id": "\(self.id)",
+            "quizTitle": "Grammar Quiz on Parts of Speech",
             "studyPlanId": "\(self.studyPlanId)",
             "questions": [
                 {
-                    "type": "multiple_choice",
-                    "question": "Which of the following is an example of a noun?",
+                    "id": "q1",
+                    "quizId": "\(self.id)",
+                    "questionType": "multiple_choice",
+                    "questionText": "Which of the following is an example of a noun?",
                     "options": ["Dog", "Run", "Quickly", "Under"],
-                    "correct_answer": "Dog"
+                    "correctAnswer": "Dog"
                 },
                 {
-                    "type": "short_answer",
-                    "question": "Define the term 'verb'."
+                    "id": "q2",
+                    "quizId": "\(self.id)",
+                    "questionType": "short_answer",
+                    "questionText": "Define the term 'verb'."
                 },
                 {
-                    "type": "multiple_choice",
-                    "question": "Which of the following sentences contains a preposition?",
+                    "id": "q3",
+                    "quizId": "\(self.id)",
+                    "questionType": "multiple_choice",
+                    "questionText": "Which of the following sentences contains a preposition?",
                     "options": [
                         "She ran quickly.",
                         "He went under the bridge.",
                         "The dog is brown.",
                         "They played in the park."
                     ],
-                    "correct_answer": "He went under the bridge."
+                    "correctAnswer": "He went under the bridge."
                 },
                 {
-                    "type": "practice_task",
-                    "task": "Identify the parts of speech in the following sentence: 'The quick brown fox jumped over the lazy dog.'"
+                    "id": "q4",
+                    "quizId": "\(self.id)",
+                    "questionType": "practice_task",
+                    "questionTask": "Identify the parts of speech in the following sentence: 'The quick brown fox jumped over the lazy dog.'"
                 }
             ]
         }

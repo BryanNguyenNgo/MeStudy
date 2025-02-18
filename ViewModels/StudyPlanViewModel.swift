@@ -182,7 +182,6 @@ class StudyPlanViewModel: ObservableObject {
         }
     }
 
-    // Your existing method for fetching study plans
     @MainActor
     func getStudyPlans(userId: String) async {
         self.isLoading = true
@@ -197,7 +196,6 @@ class StudyPlanViewModel: ObservableObject {
     // Method that returns study plans (this can be modified to fetch data from a database or API)
     @MainActor
     private func fetchStudyPlans(userId: String) async -> [StudyPlan] {
-        // For now, return hardcoded data for debugging
         // Create a new StudyPlan object
         let studyPlan = StudyPlan(id: "", userId: userId, grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "")
         

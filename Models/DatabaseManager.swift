@@ -25,7 +25,7 @@ actor DatabaseManager {
 
         private let lessonPlanTable = Table("LessonPlan")
     private let lessonPlanId = SQLite.Expression<String>("id")
-    private let lessonPlanStudyPlanId = SQLite.Expression<String>("study_plan_id") // Renamed for clarity
+    private let lessonPlanStudyPlanId = SQLite.Expression<String>("studyPlanId")
     private let grade = SQLite.Expression<String>("grade")
     private let subject = SQLite.Expression<String>("subject")
     private let topic = SQLite.Expression<String>("topic")
@@ -49,16 +49,17 @@ actor DatabaseManager {
         private let quizTable = Table("Quiz")
     private let quizId = SQLite.Expression<String>("id")
     private let quizTitle = SQLite.Expression<String>("quizTitle")
-    private let quizStudyPlanId = SQLite.Expression<String>("study_plan_id")
+    private let quizStudyPlanId = SQLite.Expression<String>("studyPlanId")
     private let quizCreatedAt = SQLite.Expression<String>("created_at")
 
         private let questionTable = Table("Question")
     private let questionId = SQLite.Expression<String>("id")
     private let questionQuizId = SQLite.Expression<String>("quiz_id")
+    private let questionType = SQLite.Expression<String>("question_type")
     private let questionText = SQLite.Expression<String>("question_text")
     private let questionOptions = SQLite.Expression<String>("options") // Store as JSON String
     private let questionCorrectAnswer = SQLite.Expression<String>("correct_answer")
-
+    private let questionTask = SQLite.Expression<String>("task")
 
     private init() { }
     
@@ -142,9 +143,11 @@ actor DatabaseManager {
                 try db?.run(questionTable.create(ifNotExists: true) { table in
                     table.column(questionId, primaryKey: true)
                     table.column(questionQuizId)
+                    table.column(questionType)
                     table.column(questionText)
                     table.column(questionOptions)
                     table.column(questionCorrectAnswer)
+                    table.column(questionTask)
 
                     table.foreignKey(questionQuizId, references: quizTable, quizId, delete: .cascade)
                 })
@@ -356,7 +359,7 @@ actor DatabaseManager {
                 let insertQuiz = quizTable.insert(
                     self.quizId <- quizId,
                     self.quizTitle <- quizTitle,
-                    self.studyPlanId <- studyPlanId,
+                    self.quizStudyPlanId <- studyPlanId,
                     quizCreatedAt <- currentDate
                 )
 
@@ -366,12 +369,18 @@ actor DatabaseManager {
                 for question in questions {
                     let optionsJson = try JSONEncoder().encode(question.options ?? [])
                     let optionsString = String(data: optionsJson, encoding: .utf8) ?? "[]"
+                    // Convert questionType to String (assuming it's an enum)
+                    let questionTypeString = question.questionType.rawValue  // If it's an enum
+
+                    
                     let insertQuestion = questionTable.insert(
                         questionId <- question.id,
                         questionQuizId <- quizId,
-                        self.questionText <- question.question ?? "",
+                        questionType <- questionTypeString,
+                        self.questionText <- question.questionText ?? "",
                         questionOptions <- optionsString,
-                        questionCorrectAnswer <- question.correctAnswer ?? ""
+                        questionCorrectAnswer <- question.correctAnswer ?? "",
+                        questionTask <- question.questionTask ?? ""
                     )
                     try await db.run(insertQuestion)
                 }
@@ -384,5 +393,83 @@ actor DatabaseManager {
                 return nil
             }
         }
+    
+    func getQuizzes(studyPlanId: String) async -> [Quiz] {
+        var quizzes: [Quiz] = []
+        
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
+                return []
+            }
+
+            let query = quizTable.filter(self.quizStudyPlanId == studyPlanId)
+            
+            for row in try await db.prepare(query) {
+                let quiz = Quiz(
+                    id: row[quizId],
+                    quizTitle: row[quizTitle],
+                    studyPlanId: row[quizStudyPlanId],
+                    questions: try await getQuizQuestions(quizId: row[quizId]) // Fetch associated questions
+                )
+                quizzes.append(quiz)
+            }
+            
+        } catch {
+            print("Error fetching quizzes: \(error)")
+        }
+        
+        return quizzes
+    }
+
+    func getQuizQuestions(quizId: String) async throws -> [Question] {
+        var questions: [Question] = []
+        
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
+                throw NSError(domain: "DatabaseError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Database connection is nil"])
+            }
+            
+            let query = questionTable.filter(self.quizId == quizId)
+            
+            for row in try await db.prepare(query) {
+                // Directly accessing values (assuming they are non-optional)
+                let questionId = row[questionId]
+                let questionQuizId = row[questionQuizId]
+                let questionTypeString = row[questionType]  // This is a String
+                let questionText = row[questionText]
+                let questionOptions = row[questionOptions].components(separatedBy: ",") // No optional chaining
+                let correctAnswer = row[questionCorrectAnswer]
+                let questionTask = row[questionTask]
+                
+                // Convert the String to QuestionType enum
+                guard let questionType = QuestionType(rawValue: questionTypeString) else {
+                    print("Invalid question type: \(questionTypeString)")
+                    continue  // Skip this question if conversion fails
+                }
+                
+                // Create Question object
+                let question = Question(
+                    id: questionId,
+                    quizId: questionQuizId,
+                    questionType: questionType,  // Now using the enum
+                    questionText: questionText,      // Corrected this from questionText to question
+                    options: questionOptions,
+                    correctAnswer: correctAnswer,
+                    questionTask: questionTask
+                )
+
+                questions.append(question)
+            }
+            
+        } catch {
+            print("Error fetching quiz questions: \(error.localizedDescription)")
+            throw error
+        }
+        
+        return questions
+    }
+
     
 }

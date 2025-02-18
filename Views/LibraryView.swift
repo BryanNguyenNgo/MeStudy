@@ -2,42 +2,43 @@ import SwiftUI
 
 // LibraryView
 struct LibraryView: View {
-    @EnvironmentObject var userSession: UserSession // Access the user from the environment
-    @StateObject private var viewModel = StudyPlanViewModel()  // ViewModel as a @StateObject
-    @StateObject private var libraryViewModel = LibraryViewModel()  // ViewModel as a @StateObject
-    @State private var goEachPlanView = false
-    
+    @EnvironmentObject var userSession: UserSession
+    @StateObject private var viewModel = StudyPlanViewModel()
+    @StateObject private var libraryViewModel = LibraryViewModel()
+    @State private var goQuizView = false
+    @State private var selectedPlanId: String? = nil // Store the selected plan ID
+
     private func handleStudyPlanAction(_ plan: StudyPlan) async {
+        viewModel.isLoading = true
+        defer {
+            viewModel.isLoading = false
+        }
+
         switch plan.status {
         case StudyPlanStatusType.notStarted.rawValue:
-            print("Starting study plan: \(plan.id)")
-            // Logic to update status to "in progress"
-            do {
-                // Calling the asynchronous method and awaiting the result
-                let result = try await libraryViewModel.createLessonQuiz(planID: plan.id)
-
-                // Handle the result (assuming it's a String or other type)
-                switch result {
-                case .success(let quiz):
-                    // Do something with the successful quiz result
-                    print("Quiz created successfully: \(quiz)")
-//                    goEachPlanView = true
-                    
-                case .failure(let error):
-                    // Handle the error case
-                    print("Failed to create quiz: \(error.localizedDescription)")
-                }
-            } catch {
-                // Handle any errors thrown during the async call
-                print("Error calling createLessonQuiz: \(error.localizedDescription)")
-            }
+            await startStudyPlan(plan)
         case StudyPlanStatusType.inProgress.rawValue:
             print("Resuming study plan: \(plan.id)")
-            // Logic to resume
         case StudyPlanStatusType.completed.rawValue:
             print("Study plan already completed: \(plan.id)")
         default:
             print("Unknown status: \(plan.status)")
+        }
+    }
+
+    private func startStudyPlan(_ plan: StudyPlan) async {
+        do {
+            let result = try await libraryViewModel.createLessonQuiz(planID: plan.id)
+            switch result {
+            case .success(let quiz):
+                print("Quiz created successfully: \(quiz)")
+                selectedPlanId = plan.id // Set the selected plan ID to navigate
+                goQuizView = true
+            case .failure(let error):
+                print("Failed to create quiz: \(error.localizedDescription)")
+            }
+        } catch {
+            print("Error calling createLessonQuiz: \(error.localizedDescription)")
         }
     }
 
@@ -47,75 +48,92 @@ struct LibraryView: View {
                 ProgressView("Loading...")
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
-                ScrollView {  // ScrollView to make the list scrollable
-                    LazyVStack(spacing: 15) {  // LazyVStack for better performance
+                ScrollView {
+                    LazyVStack(spacing: 15) {
                         ForEach(viewModel.studyPlans, id: \.id) { plan in
-                            HStack {
-                                // Text in the first column
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text("Grade: \(plan.grade)")
-                                        .font(.headline)
-                                    Text("Subject: \(plan.subject)")
-                                        .font(.subheadline)
-                                    Text("Topic: \(plan.topic)")
-                                        .font(.subheadline)
-                                    
-                                    Text("Duration: \(plan.studyDuration) hours")
-                                        .font(.subheadline)
-                                    Text("Frequency: \(plan.studyFrequency) times/week")
-                                        .font(.subheadline)
-                                    Text("Status: \(plan.status)")
-                                        .font(.subheadline)
-                                    Text("Created at: \(plan.createdAt, style: .date)")
-                                        .font(.subheadline)
-                                }
-                                .padding(.vertical, 10)
-                                .frame(maxWidth: .infinity) // Ensures text takes up available space
-
-                                // Button in the second column
-                                VStack {
-                                    Button(action: {
-                                        Task {
-                                            await handleStudyPlanAction(plan)
-                                        }
-                                    }) {
-                                        Text(plan.status == StudyPlanStatusType.notStarted.rawValue ? "Start" : "Resume")
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(Color.blue)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(8)
-                                    }
-                                    .padding(.top, 5)
-                                    .frame(width: 120)  // You can adjust the width if needed
-                                }
-                            }
-                            .background(RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 1))
-                            .padding(.horizontal)
+                            StudyPlanRow(plan: plan)
                         }
                     }
-                    .padding(.bottom, 15)  // Added bottom padding for proper spacing
+                    .padding(.bottom, 15)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)  // Ensures ScrollView takes full available space
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .navigationDestination(isPresented: $goEachPlanView) {
-                    EachPlanView()
-                }
+        .navigationDestination(isPresented: $goQuizView) {
+            if let planId = selectedPlanId {
+                QuizView(studyPlanId: planId) // Pass the selected plan ID to QuizView
+            }
+        }
         .onAppear {
-            // Unwrap the currentUser's ID and check if it's empty
-            if let userId = userSession.currentUser?.id, userId.isEmpty {
+            guard let userId = userSession.currentUser?.id, !userId.isEmpty else {
                 print("Error: User ID is empty.")
-            } else if let userId = userSession.currentUser?.id {
-                print("User ID: \(userId)")
-                Task {
-                    await viewModel.getStudyPlans(userId: userId)
-                    viewModel.isLoading = false // Move this inside Task to update after loading
-                }
-            } else {
-                print("Error: User is not logged in.")
+                return
+            }
+
+            Task {
+                await viewModel.getStudyPlans(userId: userId)
+                viewModel.isLoading = false
             }
         }
+    }
+}
+
+struct StudyPlanRow: View {
+    let plan: StudyPlan
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Grade: \(plan.grade)")
+                    .font(.headline)
+                Text("Subject: \(plan.subject)")
+                    .font(.subheadline)
+                Text("Topic: \(plan.topic)")
+                    .font(.subheadline)
+                Text("Duration: \(plan.studyDuration) hours")
+                    .font(.subheadline)
+                Text("Frequency: \(plan.studyFrequency) times/week")
+                    .font(.subheadline)
+                Text("Status: \(plan.status)")
+                    .font(.subheadline)
+                Text("Created at: \(plan.createdAt, style: .date)")
+                    .font(.subheadline)
+            }
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+
+            StudyPlanButton(plan: plan)
+        }
+        .background(RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray, lineWidth: 1))
+        .padding(.horizontal)
+    }
+}
+
+struct StudyPlanButton: View {
+    let plan: StudyPlan
+
+    var body: some View {
+        VStack {
+            Button(action: {
+                Task {
+                    await handleStudyPlanAction(plan)
+                }
+            }) {
+                Text(plan.status == StudyPlanStatusType.notStarted.rawValue ? "Start" : "Resume")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding(.top, 5)
+            .frame(width: 120)
+        }
+    }
+
+    private func handleStudyPlanAction(_ plan: StudyPlan) async {
+        // Assuming we have access to the LibraryViewModel and ViewModel in the context
+        // may need to adjust this part of the code to have access to the correct models in this subview
     }
 }

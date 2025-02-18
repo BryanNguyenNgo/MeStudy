@@ -1,0 +1,25 @@
+{
+    "studyPlanId": "5B041456-8D65-461E-8BD7-4BBE2C0168E6",
+    "grade": "Grade 9",
+    "subject": "Science",
+    "topic": "Physical Science",
+    "week": "1",
+    "goals": "Understand the basic concepts of matter, including atoms, elements, compounds, and the states of matter.",
+    "milestones": "Be able to describe the structure of matter and explain the different states of matter.",
+    "timetable": {
+        "session": "Saturday 10:00 AM - 11:00 AM",
+        "learning_tasks": [
+            {
+                "task": "Read textbook sections on \"Structure of Matter\" and \"States of Matter\"",
+                "duration": "30 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Complete worksheet on \"States of Matter\" and answer end-of-chapter questions",
+                "duration": "30 minutes"
+            }
+        ]
+    },
+    "resources": "Grade 9 Science textbook; Khan Academy videos on \"States of Matter\"; Worksheet on \"States of Matter\""
+}

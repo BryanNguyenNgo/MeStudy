@@ -6,34 +6,52 @@ class LibraryViewModel: ObservableObject {
     // Method to create lesson quiz
     func createLessonQuiz(planID: String) async -> Result<String, NSError> {
         print("Creating quiz for plan ID: \(planID)")
-        
 
-        // 1. Fetch the lesson plan (assuming you have a method to get it)
+        // 1. Fetch the lesson plan
         let lessonPlanResult = await LessonPlan.shared.getLessonPlan(studyPlanId: planID)
         
         switch lessonPlanResult {
         case .success(let lessonPlan):
-            // 2. Generate the quiz for the fetched lesson plan
-            let quizResult = await lessonPlan.createLessonQuiz()
+            // 2. Generate the quiz
+            let createQuizResult = await lessonPlan.createLessonQuiz()
             
-            switch quizResult {
-            case .success(let quiz):
-                let quizResult = await Quiz.shared.decodeQuiz(from: quiz)
+            switch createQuizResult {
+            case .success(let quizJson):
+                print(quizJson)
                 
-                return .success(quiz)
-               
+                // 3. Convert response to Quiz object
+                let decodeResult = await Quiz.shared.decodeQuiz(from: quizJson)
+                
+                switch decodeResult {
+                case .success(let quiz):  // ✅ FIXED: Removed unnecessary optional binding
+                    print("decodeQuiz success")
+                    print("quiz.studyPlanId: \(quiz.studyPlanId)")
+                    
+                    // 4. Save the generated quiz to the database
+                    let saveQuizResult = await Quiz.shared.saveToDatabase(from: quiz)
+                    
+                    switch saveQuizResult {
+                    case .success:
+                        return .success(quizJson)
+                    case .failure(let error):
+                        print("Failed to save the quiz: \(error.localizedDescription)")
+                        return .failure(error as NSError)
+                    }
+                    
+                case .failure(let error):
+                    print("Failed to decode quiz: \(error.localizedDescription)")
+                    return .failure(error as NSError)
+                }
+                
             case .failure(let error):
-                // Handle failure to save the quiz
-                print("Failed to save the quiz: \(error.localizedDescription)")
+                print("Failed to create quiz: \(error.localizedDescription)")
                 return .failure(error as NSError)
             }
-
+            
         case .failure(let error):
-            // Handle failure to decode the quiz
-            print("Failed to decode quiz: \(error.localizedDescription)")
+            print("Failed to fetch lesson plan: \(error.localizedDescription)")
             return .failure(error as NSError)
         }
-
     }
 
     func processQuizResults(from quizResults: String) {

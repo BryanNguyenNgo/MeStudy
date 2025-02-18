@@ -8,19 +8,21 @@ enum QuestionType: String, Codable {
 
 class Question: Identifiable, ObservableObject, Codable, Equatable {
     let id: String
-    let type: QuestionType
-    let question: String?
+    let quizId: String?
+    let questionType: QuestionType
+    let questionText: String?
     let options: [String]?
     let correctAnswer: String?
-    let task: String?
+    let questionTask: String?
     
-    init(id: String, type: QuestionType, question: String? = nil, options: [String]? = nil, correctAnswer: String? = nil, task: String? = nil) {
+    init(id: String, quizId: String, questionType: QuestionType, questionText: String? = nil, options: [String]? = nil, correctAnswer: String? = nil, questionTask: String? = nil) {
         self.id = id
-        self.type = type
-        self.question = question
+        self.quizId = quizId
+        self.questionType = questionType
+        self.questionText = questionText
         self.options = options
         self.correctAnswer = correctAnswer
-        self.task = task
+        self.questionTask = questionTask
     }
 
     static func == (lhs: Question, rhs: Question) -> Bool {
@@ -28,29 +30,33 @@ class Question: Identifiable, ObservableObject, Codable, Equatable {
     }
     
     private enum CodingKeys: String, CodingKey {
-        case id, type, question, options, correctAnswer, task
+        case id, quizId, questionType, questionText, options, questionTask
+        case correctAnswer
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
-        self.type = try container.decode(QuestionType.self, forKey: .type)
-        self.question = try container.decodeIfPresent(String.self, forKey: .question)
+        self.quizId = try container.decode(String.self, forKey: .quizId)
+        self.questionType = try container.decode(QuestionType.self, forKey: .questionType)
+        self.questionText = try container.decodeIfPresent(String.self, forKey: .questionText)
         self.options = try container.decodeIfPresent([String].self, forKey: .options)
         self.correctAnswer = try container.decodeIfPresent(String.self, forKey: .correctAnswer)
-        self.task = try container.decodeIfPresent(String.self, forKey: .task)
+        self.questionTask = try container.decodeIfPresent(String.self, forKey: .questionTask)
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encode(type, forKey: .type)
-        try container.encodeIfPresent(question, forKey: .question)
+        try container.encode(quizId, forKey: .quizId)
+        try container.encode(questionType, forKey: .questionType)
+        try container.encodeIfPresent(questionText, forKey: .questionText)
         try container.encodeIfPresent(options, forKey: .options)
         try container.encodeIfPresent(correctAnswer, forKey: .correctAnswer)
-        try container.encodeIfPresent(task, forKey: .task)
+        try container.encodeIfPresent(questionTask, forKey: .questionTask)
     }
 }
+
 
 class Quiz: Identifiable, ObservableObject, Codable, Equatable {
     let id: String
@@ -65,6 +71,11 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
         self.questions = questions
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case id, studyPlanId, questions
+        case quizTitle
+    }
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
@@ -73,6 +84,14 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
         self.questions = try container.decodeIfPresent([Question].self, forKey: .questions) ?? []
     }
     
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(quizTitle, forKey: .quizTitle)
+        try container.encode(studyPlanId, forKey: .studyPlanId)
+        try container.encode(questions, forKey: .questions)
+    }
+
     static func == (lhs: Quiz, rhs: Quiz) -> Bool {
         return lhs.id == rhs.id && lhs.quizTitle == rhs.quizTitle && lhs.studyPlanId == rhs.studyPlanId
     }
@@ -119,6 +138,18 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
         
         print("Successfully saved into DB. Inserted ID: \(insertedId)")
         return .success(insertedId)
+    }
+    // Method to retrieve study plans from the database for a specific userId
+    func getQuizzes(studyPlanId: String) async -> [Quiz] {
+        do {
+            let quizzes = await DatabaseManager.shared.getQuizzes(studyPlanId: studyPlanId)
+            
+            // Return the retrieved quizzes
+            return quizzes
+        } catch {
+            print("Error retrieving quizzes: \(error)")
+            return []
+        }
     }
 
 }
