@@ -4,13 +4,13 @@ struct HomeView: View {
     @StateObject private var userSession = UserSession()
     @State private var showingCreateUserView = false
     @State private var isLoggedOut = false  // State to manage the logout action
-
+    @AppStorage("selectedtab")var selectedTab = 0
     var body: some View {
+        
         NavigationView {
             VStack(spacing: 20) {
                 if let user = userSession.currentUser {
                     // Show the Home content if the user exists
-                    Text("Welcome back, \(user.name)!")
                     // Other home content
                 } else {
                     // Show a prompt to create the user profile
@@ -24,7 +24,7 @@ struct HomeView: View {
                 
                 // Welcome Message (moved inside the condition)
                 if let user = userSession.currentUser {
-                    Text("Welcome, \(user.name)!")
+                    Text("Welcome back, \(user.name)!")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.top, 20)
@@ -39,9 +39,12 @@ struct HomeView: View {
                     NavigationLink(destination: CreateStudyPlanView()) {
                         HomeButton(icon: "plus.circle.fill", label: "Create")
                     }
-                    NavigationLink(destination: LibraryView()) {
-                        HomeButton(icon: "books.vertical", label: "Library")
-                    }
+                    NavigationLink(destination: LibraryView(), isActive: Binding(
+                                       get: { selectedTab == 3 },
+                                       set: { if $0 { selectedTab = 3 } }
+                                   )) {
+                                       HomeButton(icon: "books.vertical", label: "Library")
+                                   }
                     NavigationLink(destination: StudyTipsView()) {
                         HomeButton(icon: "lightbulb.fill", label: "Study Tips")
                     }
@@ -53,14 +56,14 @@ struct HomeView: View {
                     .fontWeight(.semibold)
                     .padding(.top)
                 
-                ScrollView {
+
                     VStack(alignment: .leading) {
                         Text("📘 Math - 2 hours daily")
                         Text("📗 Science - 1.5 hours weekly")
                         Text("📙 History - 1 hour weekly")
                     }
                     .padding()
-                }
+
                 
                 // Study Tips Section
                 Text("Study Tips")
@@ -68,13 +71,12 @@ struct HomeView: View {
                     .fontWeight(.semibold)
                     .padding(.top)
                 
-                ScrollView {
+
                     VStack(alignment: .leading) {
                         Text("📚 Break study into smaller, manageable sessions.")
                         Text("💡 Take regular breaks to keep your mind fresh.")
                         Text("📝 Use active recall and spaced repetition.")
                         Text("🌟 Stay organized and plan ahead.")
-                    }
                     .padding()
                 }
                 
@@ -99,7 +101,12 @@ struct HomeView: View {
                     .foregroundColor(.blue)
             })
         }
+        
     }
+    init() {
+        UserDefaults.standard.set(0, forKey: "selectedTab")  // Reset to Home
+    }
+    
 }
 
 // Custom Button View

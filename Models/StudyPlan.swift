@@ -32,6 +32,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         self.createdAt = Date()  // Move assignment here after initializing properties
         self.status = status
     }
+    static let shared = StudyPlan(id: "", userId: "", grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "")
     
     // Conformance to Equatable
     static func == (lhs: StudyPlan, rhs: StudyPlan) -> Bool {
@@ -76,32 +77,42 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         print("Starting generatePlan()...")  // Debug start
         
         // Prepare the prompt for the API call
+        let lessonPlanId = UUID().uuidString
         let prompt = """
-            Generate a study plan for a \(self.grade) student, subject \(self.subject) about topic \(self.topic) for them to complete in \(self.studyDuration) months and to study for \(self.studyFrequency) hour(s) per week.
+        Generate a study plan for a \(self.grade) student in the subject \(self.subject) on the topic \(self.topic). The plan should be designed for completion in \(self.studyDuration) months, with a study schedule of \(self.studyFrequency) hour(s) per week.
 
-            Divide the study plan into weekly modules, but only generate a plan for the first week.
+        ### Instructions:
+        - **Only generate a study plan for the first week** of the overall study duration.
+        - **Break down the study plan into weekly modules** and provide structured guidance for the first week.
+        - **Include the following details**:
+          - Clearly defined goals for the week.
+          - Key milestones for tracking progress.
+          - A structured timetable (e.g., daily study sessions or task-based schedules).
+          - Suggested learning and practice resources.
 
-            - Clearly outline goals for the week.  
-            - Include milestones for progress tracking.  
-            - Provide a structured timetable (hours/day or tasks/day).  
-            - Suggest relevant resources.  
+        ### Output Format:
+        Return a **valid JSON object** (without including the word "json") in the following structure:
 
-            Output the response in **valid JSON format** with this structure, do not return "json" word:
-            {
-                "studyPlanId": "\(self.id)",
-                "grade": "\(self.grade)",
-                "subject": "\(self.subject)",
-                "topic": "\(self.topic)",
-                "week": "1",
-                "goals": "",
-                "milestones": "",
-                "timetable": {
-                    "session": "",
-                    "learning_tasks": [{"task": "", "duration": ""}],
-                    "practice_tasks": [{"task": "", "duration": ""}]
-                },
-                "resources": ""
-            }
+        {
+            "id": "\(lessonPlanId)",  // Do not change this value
+            "studyPlanId": "\(self.id)",  // Do not change this value
+            "grade": "\(self.grade)",
+            "subject": "\(self.subject)",
+            "topic": "\(self.topic)",
+            "week": "1",
+            "goals": "",  // Clearly state learning objectives
+            "milestones": "",  // Define key progress checkpoints
+            "timetable": {
+                "session": "",  // Outline the study schedule
+                "learning_tasks": [
+                    {"task": "", "duration": ""}  // List structured learning activities
+                ],
+                "practice_tasks": [
+                    {"task": "", "duration": ""}  // List exercises or practice activities
+                ]
+            },
+            "resources": ""  // Suggest relevant study materials
+        }
         """
         
        
@@ -148,5 +159,20 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
                 return []
             }
         }
+    
+    // Function to update StutyPlan and LessonPlan status from the database
+    func updateStudyPlan(studyPlanId: String, status: String) async -> Result<StudyPlan, NSError> {
+        do {
+            if let studyPlan = await DatabaseManager.shared.updateStudyPlan(studyPlanId: studyPlanId, status: status) {
+                return .success(studyPlan)
+            } else {
+                let error = NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "Study Plan and Lesson plan are not updated."])
+                return .failure(error)
+            }
+        } catch {
+            return .failure(error as NSError)
+        }
+    }
+
 
 }

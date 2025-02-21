@@ -33,4 +33,11 @@ class QuizViewModel: ObservableObject {
         
         return quizzes
     }
+    // Method to update the status of a study plan
+//    func updateQuizStatus(quiz: Quiz) -> Quiz {
+//        var updatedPlan = plan
+//        updatedPlan.status = newStatus.rawValue
+//        print("Updated study plan ID: \(plan.id) to status: \(newStatus.rawValue)")
+//        return updatedPlan
+//    }
 }

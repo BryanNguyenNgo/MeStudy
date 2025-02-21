@@ -297,6 +297,46 @@ actor DatabaseManager {
             return nil
         }
     }
+    // Update status of StudyPlan and LessonPlan record
+
+    func updateStudyPlan(studyPlanId: String, status: String) async -> StudyPlan? {
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
+                return nil
+            }
+
+            // Update StudyPlan status
+            let studyPlanQuery = self.studyPlan.filter(self.studyPlanId == studyPlanId)
+            if try await db.run(studyPlanQuery.update(self.studyPlanStatus <- status)) > 0 {
+                print("StudyPlan status updated successfully.")
+            } else {
+                print("StudyPlan update failed or no changes were made.")
+            }
+
+            // Fetch and return the updated StudyPlan
+            if let row = try await db.pluck(studyPlanQuery) {
+                return StudyPlan(
+                    id: row[self.studyPlanId],
+                    userId: row[self.userId],  // Fixed missing bracket
+                    grade: row[self.studyPlanGrade],
+                    subject: row[self.studyPlanSubject],
+                    topic: row[self.studyPlanTopic],
+                    studyDuration: row[self.studyPlanDuration],
+                    studyFrequency: row[self.studyPlanFrequency],
+                    status: row[self.studyPlanStatus]
+                )
+            } else {
+                print("Updated StudyPlan not found.")
+            }
+
+        } catch {
+            print("Error updating study plan status: \(error)")
+        }
+        
+        return nil
+    }
+
     
     func getLessonPlan(studyPlanId: String) async -> LessonPlan? {
         do {
@@ -328,7 +368,8 @@ actor DatabaseManager {
                             )
                             
                             return LessonPlan(
-                                studyPlanId: lessonPlanRow[self.studyPlanId],
+                                id: lessonPlanRow[self.lessonPlanId],
+                                studyPlanId: lessonPlanRow[self.lessonPlanStudyPlanId],
                                 grade: lessonPlanRow[self.grade],
                                 subject: lessonPlanRow[self.subject],
                                 topic: lessonPlanRow[self.topic],
@@ -402,16 +443,18 @@ actor DatabaseManager {
                 print("Database connection is nil")
                 return []
             }
-
+            print("Fetching quizzes for study plan \(studyPlanId)")
             let query = quizTable.filter(self.quizStudyPlanId == studyPlanId)
             
             for row in try await db.prepare(query) {
+                print("quiz row: \(row)")
                 let quiz = Quiz(
                     id: row[quizId],
                     quizTitle: row[quizTitle],
                     studyPlanId: row[quizStudyPlanId],
                     questions: try await getQuizQuestions(quizId: row[quizId]) // Fetch associated questions
                 )
+                print("quiz: \(quiz)")
                 quizzes.append(quiz)
             }
             
@@ -430,8 +473,8 @@ actor DatabaseManager {
                 print("Database connection is nil")
                 throw NSError(domain: "DatabaseError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Database connection is nil"])
             }
-            
-            let query = questionTable.filter(self.quizId == quizId)
+            print("Getting questions for quiz \(quizId)")
+            let query = questionTable.filter(self.questionQuizId == quizId)
             
             for row in try await db.prepare(query) {
                 // Directly accessing values (assuming they are non-optional)
@@ -457,7 +500,8 @@ actor DatabaseManager {
                     questionText: questionText,      // Corrected this from questionText to question
                     options: questionOptions,
                     correctAnswer: correctAnswer,
-                    questionTask: questionTask
+                    questionTask: questionTask//,
+                    //answers: answers // Attach the answers to the question
                 )
 
                 questions.append(question)

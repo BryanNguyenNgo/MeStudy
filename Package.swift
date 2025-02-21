@@ -16,6 +16,7 @@ let package = Package(
         .iOSApplication(
             name: "MeStudy",
             targets: ["AppModule"],
+            teamIdentifier: "7H539QRB34",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .leaf),

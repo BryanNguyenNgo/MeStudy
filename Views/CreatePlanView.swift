@@ -22,7 +22,7 @@ struct CreateStudyPlanView: View {
             
             // Grade Selection
             HStack {
-                Text("What is your grade: \(viewModel.selectedGrade ?? "Not selected")")
+                Text("What is your grade: ")
                     .font(.headline)
                 
                 Menu {
@@ -30,7 +30,7 @@ struct CreateStudyPlanView: View {
                         Button(grade, action: { viewModel.selectGrade(grade) })
                     }
                 } label: {
-                    Label("Select", systemImage: "chevron.down")
+                    Label("\(viewModel.selectedGrade ?? "Select")", systemImage: "chevron.down")
                         .padding()
                         .background(Color.blue.opacity(0.2))
                         .cornerRadius(8)
@@ -41,7 +41,7 @@ struct CreateStudyPlanView: View {
             // Subject Selection
             if let selectedGrade = viewModel.selectedGrade {
                 HStack {
-                    Text("Choose subject: \(viewModel.selectedSubject ?? "Not selected")")
+                    Text("Choose subject:")
                         .font(.headline)
                     
                     Menu {
@@ -49,7 +49,7 @@ struct CreateStudyPlanView: View {
                             Button(subject, action: { viewModel.selectSubject(subject) })
                         }
                     } label: {
-                        Label("Select", systemImage: "chevron.down")
+                        Label("\(viewModel.selectedSubject ?? "Select")", systemImage: "chevron.down")
                             .padding()
                             .background(Color.blue.opacity(0.2))
                             .cornerRadius(8)
@@ -61,7 +61,7 @@ struct CreateStudyPlanView: View {
             // Topic Selection
             if let selectedSubject = viewModel.selectedSubject {
                 HStack {
-                    Text("Choose topic: \(viewModel.selectedTopic ?? "Not selected")")
+                    Text("Choose topic: ")
                         .font(.headline)
                     
                     Menu {
@@ -69,7 +69,7 @@ struct CreateStudyPlanView: View {
                             Button(topic, action: { viewModel.selectTopic(topic) })
                         }
                     } label: {
-                        Label("Select", systemImage: "chevron.down")
+                        Label("\(viewModel.selectedTopic ?? "Select")", systemImage: "chevron.down")
                             .padding()
                             .background(Color.blue.opacity(0.2))
                             .cornerRadius(8)
@@ -80,14 +80,15 @@ struct CreateStudyPlanView: View {
             
             // Duration Selection
             HStack {
-                Text("How long do you plan to study: \(viewModel.selectedDuration)")
+                Text("How long do you plan to study: ")
                     .font(.headline)
                 
                 Menu {
                     Button("2 months", action: { viewModel.selectedDuration = "2 months" })
                     Button("4 months", action: { viewModel.selectedDuration = "4 months" })
                 } label: {
-                    Label("Select", systemImage: "chevron.down")
+                    Label("\(viewModel.selectedDuration.isEmpty == true ? "Select" : viewModel.selectedDuration)", systemImage: "chevron.down")
+
                         .padding()
                         .background(Color.blue.opacity(0.2))
                         .cornerRadius(8)
@@ -97,14 +98,14 @@ struct CreateStudyPlanView: View {
             
             // Commitment Selection
             HStack {
-                Text("How much time can you dedicate weekly: \(viewModel.selectedCommitment)")
+                Text("How much time can you dedicate weekly: ")
                     .font(.headline)
                 
                 Menu {
                     Button("1 hour", action: { viewModel.selectedCommitment = "1 hour" })
                     Button("2 hours", action: { viewModel.selectedCommitment = "2 hours" })
                 } label: {
-                    Label("Select", systemImage: "chevron.down")
+                    Label("\(viewModel.selectedCommitment.isEmpty == true ? "Select" : viewModel.selectedCommitment)", systemImage: "chevron.down")
                         .padding()
                         .background(Color.blue.opacity(0.2))
                         .cornerRadius(8)

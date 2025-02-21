@@ -26,9 +26,13 @@ class LibraryViewModel: ObservableObject {
                 case .success(let quiz):  // ✅ FIXED: Removed unnecessary optional binding
                     print("decodeQuiz success")
                     print("quiz.studyPlanId: \(quiz.studyPlanId)")
+                    print("quiz.questions: \(quiz.questions)")
                     
                     // 4. Save the generated quiz to the database
                     let saveQuizResult = await Quiz.shared.saveToDatabase(from: quiz)
+                    // 5. Update StudyPlan and LessonPlan status to In Progress
+                    let updateStudyPlanResult = await StudyPlan.shared.updateStudyPlan(studyPlanId: planID, status: StudyPlanStatusType.inProgress.rawValue)
+                    
                     
                     switch saveQuizResult {
                     case .success:

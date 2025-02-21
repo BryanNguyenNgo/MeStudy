@@ -147,12 +147,14 @@ class StudyPlanViewModel: ObservableObject {
                         print("lessonPlan.studyPlanId: \(lessonPlan.studyPlanId)")
                         let saveLessonResult = await LessonPlan.shared.saveToDatabase(from: lessonPlan)
                         switch saveLessonResult {
-                        case .success:
+                        case .success(let studyPlanId):
                             // 5. Update UI and return success
-                            DispatchQueue.main.async {
-                                self.generatedPlan = "Study Plan: \(grade), \(subject), \(duration) hours, \(commitment) times per week"
-                            }
-                            return .success(generatedPlanJson)
+                            
+//                            DispatchQueue.main.async {
+//                                self.generatedPlan = "Study Plan: \(grade), \(subject), \(duration) hours, \(commitment) times per week"
+//                            }
+                            print("saveToDatabase success: \(studyPlanId)")
+                            return .success(studyPlanId)
                             
                         case .failure(let error):
                             return .failure(error)

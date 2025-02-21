@@ -87,10 +87,10 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     var resources: String
     var timetable: Timetable
     
-    static let shared = LessonPlan(studyPlanId: "", grade:"", subject: "", topic: "", week: "", goals: "", milestones: "", resources: "", timetable: Timetable(session: "", learning_tasks: [], practice_tasks: []))
+    static let shared = LessonPlan(id: "", studyPlanId: "", grade:"", subject: "", topic: "", week: "", goals: "", milestones: "", resources: "", timetable: Timetable(session: "", learning_tasks: [], practice_tasks: []))
     
-    init(studyPlanId: String, grade: String,subject: String,topic: String, week: String, goals: String, milestones: String, resources: String, timetable: Timetable) {
-        self.id = UUID().uuidString  // Correct UUID conversion
+    init(id: String, studyPlanId: String, grade: String,subject: String,topic: String, week: String, goals: String, milestones: String, resources: String, timetable: Timetable) {
+        self.id = id
         self.studyPlanId = studyPlanId
         self.grade = grade
         self.subject = subject
@@ -118,6 +118,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     
     // CodingKeys to exclude the id from decoding
     enum CodingKeys: String, CodingKey {
+        case id
         case studyPlanId
         case grade
         case subject
@@ -132,6 +133,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Required initializer for Decodable
     required convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        let id = try container.decode(String.self, forKey: .id)
         let studyPlanId = try container.decode(String.self, forKey: .studyPlanId)
         let grade = try container.decode(String.self, forKey: .grade)
         let subject = try container.decode(String.self, forKey: .subject)
@@ -142,7 +144,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
         let resources = try container.decode(String.self, forKey: .resources)
         let timetable = try container.decode(Timetable.self, forKey: .timetable)
         
-        self.init(studyPlanId: studyPlanId, grade: grade, subject: subject, topic: topic, week: week, goals: goals, milestones: milestones, resources: resources, timetable: timetable)
+        self.init(id: id, studyPlanId: studyPlanId, grade: grade, subject: subject, topic: topic, week: week, goals: goals, milestones: milestones, resources: resources, timetable: timetable)
     }
     // Decode from JSON string
     func decodeLessonPlan(from data: String) async -> Result<LessonPlan?, NSError> {
@@ -230,7 +232,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             return .failure(error as NSError)
         }
     }
-
+    
     // Function to create a lesson quiz
     func createLessonQuiz() async -> Result<String, NSError> {
         
@@ -254,65 +256,61 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Function to generate the quiz based on lesson plan
     func generateQuiz() async -> Result<String, NSError> {
         let prompt = """
-        Create a quiz based on the following study plan for a grade \(self.grade) student studying \(self.subject) on the topic of \(self.topic) in week \(self.week). The goal of the quiz is to assess the student's understanding of the material outlined in the study plan.
+        Create a quiz based on the following study plan for a grade \(self.grade) student studying \(self.subject) on the topic of \(self.topic) in week \(self.week). The purpose of this quiz is to assess the student's understanding of the material outlined in the study plan.
 
-        Study Plan Details:
-        - Goal: \(self.goals)
-        - Milestones: \(self.milestones)
-        - Timetable:
-            - Session: \(self.timetable.session ?? "")
-            - Learning Tasks:
-                - Task 1: \(self.timetable.learning_tasks[safe: 0]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 0]?.duration ?? "N/A"))
-                - Task 2: \(self.timetable.learning_tasks[safe: 1]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 1]?.duration ?? "N/A"))
-                - Task 3: \(self.timetable.learning_tasks[safe: 2]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 2]?.duration ?? "N/A"))
-            - Practice Tasks:
-               - Task 1: \(self.timetable.practice_tasks[safe: 0]?.task ?? "N/A")
-               - Task 2: \(self.timetable.practice_tasks[safe: 1]?.task ?? "N/A")
+        ### Study Plan Details:
+        - **Goal**: \(self.goals)  
+        - **Milestones**: \(self.milestones)  
+        - **Timetable**:
+          - **Session**: \(self.timetable.session ?? "")  
+          - **Learning Tasks**:
+            - Task 1: \(self.timetable.learning_tasks[safe: 0]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 0]?.duration ?? "N/A"))  
+            - Task 2: \(self.timetable.learning_tasks[safe: 1]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 1]?.duration ?? "N/A"))  
+            - Task 3: \(self.timetable.learning_tasks[safe: 2]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 2]?.duration ?? "N/A"))  
+          - **Practice Tasks**:
+            - Task 1: \(self.timetable.practice_tasks[safe: 0]?.task ?? "N/A")  
+            - Task 2: \(self.timetable.practice_tasks[safe: 1]?.task ?? "N/A")  
 
-        The quiz should contain the following:
-        1. Multiple choice questions to assess understanding of the \(self.goals).
-        2. A few short-answer questions for above mentioned Learning Tasks.
-        3. A practice task for above mentioned Practice Tasks.
+        ### Quiz Requirements:
+        1. **Multiple-choice questions** that assess understanding of the study plan goals.  
+        2. **Short-answer questions** based on the learning tasks.  
+        3. **A practice task** derived from the practice tasks.  
 
-        Output the quiz in **valid JSON format** with this structure, do not return the word "json":
-        Sample 
-        {   
-            "id": "\(self.id)",
-            "quizTitle": "Grammar Quiz on Parts of Speech",
-            "studyPlanId": "\(self.studyPlanId)",
+        ### Output Format:
+        Return a **valid JSON object** (without the word "json") in the following structure:
+
+        {
+            "id": "\(self.id)", // Do not change this value
+            "quizTitle": "Quiz on \(self.topic)",
+            "studyPlanId": "\(self.studyPlanId)", // Do not change this value
             "questions": [
                 {
-                    "id": "q1",
-                    "quizId": "\(self.id)",
+                    "id": "\(self.id)_q1",
+                    "quizId": "\(self.id)", // Do not change this value
                     "questionType": "multiple_choice",
-                    "questionText": "Which of the following is an example of a noun?",
-                    "options": ["Dog", "Run", "Quickly", "Under"],
-                    "correctAnswer": "Dog"
+                    "questionText": "Which of the following best aligns with \(self.goals)?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correctAnswer": "Option A"
                 },
                 {
-                    "id": "q2",
-                    "quizId": "\(self.id)",
+                    "id": "\(self.id)_q2",
+                    "quizId": "\(self.id)", // Do not change this value
                     "questionType": "short_answer",
-                    "questionText": "Define the term 'verb'."
+                    "questionText": "Explain the concept behind \(self.timetable.learning_tasks[safe: 0]?.task ?? "N/A")."
                 },
                 {
-                    "id": "q3",
-                    "quizId": "\(self.id)",
+                    "id": "\(self.id)_q3",
+                    "quizId": "\(self.id)", // Do not change this value
                     "questionType": "multiple_choice",
-                    "questionText": "Which of the following sentences contains a preposition?",
-                    "options": [
-                        "She ran quickly.",
-                        "He went under the bridge.",
-                        "The dog is brown.",
-                        "They played in the park."
-                    ],
-                    "correctAnswer": "He went under the bridge."
+                    "questionText": "What is the key takeaway from \(self.timetable.learning_tasks[safe: 1]?.task ?? "N/A")?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correctAnswer": "Option B"
                 },
                 {
-                    "id": "q4",
-                    "quizId": "\(self.id)",
+                    "id": "\(self.id)_q4",
+                    "quizId": "\(self.id)", // Do not change this value
                     "questionType": "practice_task",
-                    "questionTask": "Identify the parts of speech in the following sentence: 'The quick brown fox jumped over the lazy dog.'"
+                    "questionTask": "\(self.timetable.practice_tasks[safe: 0]?.task ?? "N/A")"
                 }
             ]
         }

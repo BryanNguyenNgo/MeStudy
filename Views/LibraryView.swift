@@ -8,17 +8,17 @@ struct LibraryView: View {
     @State private var goQuizView = false
     @State private var selectedPlanId: String? = nil // Store the selected plan ID
 
-    private func handleStudyPlanAction(_ plan: StudyPlan) async {
+    /// Handles study plan action based on its status.
+    func handleStudyPlanAction(_ plan: StudyPlan) async {
         viewModel.isLoading = true
-        defer {
-            viewModel.isLoading = false
-        }
+        defer { viewModel.isLoading = false }
 
         switch plan.status {
         case StudyPlanStatusType.notStarted.rawValue:
             await startStudyPlan(plan)
         case StudyPlanStatusType.inProgress.rawValue:
             print("Resuming study plan: \(plan.id)")
+            await resumeStudyPlan(plan)
         case StudyPlanStatusType.completed.rawValue:
             print("Study plan already completed: \(plan.id)")
         default:
@@ -26,14 +26,14 @@ struct LibraryView: View {
         }
     }
 
+    /// Starts a new study plan by creating a quiz.
     private func startStudyPlan(_ plan: StudyPlan) async {
         do {
             let result = try await libraryViewModel.createLessonQuiz(planID: plan.id)
             switch result {
             case .success(let quiz):
                 print("Quiz created successfully: \(quiz)")
-                selectedPlanId = plan.id // Set the selected plan ID to navigate
-                goQuizView = true
+                await resumeStudyPlan(plan)
             case .failure(let error):
                 print("Failed to create quiz: \(error.localizedDescription)")
             }
@@ -42,49 +42,72 @@ struct LibraryView: View {
         }
     }
 
-    var body: some View {
-        VStack {
-            if viewModel.isLoading {
-                ProgressView("Loading...")
-                    .progressViewStyle(CircularProgressViewStyle())
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 15) {
-                        ForEach(viewModel.studyPlans, id: \.id) { plan in
-                            StudyPlanRow(plan: plan)
-                        }
-                    }
-                    .padding(.bottom, 15)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+    private func resumeStudyPlan(_ plan: StudyPlan) async {
+        DispatchQueue.main.async {
+            print("Navigating to QuizView with StudyPlan ID: \(plan.id)")
+            self.selectedPlanId = plan.id
+            self.goQuizView = true
         }
-        .navigationDestination(isPresented: $goQuizView) {
-            if let planId = selectedPlanId {
-                QuizView(studyPlanId: planId) // Pass the selected plan ID to QuizView
-            }
-        }
-        .onAppear {
-            guard let userId = userSession.currentUser?.id, !userId.isEmpty else {
-                print("Error: User ID is empty.")
-                return
-            }
+    }
 
-            Task {
-                await viewModel.getStudyPlans(userId: userId)
-                viewModel.isLoading = false
+    var body: some View {
+        NavigationStack {
+            VStack {
+                if viewModel.isLoading {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 15) {
+                            ForEach(viewModel.studyPlans, id: \.id) { plan in
+                                StudyPlanRow(plan: plan) { selectedPlan in
+                                    // Call the asynchronous action from the parent.
+                                    Task {
+                                        await handleStudyPlanAction(selectedPlan)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.bottom, 15)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            
+            // The navigationDestination modifier is now inside NavigationStack and always returns a view.
+            .navigationDestination(isPresented: $goQuizView) {
+                Group {
+                    if let planId = selectedPlanId {
+                        QuizView(studyPlanId: planId) // Pass the selected plan ID to QuizView
+                    } else {
+                        EmptyView()
+                    }
+                }
+            }
+            .onAppear {
+                guard let userId = userSession.currentUser?.id, !userId.isEmpty else {
+                    print("Error: User ID is empty.")
+                    return
+                }
+                Task {
+                    await viewModel.getStudyPlans(userId: userId)
+                    viewModel.isLoading = false
+                }
             }
         }
+        
     }
 }
 
+// StudyPlanRow displays details of a study plan and contains a StudyPlanButton.
 struct StudyPlanRow: View {
     let plan: StudyPlan
+    let action: (StudyPlan) async -> Void
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
-                Text("Grade: \(plan.grade)")
+                Text("\(plan.grade)")
                     .font(.headline)
                 Text("Subject: \(plan.subject)")
                     .font(.subheadline)
@@ -92,7 +115,7 @@ struct StudyPlanRow: View {
                     .font(.subheadline)
                 Text("Duration: \(plan.studyDuration) hours")
                     .font(.subheadline)
-                Text("Frequency: \(plan.studyFrequency) times/week")
+                Text("Frequency: \(plan.studyFrequency) times per week")
                     .font(.subheadline)
                 Text("Status: \(plan.status)")
                     .font(.subheadline)
@@ -102,22 +125,25 @@ struct StudyPlanRow: View {
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
 
-            StudyPlanButton(plan: plan)
+            StudyPlanButton(plan: plan, action: action)
         }
+        .navigationBarBackButtonHidden()
         .background(RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.gray, lineWidth: 1))
         .padding(.horizontal)
     }
 }
 
+// StudyPlanButton shows a button for the study plan, calling the action when tapped.
 struct StudyPlanButton: View {
     let plan: StudyPlan
+    let action: (StudyPlan) async -> Void
 
     var body: some View {
         VStack {
             Button(action: {
                 Task {
-                    await handleStudyPlanAction(plan)
+                    await action(plan)
                 }
             }) {
                 Text(plan.status == StudyPlanStatusType.notStarted.rawValue ? "Start" : "Resume")
@@ -130,10 +156,5 @@ struct StudyPlanButton: View {
             .padding(.top, 5)
             .frame(width: 120)
         }
-    }
-
-    private func handleStudyPlanAction(_ plan: StudyPlan) async {
-        // Assuming we have access to the LibraryViewModel and ViewModel in the context
-        // may need to adjust this part of the code to have access to the correct models in this subview
     }
 }

@@ -4,6 +4,7 @@ import SwiftUI
 struct MeStudy: App {
     @StateObject private var userSession = UserSession()  // Initialize the user session
     @StateObject private var appViewModel = AppViewModel()
+    @AppStorage("selectedtab")var selectedTab = 0
 
     var body: some Scene {
         WindowGroup {
@@ -17,6 +18,8 @@ struct MeStudy: App {
                 .onAppear {
                     Task {
                         await appViewModel.initializeDatabase()
+                        selectedTab = 0
+                        
                     }
                 }
             }

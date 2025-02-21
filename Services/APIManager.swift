@@ -20,7 +20,7 @@ class APIManager {
         
         // Prepare request payload
         let requestBody: [String: Any] = [
-            "model": "o1-preview",
+            "model": "gpt-4o",
             "messages": [
                 ["role": "user", "content": prompt]
             ]

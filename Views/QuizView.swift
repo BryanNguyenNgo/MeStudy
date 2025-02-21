@@ -18,7 +18,7 @@ struct QuizView: View {
     var body: some View {
         VStack {
             if quizViewModel.isLoading {
-                ProgressView("Loading...")
+                ProgressView("Loading2...")
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
                 ScrollView {
@@ -32,11 +32,11 @@ struct QuizView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-//        .navigationDestination(isPresented: $goToQuizDetailView) {
-//            if let quiz = selectedQuiz {
-//                QuizDetailView(quiz: quiz)  // Navigate to the quiz detail view
-//            }
-//        }
+        .navigationDestination(isPresented: $goToQuizDetailView) {
+            if let quiz = selectedQuiz {
+                QuizDetailView(quiz: quiz)  // Navigate to the quiz detail view
+            }
+}
         .onAppear {
             Task {
                 await quizViewModel.getQuizzes(studyPlanId: studyPlanId)
@@ -60,7 +60,6 @@ struct QuizRow: View {
 //                Text("Created at: \(quiz.createdAt, style: .date)")
 //                    .font(.subheadline)
             }
-            .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
 
             VStack {
@@ -76,7 +75,6 @@ struct QuizRow: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                .padding(.top, 5)
                 .frame(width: 120)
             }
         }
