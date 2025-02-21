@@ -207,4 +207,39 @@ class StudyPlanViewModel: ObservableObject {
         
         return studyPlans
     }
+    // for scannerView
+    func extractStudyPlan(recognizedText: String) async -> Result<String, NSError> {
+        // Indicate loading
+        DispatchQueue.main.async {
+            self.isLoading = true
+            self.errorMessage = nil
+        }
+
+        do {
+            // 1. Generate study plan
+            let generatedResult = await StudyPlan.shared.extractStudyPlan(recognizedText: recognizedText)
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+            
+            switch generatedResult {
+            case .success(let generatedJson):
+                print("Generated Plan JSON: \(generatedJson)")
+                return .success(generatedJson)
+                
+            case .failure(let error):
+                return .failure(error)
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.errorMessage = "Error: \(error.localizedDescription)"
+            }
+            
+            let nsError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
+            return .failure(nsError)
+        }
+    }
+
 }

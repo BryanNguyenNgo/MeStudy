@@ -14,6 +14,7 @@ struct TextbookScannerView: View {
     @State private var recognizedText: String = ""
     @State private var showImagePicker = false
     @State private var studyPlanSuggested = false
+    @StateObject private var viewModel = StudyPlanViewModel()
     
     var body: some View {
         VStack {
@@ -55,6 +56,7 @@ struct TextbookScannerView: View {
                 
                 Button("Guide Me to Find the Answer") {
                     analyzeText()
+                    print("\(recognizedText)")
                 }
                 .padding()
                 .background(Color.green)
@@ -63,7 +65,9 @@ struct TextbookScannerView: View {
                 
                 if studyPlanSuggested {
                     Button("Create Study Plan for This Topic") {
-                        createStudyPlan()
+                        Task {
+                            await createStudyPlan()
+                        }
                     }
                     .padding()
                     .background(Color.orange)
@@ -112,9 +116,10 @@ struct TextbookScannerView: View {
     }
     
     // Suggest creating a study plan
-    private func createStudyPlan() {
+    private func createStudyPlan() async {
         print("Study plan created for topic: \(recognizedText)")
         // Navigate to a Study Plan view or save the topic in app storage
+        await viewModel.extractStudyPlan(recognizedText: recognizedText)
     }
 }
 

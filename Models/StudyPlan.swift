@@ -173,6 +173,28 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
             return .failure(error as NSError)
         }
     }
+    func extractStudyPlan(recognizedText: String) async -> Result<String, NSError> {
+        print("Starting generatePlan()...")  // Debug start
+        
+        // Prepare the prompt for the API call
+        let lessonPlanId = UUID().uuidString
+        let prompt = """
+        Extract the **Grade**, **Subject**, and **Topic** from the following problem statement:\n\n'\(recognizedText)'\n\n
+        - **Grade**: Identify the educational level or grade appropriate for this problem.\n
+        - **Subject**: Determine the subject (e.g., Mathematics, Geometry, Physics, etc.).\n
+        - **Topic**: Specify the topic within the subject (e.g., Circles, Geometry, Measurement).\n\n
+        Return the extracted information in the following JSON format:\n\n
+        {\n  \"Grade\": \"\",\n  \"Subject\": \"\",\n  \"Topic\": \"\"\n}
+
+        """
+       
+            // Call the API and await the result
+            let apiResult = try await APIManager.shared.callOpenAIAPI(prompt: prompt)
+            
+            // Return success with result
+            return apiResult
+        
+    }
 
 
 }
