@@ -6,7 +6,11 @@ enum StudyPlanStatusType: String {
     case completed = "Completed"
 }
 
-
+struct StudyPlanExtracted: Codable {
+    let grade: String
+    let subject: String
+    let topic: String
+}
 // Step 1: Alarm StudyPlan
 class StudyPlan: Identifiable, ObservableObject, Equatable {
     let id: String  // Conforms to Identifiable
@@ -180,12 +184,12 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         let lessonPlanId = UUID().uuidString
         let prompt = """
         Extract the **Grade**, **Subject**, and **Topic** from the following problem statement:\n\n'\(recognizedText)'\n\n
-        - **Grade**: Identify the educational level or grade appropriate for this problem.\n
-        - **Subject**: Determine the subject (e.g., Mathematics, Geometry, Physics, etc.).\n
-        - **Topic**: Specify the topic within the subject (e.g., Circles, Geometry, Measurement).\n\n
+        - **grade**: Identify the educational level or grade appropriate for this problem.\n
+        - **subject**: Determine the subject (e.g., Mathematics, Geometry, Physics, etc.).\n
+        - **topic**: Specify the topic within the subject (e.g., Circles, Geometry, Measurement).\n\n
         Return the extracted information in the following JSON format:\n\n
-        {\n  \"Grade\": \"\",\n  \"Subject\": \"\",\n  \"Topic\": \"\"\n}
-
+        {\n  \"grade\": \"\",\n  \"subject\": \"\",\n  \"topic\": \"\"\n}
+        Return a **valid JSON object** (without including the word "json")
         """
        
             // Call the API and await the result
@@ -194,6 +198,72 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
             // Return success with result
             return apiResult
         
+    }
+    // Decode from JSON string
+    func decodeStudyPlanExtracted(from data: String) async -> Result<StudyPlanExtracted?, NSError> {
+        guard let jsonData = data.data(using: .utf8) else {
+            let error = NSError(domain: "DecodeLessonPlanError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
+            print(error.localizedDescription)
+            return .failure(error)
+        }
+        
+        do {
+            // Parse JSON response using JSONDecoder to decode into LessonPlan
+            let decoder = JSONDecoder()
+            let studyPlanExtracted = try decoder.decode(StudyPlanExtracted.self, from: jsonData)
+            
+            // Print out the decoded values
+            
+            print("Grade: \(studyPlanExtracted.grade)")
+            print("subject: \(studyPlanExtracted.subject)")
+            print("topic : \(studyPlanExtracted.topic)")
+           
+            
+            return .success(studyPlanExtracted)
+        } catch let error as NSError {
+            print("Error decoding JSON: \(error.localizedDescription)")
+            return .failure(error)
+        }
+    }
+    // Simulate saving to a database asynchronously
+    func saveToDatabase(from lessonPlan: LessonPlan) async -> Result<String, NSError> {
+        print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
+        print("Grade: \(lessonPlan.studyPlanId)")
+        print("Grade: \(lessonPlan.grade)")
+        print("Subject: \(lessonPlan.subject)")
+        print("Topic: \(lessonPlan.topic)")
+        print("Week: \(lessonPlan.week)")
+        print("Goals: \(lessonPlan.goals)")
+        print("Milestones: \(lessonPlan.milestones)")
+        print("Resources: \(lessonPlan.resources)")
+        print("Timetable: \(lessonPlan.timetable)")
+
+        // Call the database save logic
+        guard let insertedId: String = await DatabaseManager.shared.insertLessonPlan(
+            id: lessonPlan.id,
+            studyPlanId:lessonPlan.studyPlanId,
+            grade: lessonPlan.grade,
+            subject: lessonPlan.subject,
+            topic: lessonPlan.topic,
+            week: lessonPlan.week,
+            goals: lessonPlan.goals,
+            milestones: lessonPlan.milestones,
+            resources: lessonPlan.resources,
+            timetable: lessonPlan.timetable
+        ) else {
+            let error = NSError(domain: "DatabaseError", code: 101, userInfo: [NSLocalizedDescriptionKey: "Failed to save lesson plan to database."])
+            print("Error: \(error.localizedDescription)")
+
+            // Additional debugging for foreign key issues
+//            print("Checking related foreign key dependencies...")
+//            let parentExists = await DatabaseManager.shared.checkParentExists(for: lessonPlan)
+//            print("Parent record exists: \(parentExists)")
+
+            return .failure(error)
+        }
+        
+        print("Successfully saved into DB. Inserted ID: \(insertedId)")
+        return .success(insertedId)
     }
 
 

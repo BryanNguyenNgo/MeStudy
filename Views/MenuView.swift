@@ -15,7 +15,7 @@ struct MenuView: View {
                     Label("Create", systemImage: "plus.circle")
                 }
                 .tag(1)
-            TextbookScannerView()
+            StudyTipsView()
                 .tabItem {
                     Label("Tips", systemImage: "plus.circle")
                 }

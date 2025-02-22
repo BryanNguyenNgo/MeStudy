@@ -32,7 +32,10 @@ class StudyPlanViewModel: ObservableObject {
     @Published var grades: [String] = []
     @Published var subjects: [String: [String]] = [:]
     @Published var topics: [String: [String]] = [:]
-        
+    
+    // For ScannerView
+    @Published var recognizedText: String = ""
+    
     // Load data from JSON for grades, subjects and topics
     func loadDataSubjectTopics() async {
         // Load JSON data from a file
@@ -208,27 +211,46 @@ class StudyPlanViewModel: ObservableObject {
         return studyPlans
     }
     // for scannerView
-    func extractStudyPlan(recognizedText: String) async -> Result<String, NSError> {
-        // Indicate loading
+    func extractStudyPlan(
+        recognizedText: String
+    ) async -> Result<StudyPlanExtracted?, NSError> {
+        
         DispatchQueue.main.async {
             self.isLoading = true
             self.errorMessage = nil
         }
 
         do {
-            // 1. Generate study plan
+            // Generate study plan
             let generatedResult = await StudyPlan.shared.extractStudyPlan(recognizedText: recognizedText)
-            
-            DispatchQueue.main.async {
-                self.isLoading = false
-            }
             
             switch generatedResult {
             case .success(let generatedJson):
                 print("Generated Plan JSON: \(generatedJson)")
-                return .success(generatedJson)
                 
+                // Decode the study plan
+                let decodedResult = await StudyPlan.shared.decodeStudyPlanExtracted(from: generatedJson)
+                
+                switch decodedResult {
+                case .success(let studyPlan):
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                    }
+                    print("Decoded Study Plan:\(decodedResult)")
+                    return .success(studyPlan)
+                    
+                    
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                    }
+                    return .failure(error)
+                }
+
             case .failure(let error):
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                }
                 return .failure(error)
             }
         } catch {
@@ -241,5 +263,6 @@ class StudyPlanViewModel: ObservableObject {
             return .failure(nsError)
         }
     }
+
 
 }

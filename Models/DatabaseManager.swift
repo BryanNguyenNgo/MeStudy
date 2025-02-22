@@ -6,13 +6,13 @@ actor DatabaseManager {
     private var db: Connection?
     
     // Table References
-        private let userTable = Table("User")
+    private let userTable = Table("User")
     private let userId = SQLite.Expression<String>("id")
     private let userName = SQLite.Expression<String>("name")
     private let userEmail = SQLite.Expression<String>("email")
     private let userGrade = SQLite.Expression<String>("grade")
-
-        private let studyPlan = Table("StudyPlan")
+    
+    private let studyPlanTable = Table("StudyPlan")
     private let studyPlanId = SQLite.Expression<String>("id")
     private let studyPlanUserId = SQLite.Expression<String>("user_id")
     private let studyPlanGrade = SQLite.Expression<String>("grade")
@@ -22,8 +22,8 @@ actor DatabaseManager {
     private let studyPlanFrequency = SQLite.Expression<Int>("study_frequency")
     private let studyPlanStatus = SQLite.Expression<String>("status")
     private let studyPlanCreatedAt = SQLite.Expression<String>("created_at")
-
-        private let lessonPlanTable = Table("LessonPlan")
+    
+    private let lessonPlanTable = Table("LessonPlan")
     private let lessonPlanId = SQLite.Expression<String>("id")
     private let lessonPlanStudyPlanId = SQLite.Expression<String>("studyPlanId")
     private let grade = SQLite.Expression<String>("grade")
@@ -34,25 +34,27 @@ actor DatabaseManager {
     private let milestones = SQLite.Expression<String>("milestones")
     private let resources = SQLite.Expression<String>("resources")
     private let lessonPlanCreatedAt = SQLite.Expression<String>("created_at")
-
-        private let lessonPlanTaskTable = Table("LessonPlanTask")
+    private let lessonPlanStatus = SQLite.Expression<String>("status")
+    
+    private let lessonPlanTaskTable = Table("LessonPlanTask")
     private let taskId = SQLite.Expression<String>("id")
     private let task = SQLite.Expression<String>("task")
     private let duration = SQLite.Expression<String>("duration")
     private let lessonPlanTaskLessonPlanId = SQLite.Expression<String>("lesson_plan_id")
-
-        private let timetableTable = Table("Timetable")
+    
+    private let timetableTable = Table("Timetable")
     private let timetableId = SQLite.Expression<String>("id")
     private let session = SQLite.Expression<String>("session")
     private let timetableLessonPlanId = SQLite.Expression<String>("lesson_plan_id")
-
-        private let quizTable = Table("Quiz")
+    
+    private let quizTable = Table("Quiz")
     private let quizId = SQLite.Expression<String>("id")
     private let quizTitle = SQLite.Expression<String>("quizTitle")
     private let quizStudyPlanId = SQLite.Expression<String>("studyPlanId")
     private let quizCreatedAt = SQLite.Expression<String>("created_at")
-
-        private let questionTable = Table("Question")
+    private let quizStatus = SQLite.Expression<String>("status")
+    
+    private let questionTable = Table("Question")
     private let questionId = SQLite.Expression<String>("id")
     private let questionQuizId = SQLite.Expression<String>("quiz_id")
     private let questionType = SQLite.Expression<String>("question_type")
@@ -60,7 +62,8 @@ actor DatabaseManager {
     private let questionOptions = SQLite.Expression<String>("options") // Store as JSON String
     private let questionCorrectAnswer = SQLite.Expression<String>("correct_answer")
     private let questionTask = SQLite.Expression<String>("task")
-
+    private let questionUserAnswer = SQLite.Expression<String>("user_answer")
+    
     private init() { }
     
     func initializeDatabase() {
@@ -77,84 +80,87 @@ actor DatabaseManager {
             print("Error initializing database: \(error)")
         }
     }
-
+    
     private func createTables() {
-            do {
-                try db?.run(userTable.create(ifNotExists: true) { table in
-                    table.column(userId, primaryKey: true)
-                    table.column(userName)
-                    table.column(userEmail, unique: true)
-                    table.column(userGrade)
-                })
-
-                try db?.run(studyPlan.create(ifNotExists: true) { table in
-                    table.column(studyPlanId, primaryKey: true)
-                    table.column(studyPlanUserId)
-                    table.column(studyPlanGrade)
-                    table.column(studyPlanSubject)
-                    table.column(studyPlanTopic)
-                    table.column(studyPlanDuration)
-                    table.column(studyPlanFrequency)
-                    table.column(studyPlanStatus)
-                    table.column(studyPlanCreatedAt)
-
-                    table.foreignKey(studyPlanUserId, references: userTable, userId, update: .cascade, delete: .cascade)
-                })
-
-                try db?.run(lessonPlanTable.create(ifNotExists: true) { table in
-                    table.column(lessonPlanId, primaryKey: true)
-                    table.column(lessonPlanStudyPlanId)
-                    table.column(grade)
-                    table.column(subject)
-                    table.column(topic)
-                    table.column(week)
-                    table.column(goals)
-                    table.column(milestones)
-                    table.column(resources)
-                    table.column(lessonPlanCreatedAt)
-
-                    table.foreignKey(lessonPlanStudyPlanId, references: studyPlan, studyPlanId, delete: .cascade)
-                })
-
-                try db?.run(lessonPlanTaskTable.create(ifNotExists: true) { table in
-                    table.column(taskId, primaryKey: true)
-                    table.column(task)
-                    table.column(duration)
-                    table.column(lessonPlanTaskLessonPlanId)
-
-                    table.foreignKey(lessonPlanTaskLessonPlanId, references: lessonPlanTable, lessonPlanId, delete: .cascade)
-                })
-
-                try db?.run(timetableTable.create(ifNotExists: true) { table in
-                    table.column(timetableId, primaryKey: true)
-                    table.column(session)
-                    table.column(timetableLessonPlanId)
-
-                    table.foreignKey(timetableLessonPlanId, references: lessonPlanTable, lessonPlanId, delete: .cascade)
-                })
-
-                try db?.run(quizTable.create(ifNotExists: true) { table in
-                    table.column(quizId, primaryKey: true)
-                    table.column(quizTitle)
-                    table.column(quizStudyPlanId)
-                    table.column(quizCreatedAt, defaultValue: Date().ISO8601Format())
-                })
-
-                try db?.run(questionTable.create(ifNotExists: true) { table in
-                    table.column(questionId, primaryKey: true)
-                    table.column(questionQuizId)
-                    table.column(questionType)
-                    table.column(questionText)
-                    table.column(questionOptions)
-                    table.column(questionCorrectAnswer)
-                    table.column(questionTask)
-
-                    table.foreignKey(questionQuizId, references: quizTable, quizId, delete: .cascade)
-                })
-            } catch {
-                print("Error creating tables: \(error)")
-            }
+        do {
+            try db?.run(userTable.create(ifNotExists: true) { table in
+                table.column(userId, primaryKey: true)
+                table.column(userName)
+                table.column(userEmail, unique: true)
+                table.column(userGrade)
+            })
+            
+            try db?.run(studyPlanTable.create(ifNotExists: true) { table in
+                table.column(studyPlanId, primaryKey: true)
+                table.column(studyPlanUserId)
+                table.column(studyPlanGrade)
+                table.column(studyPlanSubject)
+                table.column(studyPlanTopic)
+                table.column(studyPlanDuration)
+                table.column(studyPlanFrequency)
+                table.column(studyPlanStatus)
+                table.column(studyPlanCreatedAt)
+                
+                table.foreignKey(studyPlanUserId, references: userTable, userId, update: .cascade, delete: .cascade)
+            })
+            
+            try db?.run(lessonPlanTable.create(ifNotExists: true) { table in
+                table.column(lessonPlanId, primaryKey: true)
+                table.column(lessonPlanStudyPlanId)
+                table.column(grade)
+                table.column(subject)
+                table.column(topic)
+                table.column(week)
+                table.column(goals)
+                table.column(milestones)
+                table.column(resources)
+                table.column(lessonPlanCreatedAt)
+                table.column(lessonPlanStatus, defaultValue: StudyPlanStatusType.notStarted.rawValue)
+                
+                table.foreignKey(lessonPlanStudyPlanId, references: studyPlanTable, studyPlanId, delete: .cascade)
+            })
+            
+            try db?.run(lessonPlanTaskTable.create(ifNotExists: true) { table in
+                table.column(taskId, primaryKey: true)
+                table.column(task)
+                table.column(duration)
+                table.column(lessonPlanTaskLessonPlanId)
+                
+                table.foreignKey(lessonPlanTaskLessonPlanId, references: lessonPlanTable, lessonPlanId, delete: .cascade)
+            })
+            
+            try db?.run(timetableTable.create(ifNotExists: true) { table in
+                table.column(timetableId, primaryKey: true)
+                table.column(session)
+                table.column(timetableLessonPlanId)
+                
+                table.foreignKey(timetableLessonPlanId, references: lessonPlanTable, lessonPlanId, delete: .cascade)
+            })
+            
+            try db?.run(quizTable.create(ifNotExists: true) { table in
+                table.column(quizId, primaryKey: true)
+                table.column(quizTitle)
+                table.column(quizStudyPlanId)
+                table.column(quizCreatedAt, defaultValue: Date().ISO8601Format())
+                table.column(quizStatus, defaultValue: StudyPlanStatusType.notStarted.rawValue)
+            })
+            
+            try db?.run(questionTable.create(ifNotExists: true) { table in
+                table.column(questionId, primaryKey: true)
+                table.column(questionQuizId)
+                table.column(questionType)
+                table.column(questionText)
+                table.column(questionOptions)
+                table.column(questionCorrectAnswer)
+                table.column(questionTask)
+                table.column(questionUserAnswer, defaultValue: "")
+                
+                table.foreignKey(questionQuizId, references: quizTable, quizId, delete: .cascade)
+            })
+        } catch {
+            print("Error creating tables: \(error)")
         }
+    }
     // Insert User and return Result with userId or NSError (Async)
     // Insert User and return userId (Async, with error handling)
     func insertUser(id: String, name: String, email: String, grade: String) async throws -> String {
@@ -164,14 +170,14 @@ actor DatabaseManager {
             
             print("User inserted successfully with id: \(id)")
             return id  // Corrected return statement without extra parentheses
-           
+            
         } catch let error as NSError {
             print("Error inserting user: \(error)")
             throw error  // Re-throw the error after logging it
         }
     }
-
-
+    
+    
     func insertStudyPlan(id: String, userId: String, grade: String, subject: String, topic: String, studyDuration: Int, studyFrequency: Int, status: String) async -> String? {
         do {
             guard let db = db else {
@@ -181,8 +187,8 @@ actor DatabaseManager {
             
             let dateFormatter = ISO8601DateFormatter()
             let currentDate = dateFormatter.string(from: Date())
- 
-            let insert = studyPlan.insert(
+            
+            let insert = studyPlanTable.insert(
                 studyPlanId <- id,
                 studyPlanUserId <- userId,
                 studyPlanGrade <- grade,
@@ -191,7 +197,7 @@ actor DatabaseManager {
                 studyPlanDuration <- studyDuration,
                 studyPlanFrequency <- studyFrequency,
                 studyPlanCreatedAt <- currentDate,
-                studyPlanStatus <- status  
+                studyPlanStatus <- status
             )
             
             let rowId = try await db.run(insert) // `db.run(insert)` returns an `Int64`
@@ -205,9 +211,9 @@ actor DatabaseManager {
     func getStudyPlans(userId: String) async -> [StudyPlan] {
         var studyPlans: [StudyPlan] = []
         do {
-            let query = studyPlan.filter(studyPlanUserId == userId)
+            let query = studyPlanTable.filter(studyPlanUserId == userId)
             for row in try db!.prepare(query) {
-              let id = row[studyPlanId]
+                let id = row[studyPlanId]
                 let grade = row[studyPlanGrade]
                 let subject = row[studyPlanSubject]
                 let topic = row[studyPlanTopic]
@@ -215,19 +221,19 @@ actor DatabaseManager {
                 let studyDuration = row[studyPlanDuration]
                 let studyFrequency = row[studyPlanFrequency]
                 let status = row[studyPlanStatus]
-               
-                    let studyPlan = StudyPlan(
-                        id: id,
-                        userId: userId,
-                        grade: grade,
-                        subject: subject,
-                        topic: topic,
-                        studyDuration: studyDuration,
-                        studyFrequency: studyFrequency,
-                        status: status
-                      
-                    )
-                    studyPlans.append(studyPlan)
+                
+                let studyPlan = StudyPlan(
+                    id: id,
+                    userId: userId,
+                    grade: grade,
+                    subject: subject,
+                    topic: topic,
+                    studyDuration: studyDuration,
+                    studyFrequency: studyFrequency,
+                    status: status
+                    
+                )
+                studyPlans.append(studyPlan)
                 
             }
         } catch {
@@ -235,7 +241,7 @@ actor DatabaseManager {
         }
         return studyPlans
     }
-
+    
     func insertLessonPlan(id: String, studyPlanId: String, grade: String, subject: String, topic: String,
                           week: String, goals: String, milestones: String, resources: String, timetable: Timetable) async -> String? {
         do {
@@ -298,22 +304,22 @@ actor DatabaseManager {
         }
     }
     // Update status of StudyPlan and LessonPlan record
-
+    
     func updateStudyPlan(studyPlanId: String, status: String) async -> StudyPlan? {
         do {
             guard let db = db else {
                 print("Database connection is nil")
                 return nil
             }
-
+            
             // Update StudyPlan status
-            let studyPlanQuery = self.studyPlan.filter(self.studyPlanId == studyPlanId)
+            let studyPlanQuery = self.studyPlanTable.filter(self.studyPlanId == studyPlanId)
             if try await db.run(studyPlanQuery.update(self.studyPlanStatus <- status)) > 0 {
                 print("StudyPlan status updated successfully.")
             } else {
                 print("StudyPlan update failed or no changes were made.")
             }
-
+            
             // Fetch and return the updated StudyPlan
             if let row = try await db.pluck(studyPlanQuery) {
                 return StudyPlan(
@@ -329,14 +335,14 @@ actor DatabaseManager {
             } else {
                 print("Updated StudyPlan not found.")
             }
-
+            
         } catch {
             print("Error updating study plan status: \(error)")
         }
         
         return nil
     }
-
+    
     
     func getLessonPlan(studyPlanId: String) async -> LessonPlan? {
         do {
@@ -362,23 +368,23 @@ actor DatabaseManager {
                 }
                 
                 let timetable = Timetable(
-                                session: timetableRow?[session] ?? "",
-                                learning_tasks: learningTasks,
-                                practice_tasks: practiceTasks
-                            )
-                            
-                            return LessonPlan(
-                                id: lessonPlanRow[self.lessonPlanId],
-                                studyPlanId: lessonPlanRow[self.lessonPlanStudyPlanId],
-                                grade: lessonPlanRow[self.grade],
-                                subject: lessonPlanRow[self.subject],
-                                topic: lessonPlanRow[self.topic],
-                                week: lessonPlanRow[self.week],
-                                goals: lessonPlanRow[self.goals],
-                                milestones: lessonPlanRow[self.milestones],
-                                resources: lessonPlanRow[self.resources],
-                                timetable: timetable
-                            )
+                    session: timetableRow?[session] ?? "",
+                    learning_tasks: learningTasks,
+                    practice_tasks: practiceTasks
+                )
+                
+                return LessonPlan(
+                    id: lessonPlanRow[self.lessonPlanId],
+                    studyPlanId: lessonPlanRow[self.lessonPlanStudyPlanId],
+                    grade: lessonPlanRow[self.grade],
+                    subject: lessonPlanRow[self.subject],
+                    topic: lessonPlanRow[self.topic],
+                    week: lessonPlanRow[self.week],
+                    goals: lessonPlanRow[self.goals],
+                    milestones: lessonPlanRow[self.milestones],
+                    resources: lessonPlanRow[self.resources],
+                    timetable: timetable
+                )
             }
             
         } catch {
@@ -388,52 +394,54 @@ actor DatabaseManager {
     }
     
     // Insert quiz and questions into the database
-        func insertQuizAndQuestions(quizId: String, quizTitle: String, studyPlanId: String, questions: [Question]) async -> String? {
-            do {
-                guard let db = db else {
-                    print("Database connection is nil")
-                    return nil
-                }
-
-                // Insert the quiz
-                let currentDate = ISO8601DateFormatter().string(from: Date())
-                let insertQuiz = quizTable.insert(
-                    self.quizId <- quizId,
-                    self.quizTitle <- quizTitle,
-                    self.quizStudyPlanId <- studyPlanId,
-                    quizCreatedAt <- currentDate
-                )
-
-                let quizRowId = try await db.run(insertQuiz)
-
-                // Insert the questions
-                for question in questions {
-                    let optionsJson = try JSONEncoder().encode(question.options ?? [])
-                    let optionsString = String(data: optionsJson, encoding: .utf8) ?? "[]"
-                    // Convert questionType to String (assuming it's an enum)
-                    let questionTypeString = question.questionType.rawValue  // If it's an enum
-
-                    
-                    let insertQuestion = questionTable.insert(
-                        questionId <- question.id,
-                        questionQuizId <- quizId,
-                        questionType <- questionTypeString,
-                        self.questionText <- question.questionText ?? "",
-                        questionOptions <- optionsString,
-                        questionCorrectAnswer <- question.correctAnswer ?? "",
-                        questionTask <- question.questionTask ?? ""
-                    )
-                    try await db.run(insertQuestion)
-                }
-
-                // Return the quiz ID after insertion
-                return quizId
-
-            } catch {
-                print("Error inserting quiz and/or questions: \(error)")
+    func insertQuizAndQuestions(quizId: String, quizTitle: String, studyPlanId: String, questions: [Question]) async -> String? {
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
                 return nil
             }
+            
+            // Insert the quiz
+            let currentDate = ISO8601DateFormatter().string(from: Date())
+            let insertQuiz = quizTable.insert(
+                self.quizId <- quizId,
+                self.quizTitle <- quizTitle,
+                self.quizStudyPlanId <- studyPlanId,
+                quizCreatedAt <- currentDate
+            )
+            
+            let quizRowId = try await db.run(insertQuiz)
+            
+            // Insert the questions
+            for question in questions {
+                let optionsJson = try JSONEncoder().encode(question.options ?? [])
+                let optionsString = String(data: optionsJson, encoding: .utf8) ?? "[]"
+                // Convert questionType to String (assuming it's an enum)
+                let questionTypeString = question.questionType.rawValue  // If it's an enum
+                
+                
+                let insertQuestion = questionTable.insert(
+                    questionId <- question.id,
+                    questionQuizId <- quizId,
+                    questionType <- questionTypeString,
+                    self.questionText <- question.questionText ?? "",
+                    questionOptions <- optionsString,
+                    questionCorrectAnswer <- question.correctAnswer ?? "",
+                    questionTask <- question.questionTask ?? "",
+                    questionUserAnswer <- "" // default value is blank
+                    
+                )
+                try await db.run(insertQuestion)
+            }
+            
+            // Return the quiz ID after insertion
+            return quizId
+            
+        } catch {
+            print("Error inserting quiz and/or questions: \(error)")
+            return nil
         }
+    }
     
     func getQuizzes(studyPlanId: String) async -> [Quiz] {
         var quizzes: [Quiz] = []
@@ -464,7 +472,7 @@ actor DatabaseManager {
         
         return quizzes
     }
-
+    
     func getQuizQuestions(quizId: String) async throws -> [Question] {
         var questions: [Question] = []
         
@@ -503,7 +511,7 @@ actor DatabaseManager {
                     questionTask: questionTask//,
                     //answers: answers // Attach the answers to the question
                 )
-
+                
                 questions.append(question)
             }
             
@@ -514,6 +522,91 @@ actor DatabaseManager {
         
         return questions
     }
-
+    // Update question's answer
     
+    func updateAnswer(for questionId: String, answer: String) async -> Bool {
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
+                return false  // Indicate failure
+            }
+            
+            // Update StudyPlan status
+            let questionQuery = self.questionTable.filter(self.questionId == questionId)
+            print(questionQuery)
+            let updateCount = try await db.run(questionQuery.update(self.questionUserAnswer <- answer))
+            
+            if updateCount > 0 {
+                print("Question user answer is updated successfully.")
+                return true  // Indicate success
+            } else {
+                print("Question user answer failed or no changes were made.")
+                return false  // Indicate failure
+            }
+        } catch {
+            print("Error updating question user answer: \(error)")
+            return false  // Indicate failure
+        }
+    }
+    // Update quiz's status and all question's answer
+    func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Bool {
+        do {
+            guard let db = db else {
+                print("Database connection is nil")
+                return false  // Indicate failure
+            }
+            
+            // Loop through all the answers and update the respective question's answer
+            for (questionId, answer) in answers {
+                let questionQuery = questionTable.filter(self.questionId == questionId)
+                let questionUpdateCount = try await db.run(questionQuery.update(self.questionUserAnswer <- answer))
+                
+                if questionUpdateCount > 0 {
+                    print("Question user answer for \(questionId) is updated successfully.")
+                } else {
+                    print("Failed to update user answer for \(questionId) or no changes were made.")
+                    return false  // Indicate failure if any question update fails
+                }
+            }
+            
+            // Update quiz's status to Complete
+            let quizQuery = quizTable.filter(self.quizId == quizId)
+            let quizUpdateCount = try await db.run(quizQuery.update(self.quizStatus <- StudyPlanStatusType.completed.rawValue))
+            
+            if quizUpdateCount > 0 {
+                print("Quiz status for \(quizId) is updated successfully.")
+            } else {
+                print("Failed to update Quiz status for \(quizId) or no changes were made.")
+                return false  // Indicate failure if quiz status update fails
+            }
+            
+            // Update lessonPlan's status to Complete
+            let lessonPlanQuery = lessonPlanTable.filter(self.lessonPlanStudyPlanId == studyPlanId)
+            let lessonPlanUpdateCount = try await db.run(lessonPlanQuery.update(self.lessonPlanStatus <- StudyPlanStatusType.completed.rawValue))
+            
+            if lessonPlanUpdateCount > 0 {
+                print("LessonPlan status for \(studyPlanId) is updated successfully.")
+            } else {
+                print("Failed to update LessonPlan status for \(studyPlanId) or no changes were made.")
+                return false
+            }
+            
+            // Update studyPlan's status to Complete
+            let studyPlanQuery = studyPlanTable.filter(self.studyPlanId == studyPlanId)
+            let studyPlanUpdateCount = try await db.run(studyPlanQuery.update(self.studyPlanStatus <- StudyPlanStatusType.completed.rawValue))
+            
+            if studyPlanUpdateCount > 0 {
+                print("StudyPlan status for \(studyPlanId) is updated successfully.")
+            } else {
+                print("Failed to update StudyPlan status for \(studyPlanId) or no changes were made.")
+                return false
+            }
+            
+            return true  // Indicate success if all updates were successful
+            
+        } catch {
+            print("Error occurred: \(error.localizedDescription)")
+            return false  // Return false if an error occurred
+        }
+    }
 }

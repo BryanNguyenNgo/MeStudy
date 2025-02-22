@@ -33,11 +33,16 @@ class QuizViewModel: ObservableObject {
         
         return quizzes
     }
-    // Method to update the status of a study plan
-//    func updateQuizStatus(quiz: Quiz) -> Quiz {
-//        var updatedPlan = plan
-//        updatedPlan.status = newStatus.rawValue
-//        print("Updated study plan ID: \(plan.id) to status: \(newStatus.rawValue)")
-//        return updatedPlan
-//    }
+    // Method to update the selected answer for a specific question
+    func updateAnswer(for questionId: String, answer: String) async -> Result<String, NSError> {
+            
+        let result = await Quiz.shared.updateAnswer(for: questionId, answer: answer)
+        return result
+            
+        }
+    // Method to submit all answers at once when the quiz is completed
+    func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Result<String, NSError> {
+        let result = await Quiz.shared.submitQuiz(studyPlanId: studyPlanId, quizId: quizId, answers: answers)
+            return result
+        }
 }

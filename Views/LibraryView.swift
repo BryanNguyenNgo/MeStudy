@@ -146,15 +146,24 @@ struct StudyPlanButton: View {
                     await action(plan)
                 }
             }) {
-                Text(plan.status == StudyPlanStatusType.notStarted.rawValue ? "Start" : "Resume")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                Text(
+                    plan.status == StudyPlanStatusType.notStarted.rawValue ? "Start" :
+                    plan.status == StudyPlanStatusType.inProgress.rawValue ? "Resume" :
+                    plan.status == StudyPlanStatusType.completed.rawValue ? "Completed" : "Unknown"
+                )
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    plan.status == StudyPlanStatusType.notStarted.rawValue ? Color.blue :
+                    plan.status == StudyPlanStatusType.inProgress.rawValue ? Color.orange :
+                    Color.green // Color for Completed
+                )
+                .foregroundColor(.white)
+                .cornerRadius(8)
             }
             .padding(.top, 5)
             .frame(width: 120)
         }
     }
+
 }

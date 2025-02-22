@@ -2,12 +2,14 @@ import SwiftUI
 
 struct QuizDetailView: View {
     var quiz: Quiz  // The selected quiz passed from QuizView
-    
+    @StateObject private var viewModel = QuizViewModel()  // ViewModel as a @StateObject
     @State private var isQuizStarted = false
     @State private var currentQuestionIndex = 0
-    @State private var selectedAnswer: String?
+    @State private var selectedAnswer: [String: String] = [:] // Track selected answers per question
     @State private var shortAnswerText: String = ""
     @State private var practiceTaskResponse: String = ""
+
+    @State private var userAnswers: [String: String] = [:]  // Store answers for all questions
 
     var body: some View {
         VStack {
@@ -45,9 +47,9 @@ struct QuizDetailView: View {
         case "multiple_choice":
             multipleChoiceView(for: question)
         case "short_answer":
-            shortAnswerView()
+            shortAnswerView(for: question)
         case "practice_task":
-            practiceTaskView()
+            practiceTaskView(for: question)
         default:
             Text("Unsupported question type")
         }
@@ -59,7 +61,7 @@ struct QuizDetailView: View {
             if let options = question.options { // Safely unwrap optional array
                 ForEach(options, id: \.self) { answer in
                     HStack {
-                        Image(systemName: selectedAnswer == answer ? "largecircle.fill.circle" : "circle")
+                        Image(systemName: selectedAnswer[question.id] == answer ? "largecircle.fill.circle" : "circle")
                             .foregroundColor(.blue)
                         
                         Text(answer)
@@ -71,7 +73,19 @@ struct QuizDetailView: View {
                     .background(Color(UIColor.systemGray6)) // Light background for contrast
                     .cornerRadius(8)
                     .onTapGesture {
-                        selectedAnswer = answer
+                        selectedAnswer[question.id] = answer
+                        userAnswers[question.id] = answer  // Save the selected answer
+                        
+                        // Update the answer incrementally
+                        Task {
+                            let result = await viewModel.updateAnswer(for: question.id, answer: answer)
+                            switch result {
+                            case .success:
+                                print("Answer updated successfully")
+                            case .failure(let error):
+                                print("Error updating answer: \(error.localizedDescription)")
+                            }
+                        }
                     }
                 }
             } else {
@@ -83,16 +97,31 @@ struct QuizDetailView: View {
         .padding(.horizontal)
     }
 
-
     /// Separate function for short answer questions
-    private func shortAnswerView() -> some View {
-        TextField("Enter your answer", text: $shortAnswerText)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding()
+    private func shortAnswerView(for question: Question) -> some View {
+        VStack(alignment: .leading) {
+            TextField("Enter your answer", text: $shortAnswerText)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+                .onChange(of: shortAnswerText) { newText in
+                    userAnswers[question.id] = newText
+                    
+                    Task {
+                        let result = await viewModel.updateAnswer(for: question.id, answer: newText)
+                        switch result {
+                        case .success:
+                            print("Answer updated successfully")
+                        case .failure(let error):
+                            print("Error updating answer: \(error.localizedDescription)")
+                        }
+                    }
+                }
+        }
+        .padding()
     }
 
-    /// Separate function for practice tasks
-    private func practiceTaskView() -> some View {
+    /// Separate function for practice task questions
+    private func practiceTaskView(for question: Question) -> some View {
         VStack {
             Text("Complete the practice task:")
                 .font(.headline)
@@ -101,7 +130,21 @@ struct QuizDetailView: View {
                 .border(Color.gray, width: 1)
                 .cornerRadius(5)
                 .padding()
+                .onChange(of: practiceTaskResponse) { newText in
+                    userAnswers[question.id] = newText
+
+                    Task {
+                        let result = await viewModel.updateAnswer(for: question.id, answer: newText)
+                        switch result {
+                        case .success:
+                            print("Answer updated successfully")
+                        case .failure(let error):
+                            print("Error updating answer: \(error.localizedDescription)")
+                        }
+                    }
+                }
         }
+        .padding()
     }
 
     /// Navigation buttons extracted to a separate function
@@ -111,9 +154,7 @@ struct QuizDetailView: View {
             if currentQuestionIndex > 0 {
                 Button("Previous Question") {
                     currentQuestionIndex -= 1
-                    selectedAnswer = nil  // Reset selected answer
-                    shortAnswerText = ""   // Reset short answer
-                    practiceTaskResponse = ""  // Reset practice task response
+                    resetInputs()
                 }
                 .padding()
                 .background(Color.blue)
@@ -127,19 +168,25 @@ struct QuizDetailView: View {
             if currentQuestionIndex < quiz.questions.count - 1 {
                 Button("Next Question") {
                     currentQuestionIndex += 1
-                    selectedAnswer = nil  // Reset selected answer
-                    shortAnswerText = ""   // Reset short answer
-                    practiceTaskResponse = ""  // Reset practice task response
+                    resetInputs()
                 }
                 .padding()
                 .background(Color.green)
                 .foregroundColor(.white)
                 .cornerRadius(8)
             } else {
-                Button("Finish Quiz") {
+                Button("Complete Quiz") {
                     isQuizStarted = false
-                    // Handle quiz completion logic here
-                    //completeQuiz() // Call function to submit quiz results
+                    // Submit all answers when the quiz is complete
+                    Task {
+                        let result = await viewModel.submitQuiz(studyPlanId: quiz.studyPlanId,quizId: quiz.id, answers: userAnswers)
+                        switch result {
+                        case .success:
+                            print("Quiz answers updated successfully")
+                        case .failure(let error):
+                            print("Error updating quiz and all answers: \(error.localizedDescription)")
+                        }
+                    }
                 }
                 .padding()
                 .background(Color.orange)
@@ -150,4 +197,9 @@ struct QuizDetailView: View {
         .padding(.horizontal)
     }
 
+    /// Function to reset inputs when navigating between questions
+    private func resetInputs() {
+        shortAnswerText = ""
+        practiceTaskResponse = ""
+    }
 }
