@@ -116,7 +116,8 @@ class StudyPlanViewModel: ObservableObject {
                 topic: topic,
                 studyDuration: duration,
                 studyFrequency: commitment,
-                status: StudyPlanStatusType.notStarted.rawValue
+                status: StudyPlanStatusType.notStarted.rawValue,
+                scorePercentage: 0
             )
             
             // 1. Save study plan to database
@@ -202,7 +203,7 @@ class StudyPlanViewModel: ObservableObject {
     @MainActor
     private func fetchStudyPlans(userId: String) async -> [StudyPlan] {
         // Create a new StudyPlan object
-        let studyPlan = StudyPlan(id: "", userId: userId, grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "")
+        let studyPlan = StudyPlan(id: "", userId: userId, grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "", scorePercentage:0)
         
         // Assuming you are fetching real study plans here
         let studyPlans = try await studyPlan.getStudyPlans(userId: userId)

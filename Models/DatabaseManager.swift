@@ -22,7 +22,7 @@ actor DatabaseManager {
     private let studyPlanFrequency = SQLite.Expression<Int>("study_frequency")
     private let studyPlanStatus = SQLite.Expression<String>("status")
     private let studyPlanCreatedAt = SQLite.Expression<String>("created_at")
-    private let studyPlanCompletionPercentage = SQLite.Expression<Int>("completion_percentage")
+    private let studyPlanScorePercentage = SQLite.Expression<Int>("score_percentage")
     
     private let lessonPlanTable = Table("LessonPlan")
     private let lessonPlanId = SQLite.Expression<String>("id")
@@ -103,7 +103,7 @@ actor DatabaseManager {
                 table.column(studyPlanFrequency)
                 table.column(studyPlanStatus)
                 table.column(studyPlanCreatedAt)
-                table.column(studyPlanCompletionPercentage, defaultValue: 0)
+                table.column(studyPlanScorePercentage, defaultValue: 0)
                 
                 table.foreignKey(studyPlanUserId, references: userTable, userId, update: .cascade, delete: .cascade)
             })
@@ -226,6 +226,7 @@ actor DatabaseManager {
                 let studyDuration = row[studyPlanDuration]
                 let studyFrequency = row[studyPlanFrequency]
                 let status = row[studyPlanStatus]
+                let scorePercentage = row[studyPlanScorePercentage]
                 
                 let studyPlan = StudyPlan(
                     id: id,
@@ -235,7 +236,8 @@ actor DatabaseManager {
                     topic: topic,
                     studyDuration: studyDuration,
                     studyFrequency: studyFrequency,
-                    status: status
+                    status: status,
+                    scorePercentage: scorePercentage
                     
                 )
                 studyPlans.append(studyPlan)
@@ -335,7 +337,8 @@ actor DatabaseManager {
                     topic: row[self.studyPlanTopic],
                     studyDuration: row[self.studyPlanDuration],
                     studyFrequency: row[self.studyPlanFrequency],
-                    status: row[self.studyPlanStatus]
+                    status: row[self.studyPlanStatus],
+                    scorePercentage: row[self.studyPlanScorePercentage]
                 )
             } else {
                 print("Updated StudyPlan not found.")
@@ -612,14 +615,14 @@ actor DatabaseManager {
             }
             print("LessonPlan status for \(studyPlanId) updated successfully.")
 
-            // Calculate completion percentage
-            let completionPercentage = Int((Double(correctAnswerCount) / Double(totalQuestions)) * 100)
+            // Calculate score percentage
+            let scorePercentage = Int((Double(correctAnswerCount) / Double(totalQuestions)) * 100)
 
             // Update studyPlan status and completion percentage
             let studyPlanQuery = studyPlanTable.filter(self.studyPlanId == studyPlanId)
             let studyPlanUpdateCount = try db.run(studyPlanQuery.update(
                 self.studyPlanStatus <- StudyPlanStatusType.completed.rawValue,
-                self.studyPlanCompletionPercentage <- completionPercentage
+                self.studyPlanScorePercentage <- scorePercentage
             ))
 
             if studyPlanUpdateCount == 0 {

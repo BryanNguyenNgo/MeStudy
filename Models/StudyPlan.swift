@@ -23,9 +23,10 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
     var createdAt: Date
     var apiKey: String? // Optional, to be set dynamically
     var status: String?
+    var scorePercentage: Int?
     
     // Initialize with study plan or default values
-    init(id: String, userId: String, grade: String, subject: String, topic: String, studyDuration: Int, studyFrequency: Int, status: String) {
+    init(id: String, userId: String, grade: String, subject: String, topic: String, studyDuration: Int, studyFrequency: Int, status: String, scorePercentage: Int) {
         self.id = id
         self.userId = userId
         self.grade = grade
@@ -35,8 +36,9 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         self.studyFrequency = studyFrequency
         self.createdAt = Date()  // Move assignment here after initializing properties
         self.status = status
+        self.scorePercentage = scorePercentage
     }
-    static let shared = StudyPlan(id: "", userId: "", grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "")
+    static let shared = StudyPlan(id: "", userId: "", grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "", scorePercentage: 0)
     
     // Conformance to Equatable
     static func == (lhs: StudyPlan, rhs: StudyPlan) -> Bool {
@@ -156,7 +158,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
                 
                 // Return the mapped StudyPlans to the main actor
                 return studyPlans.map { studyPlan in
-                    StudyPlan( id: studyPlan.id, userId: studyPlan.userId, grade: studyPlan.grade, subject: studyPlan.subject, topic: studyPlan.topic, studyDuration: studyPlan.studyDuration, studyFrequency: studyPlan.studyFrequency, status: studyPlan.status ?? StudyPlanStatusType.notStarted.rawValue)
+                    StudyPlan( id: studyPlan.id, userId: studyPlan.userId, grade: studyPlan.grade, subject: studyPlan.subject, topic: studyPlan.topic, studyDuration: studyPlan.studyDuration, studyFrequency: studyPlan.studyFrequency, status: studyPlan.status ?? StudyPlanStatusType.notStarted.rawValue, scorePercentage: studyPlan.scorePercentage ?? 0)
                 }
             } catch {
                 print("Error retrieving study plans: \(error)")
