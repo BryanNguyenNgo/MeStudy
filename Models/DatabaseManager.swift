@@ -22,6 +22,7 @@ actor DatabaseManager {
     private let studyPlanFrequency = SQLite.Expression<Int>("study_frequency")
     private let studyPlanStatus = SQLite.Expression<String>("status")
     private let studyPlanCreatedAt = SQLite.Expression<String>("created_at")
+    private let studyPlanCompletionPercentage = SQLite.Expression<Int>("completion_percentage")
     
     private let lessonPlanTable = Table("LessonPlan")
     private let lessonPlanId = SQLite.Expression<String>("id")
@@ -35,6 +36,7 @@ actor DatabaseManager {
     private let resources = SQLite.Expression<String>("resources")
     private let lessonPlanCreatedAt = SQLite.Expression<String>("created_at")
     private let lessonPlanStatus = SQLite.Expression<String>("status")
+    
     
     private let lessonPlanTaskTable = Table("LessonPlanTask")
     private let taskId = SQLite.Expression<String>("id")
@@ -63,6 +65,7 @@ actor DatabaseManager {
     private let questionCorrectAnswer = SQLite.Expression<String>("correct_answer")
     private let questionTask = SQLite.Expression<String>("task")
     private let questionUserAnswer = SQLite.Expression<String>("user_answer")
+    private let questionIsCorrect = SQLite.Expression<Bool>("is_correct")
     
     private init() { }
     
@@ -100,6 +103,7 @@ actor DatabaseManager {
                 table.column(studyPlanFrequency)
                 table.column(studyPlanStatus)
                 table.column(studyPlanCreatedAt)
+                table.column(studyPlanCompletionPercentage, defaultValue: 0)
                 
                 table.foreignKey(studyPlanUserId, references: userTable, userId, update: .cascade, delete: .cascade)
             })
@@ -154,6 +158,7 @@ actor DatabaseManager {
                 table.column(questionCorrectAnswer)
                 table.column(questionTask)
                 table.column(questionUserAnswer, defaultValue: "")
+                table.column(questionIsCorrect, defaultValue: false)
                 
                 table.foreignKey(questionQuizId, references: quizTable, quizId, delete: .cascade)
             })
@@ -549,64 +554,86 @@ actor DatabaseManager {
         }
     }
     // Update quiz's status and all question's answer
-    func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Bool {
+    func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Int? {
         do {
             guard let db = db else {
                 print("Database connection is nil")
-                return false  // Indicate failure
+                return -1  // Indicate failure
             }
-            
-            // Loop through all the answers and update the respective question's answer
-            for (questionId, answer) in answers {
+
+            var correctAnswerCount = 0
+            let totalQuestions = answers.count  // Total number of questions in the quiz
+
+            for (questionId, userAnswer) in answers {
                 let questionQuery = questionTable.filter(self.questionId == questionId)
-                let questionUpdateCount = try await db.run(questionQuery.update(self.questionUserAnswer <- answer))
-                
+
+                guard let question = try db.pluck(questionQuery) else {
+                    print("Question with ID \(questionId) not found.")
+                    return -1  // Indicate failure if the question is not found
+                }
+
+                let correctAnswer = question[self.questionCorrectAnswer]
+                let isCorrect = (userAnswer == correctAnswer)
+
+                let questionUpdateCount = try db.run(questionQuery.update(
+                    self.questionUserAnswer <- userAnswer,
+                    self.questionIsCorrect <- isCorrect
+                ))
+
                 if questionUpdateCount > 0 {
-                    print("Question user answer for \(questionId) is updated successfully.")
+                    print("Question user answer for \(questionId) updated successfully. Correct: \(isCorrect)")
+                    if isCorrect {
+                        correctAnswerCount += 1
+                    }
                 } else {
                     print("Failed to update user answer for \(questionId) or no changes were made.")
-                    return false  // Indicate failure if any question update fails
+                    return -1
                 }
             }
-            
-            // Update quiz's status to Complete
+
+            // Update quiz status to Complete
             let quizQuery = quizTable.filter(self.quizId == quizId)
-            let quizUpdateCount = try await db.run(quizQuery.update(self.quizStatus <- StudyPlanStatusType.completed.rawValue))
+            let quizUpdateCount = try db.run(quizQuery.update(self.quizStatus <- StudyPlanStatusType.completed.rawValue))
             
-            if quizUpdateCount > 0 {
-                print("Quiz status for \(quizId) is updated successfully.")
-            } else {
+            if quizUpdateCount == 0 {
                 print("Failed to update Quiz status for \(quizId) or no changes were made.")
-                return false  // Indicate failure if quiz status update fails
+                return -1
             }
-            
-            // Update lessonPlan's status to Complete
+            print("Quiz status for \(quizId) updated successfully.")
+
             let lessonPlanQuery = lessonPlanTable.filter(self.lessonPlanStudyPlanId == studyPlanId)
-            let lessonPlanUpdateCount = try await db.run(lessonPlanQuery.update(self.lessonPlanStatus <- StudyPlanStatusType.completed.rawValue))
-            
-            if lessonPlanUpdateCount > 0 {
-                print("LessonPlan status for \(studyPlanId) is updated successfully.")
-            } else {
+            let lessonPlanUpdateCount = try db.run(lessonPlanQuery.update(
+                self.lessonPlanStatus <- StudyPlanStatusType.completed.rawValue
+            ))
+
+            if lessonPlanUpdateCount == 0 {
                 print("Failed to update LessonPlan status for \(studyPlanId) or no changes were made.")
-                return false
+                return -1
             }
-            
-            // Update studyPlan's status to Complete
+            print("LessonPlan status for \(studyPlanId) updated successfully.")
+
+            // Calculate completion percentage
+            let completionPercentage = Int((Double(correctAnswerCount) / Double(totalQuestions)) * 100)
+
+            // Update studyPlan status and completion percentage
             let studyPlanQuery = studyPlanTable.filter(self.studyPlanId == studyPlanId)
-            let studyPlanUpdateCount = try await db.run(studyPlanQuery.update(self.studyPlanStatus <- StudyPlanStatusType.completed.rawValue))
-            
-            if studyPlanUpdateCount > 0 {
-                print("StudyPlan status for \(studyPlanId) is updated successfully.")
-            } else {
+            let studyPlanUpdateCount = try db.run(studyPlanQuery.update(
+                self.studyPlanStatus <- StudyPlanStatusType.completed.rawValue,
+                self.studyPlanCompletionPercentage <- completionPercentage
+            ))
+
+            if studyPlanUpdateCount == 0 {
                 print("Failed to update StudyPlan status for \(studyPlanId) or no changes were made.")
-                return false
+                return -1
             }
-            
-            return true  // Indicate success if all updates were successful
-            
+            print("StudyPlan status for \(studyPlanId) updated successfully.")
+
+            return correctAnswerCount
+
         } catch {
             print("Error occurred: \(error.localizedDescription)")
-            return false  // Return false if an error occurred
+            return -1
         }
     }
+
 }
