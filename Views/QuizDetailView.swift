@@ -10,7 +10,10 @@ struct QuizDetailView: View {
     @State private var practiceTaskResponse: String = ""
 
     @State private var userAnswers: [String: String] = [:]  // Store answers for all questions
-
+    
+    @State private var promptMessage: String?  // Holds success or error message
+    @State private var showMessage: Bool = false  // Controls message display
+    
     var body: some View {
         VStack {
             Text(quiz.quizTitle)
@@ -178,15 +181,18 @@ struct QuizDetailView: View {
                 Button("Complete Quiz") {
                     isQuizStarted = false
                     // Submit all answers when the quiz is complete
-                    Task {
-                        let result = await viewModel.submitQuiz(studyPlanId: quiz.studyPlanId,quizId: quiz.id, answers: userAnswers)
-                        switch result {
-                        case .success:
-                            print("Quiz answers updated successfully")
-                        case .failure(let error):
-                            print("Error updating quiz and all answers: \(error.localizedDescription)")
-                        }
-                    }
+                   Task {
+                       let result = await viewModel.submitQuiz(studyPlanId: quiz.studyPlanId, quizId: quiz.id, answers: userAnswers)
+                       DispatchQueue.main.async {
+                           switch result {
+                           case .success(let message):
+                               promptMessage = message
+                           case .failure(let error):
+                               promptMessage = "Error: \(error.localizedDescription)"
+                           }
+                           showMessage = true
+                       }
+                   }
                 }
                 .padding()
                 .background(Color.orange)
@@ -195,6 +201,9 @@ struct QuizDetailView: View {
             }
         }
         .padding(.horizontal)
+        .alert(isPresented: $showMessage) {
+                Alert(title: Text("Quiz Submission"), message: Text(promptMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+            }
     }
 
     /// Function to reset inputs when navigating between questions

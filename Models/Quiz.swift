@@ -167,24 +167,22 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
             return .failure(error as NSError) // Convert Swift error to NSError
         }
     }
-    // Method to update all question's user answer
+    // Method to update all question's user answers
     func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Result<String, NSError> {
         do {
-            // Iterate through each answer and submit the quiz
-    
-            let isSuccess = await DatabaseManager.shared.submitQuiz(studyPlanId: studyPlanId, quizId: quizId, answers: answers)
-                
-                if !isSuccess {
-                    return .failure(NSError(domain: "Quiz", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to update answer for quiz \(quizId)"]))
-                }
-         
-            // After all answers are submitted, return success
-            return .success("All answers updated successfully.")
+            // Call DatabaseManager to update answers and get the correct answer count
+            guard let correctAnswerCount = await DatabaseManager.shared.submitQuiz(studyPlanId: studyPlanId, quizId: quizId, answers: answers) else {
+                return .failure(NSError(domain: "Quiz", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to update answer for quiz \(quizId)"]))
+            }
+            
+            // Return success message with the number of correct answers
+            return .success("All answers updated successfully. Correct answers: \(correctAnswerCount)")
         } catch {
             print("Error updating answers: \(error)")
             return .failure(error as NSError) // Convert Swift error to NSError
         }
     }
+
 
 
 
