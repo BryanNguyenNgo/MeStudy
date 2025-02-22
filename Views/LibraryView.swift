@@ -58,19 +58,22 @@ struct LibraryView: View {
                         .progressViewStyle(CircularProgressViewStyle())
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 15) {
-                            ForEach(viewModel.studyPlans, id: \.id) { plan in
-                                StudyPlanRow(plan: plan) { selectedPlan in
-                                    // Call the asynchronous action from the parent.
-                                    Task {
-                                        await handleStudyPlanAction(selectedPlan)
+                        NavigationStack{
+                            LazyVStack(spacing: 15) {
+                                ForEach(viewModel.studyPlans, id: \.id) { plan in
+                                    StudyPlanRow(plan: plan) { selectedPlan in
+                                        // Call the asynchronous action from the parent.
+                                        Task {
+                                            await handleStudyPlanAction(selectedPlan)
+                                        }
                                     }
                                 }
                             }
+                            .padding(.bottom, 15)
                         }
-                        .padding(.bottom, 15)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .navigationTitle("Library")
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             
@@ -107,20 +110,28 @@ struct StudyPlanRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
+               
+                NavigationLink {
+                    StudyPlanDetailView()
+                } label: {
+                    Text("\(plan.topic)")
+                        .font(.headline)
+                        .foregroundColor(Color.blue)
+                }
+
+                Text("\(plan.subject)")
+                    .font(.subheadline)
                 Text("\(plan.grade)")
-                    .font(.headline)
-                Text("Subject: \(plan.subject)")
                     .font(.subheadline)
-                Text("Topic: \(plan.topic)")
-                    .font(.subheadline)
-                Text("Duration: \(plan.studyDuration) hours")
-                    .font(.subheadline)
-                Text("Frequency: \(plan.studyFrequency) times per week")
-                    .font(.subheadline)
-                Text("Status: \(plan.status)")
-                    .font(.subheadline)
-                Text("Created at: \(plan.createdAt, style: .date)")
-                    .font(.subheadline)
+               
+//                Text("Duration: \(plan.studyDuration) hours")
+//                    .font(.subheadline)
+//                Text("Frequency: \(plan.studyFrequency) times per week")
+//                    .font(.subheadline)
+//                Text("Status: \(plan.status ?? "status")")
+//                    .font(.subheadline)
+//                Text("Created at: \(plan.createdAt, style: .date)")
+//                    .font(.subheadline)
             }
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)

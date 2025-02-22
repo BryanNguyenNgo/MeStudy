@@ -8,7 +8,7 @@
             "quizId": "A1B2C3D4-5678-90AB-CDEF-1234567890AB",
             "type": "multiple_choice",
             "questionText": "What is the smallest unit of an element that retains all the chemical properties of that element?",
-            "options": ["Atom", "Molecule", "Compound", "Proton"],
+            "options": "Atom", "Molecule", "Compound", "Proton",
             "correctAnswer": "Atom"
         },
         {
@@ -16,7 +16,7 @@
             "quizId": "A1B2C3D4-5678-90AB-CDEF-1234567890AB",
             "type": "multiple_choice",
             "questionText": "Which of the following is a compound?",
-            "options": ["Oxygen (O₂)", "Water (H₂O)", "Nitrogen (N₂)", "Helium (He)"],
+            "options": "Oxygen (O₂)", "Water (H₂O)", "Nitrogen (N₂)", "Helium (He)",
             "correctAnswer": "Water (H₂O)"
         },
         {
@@ -24,7 +24,7 @@
             "quizId": "A1B2C3D4-5678-90AB-CDEF-1234567890AB",
             "type": "multiple_choice",
             "questionText": "Which state of matter has a definite volume but no definite shape?",
-            "options": ["Solid", "Liquid", "Gas", "Plasma"],
+            "options": "Solid", "Liquid", "Gas", "Plasma",
             "correctAnswer": "Liquid"
         },
         {
@@ -32,7 +32,7 @@
             "quizId": "A1B2C3D4-5678-90AB-CDEF-1234567890AB",
             "type": "multiple_choice",
             "questionText": "In which state of matter are particles packed tightly together in fixed positions?",
-            "options": ["Solid", "Liquid", "Gas", "Plasma"],
+            "options": "Solid", "Liquid", "Gas", "Plasma",
             "correctAnswer": "Solid"
         },
         {

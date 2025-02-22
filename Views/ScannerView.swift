@@ -60,16 +60,6 @@ struct ScannerView: View {
                     }
                     .frame(height: 100)
                     
-                    Button("Guide Me to Find the Answer") {
-                        analyzeText()
-                        print("\(viewModel.recognizedText)")
-                    }
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    
-                   
                         Button("Create Study Plan for This Topic") {
                             Task {
                                 await createStudyPlan()
@@ -113,14 +103,6 @@ struct ScannerView: View {
         }
         
         // Guide the student based on extracted text
-        private func analyzeText() {
-            if viewModel.recognizedText.contains("chapter") || viewModel.recognizedText.contains("exercise") {
-                viewModel.recognizedText += "\n\nHint: Look at the chapter summary and key points to find the answer."
-            } else {
-                viewModel.recognizedText += "\n\nHint: Try searching for keywords in the text to understand the main idea."
-            }
-            studyPlanSuggested = true
-        }
         
         // Suggest creating a study plan
         private func createStudyPlan() async {
