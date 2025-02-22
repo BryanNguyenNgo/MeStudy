@@ -20,7 +20,7 @@ struct QuizDetailView: View {
             if currentQuestionIndex < quiz.questions.count {
                 let currentQuestion = quiz.questions[currentQuestionIndex]
 
-                Text("Question \(currentQuestionIndex + 1): \(currentQuestion.questionText)")
+                Text("Question \(currentQuestionIndex + 1): \(currentQuestion.questionText ?? "Question")")
                     .font(.headline)
                     .padding()
 

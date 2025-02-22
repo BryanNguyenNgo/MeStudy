@@ -84,8 +84,10 @@ struct CreateStudyPlanView: View {
                         .font(.headline)
                     
                     Menu {
-                        Button("2 months", action: { viewModel.selectedDuration = "2 months" })
-                        Button("4 months", action: { viewModel.selectedDuration = "4 months" })
+                        Button("1 week", action: { viewModel.selectedDuration = "1 week" })
+                        Button("2 weeks", action: { viewModel.selectedDuration = "2 weeks" })
+                        Button("3 weeks", action: { viewModel.selectedDuration = "3 weeks" })
+                        Button("1 month", action: { viewModel.selectedDuration = "1 month" })
                     } label: {
                         Label(viewModel.selectedDuration.isEmpty ? "Select" : viewModel.selectedDuration, systemImage: "chevron.down")
                             .padding()

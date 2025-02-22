@@ -184,7 +184,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         let lessonPlanId = UUID().uuidString
         let prompt = """
         Extract the **Grade**, **Subject**, and **Topic** from the following problem statement:\n\n'\(recognizedText)'\n\n
-        - **grade**: Identify the educational level or grade appropriate for this problem.\n
+        - **grade**: Identify the educational level or grade appropriate for this problem. Provide it in Grade followed by the number \n
         - **subject**: Determine the subject (e.g., Mathematics, Geometry, Physics, etc.).\n
         - **topic**: Specify the topic within the subject (e.g., Circles, Geometry, Measurement).\n\n
         Return the extracted information in the following JSON format:\n\n
