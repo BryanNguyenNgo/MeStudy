@@ -112,7 +112,7 @@ struct StudyPlanRow: View {
             VStack(alignment: .leading, spacing: 5) {
                
                 NavigationLink {
-                    StudyPlanDetailView()
+                    StudyPlanDetailView(plan: plan, studyPlanId: plan.id)
                 } label: {
                     Text("\(plan.topic)")
                         .font(.headline)
