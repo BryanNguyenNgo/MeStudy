@@ -10,19 +10,19 @@ struct MenuView: View {
                     Label("Home", systemImage: "house")
                 }
                 .tag(0)
+            LibraryView()
+                .tabItem {
+                    Label("Library", systemImage: "books.vertical")
+                }
+                .tag(1)
             CreateStudyPlanView()
                 .tabItem {
                     Label("Create", systemImage: "plus.circle")
                 }
-                .tag(1)
+                .tag(2)
             StudyTipsView()
                 .tabItem {
                     Label("Tips", systemImage: "plus.circle")
-                }
-                .tag(2)
-            LibraryView()
-                .tabItem {
-                    Label("Library", systemImage: "books.vertical")
                 }
                 .tag(3)
             UserView(userSession: userSession)

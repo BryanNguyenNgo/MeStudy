@@ -36,16 +36,13 @@ struct HomeView: View {
                 
                 // Navigation Buttons
                 HStack {
-                    NavigationLink(destination: CreateStudyPlanView()) {
+                    Button(action: { selectedTab = 2 }) {
                         HomeButton(icon: "plus.circle.fill", label: "Create")
                     }
-                    NavigationLink(destination: LibraryView(), isActive: Binding(
-                                       get: { selectedTab == 3 },
-                                       set: { if $0 { selectedTab = 3 } }
-                                   )) {
-                                       HomeButton(icon: "books.vertical", label: "Library")
-                                   }
-                    NavigationLink(destination: StudyTipsView()) {
+                    Button(action: { selectedTab = 1 }) {
+                        HomeButton(icon: "books.vertical", label: "Library")
+                    }
+                    Button(action: { selectedTab = 3 }) {
                         HomeButton(icon: "lightbulb.fill", label: "Study Tips")
                     }
                 }
