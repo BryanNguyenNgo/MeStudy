@@ -154,7 +154,9 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             
             // Parse JSON response using JSONDecoder to decode into LessonPlan
             let decoder = JSONDecoder()
+            print("before decoder jsonData: \(jsonData)")
             let lessonPlan = try decoder.decode(LessonPlan.self, from: jsonData)
+            print("after decoder lessonPlan\(lessonPlan)")
             
             // Print out the decoded values
             print("Study Plan for: \(lessonPlan.studyPlanId)")

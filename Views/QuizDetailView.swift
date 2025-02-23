@@ -8,42 +8,47 @@ struct QuizDetailView: View {
     @State private var selectedAnswer: [String: String] = [:] // Track selected answers per question
     @State private var shortAnswerText: String = ""
     @State private var practiceTaskResponse: String = ""
-
     @State private var userAnswers: [String: String] = [:]  // Store answers for all questions
-    
     @State private var promptMessage: String?  // Holds success or error message
     @State private var showMessage: Bool = false  // Controls message display
-    
+    @State private var navigateToLibrary = false
+
     var body: some View {
-        VStack {
-            Text(quiz.quizTitle)
-                .font(.largeTitle)
-                .padding()
-
-            if currentQuestionIndex < quiz.questions.count {
-                let currentQuestion = quiz.questions[currentQuestionIndex]
-
-                Text("Question \(currentQuestionIndex + 1): \(currentQuestion.questionText ?? "Question")")
-                    .font(.headline)
+//        NavigationView {
+            VStack {
+                Text(quiz.quizTitle)
+                    .font(.largeTitle)
                     .padding()
-
-                questionView(for: currentQuestion)  // Extracted function to simplify `body`
-            } else {
-                Text("No questions available.")
-                    .padding()
+                
+                if currentQuestionIndex < quiz.questions.count {
+                    let currentQuestion = quiz.questions[currentQuestionIndex]
+                    
+                    Text("Question \(currentQuestionIndex + 1): \(currentQuestion.questionText ?? "Question")")
+                        .font(.headline)
+                        .padding()
+                    
+                    questionView(for: currentQuestion)  // Extracted function to simplify `body`
+                } else {
+                    Text("No questions available.")
+                        .padding()
+                }
+                
+                Spacer()
+                navigationButtons()
             }
-
-            Spacer()
-            navigationButtons()
-        }
-        .padding()
-        .navigationTitle("Quiz Details")
-        .onAppear {
-            isQuizStarted = true
-        }
+            .padding()
+            .navigationTitle("Quiz Details")
+            .onAppear {
+                isQuizStarted = true
+            }
+//            .background(
+//                NavigationLink(destination: LibraryView(), isActive: $navigateToLibrary) {
+//                    EmptyView()
+//                }
+//            )
+        //}
     }
-    
-    /// Function to handle different question types separately
+
     @ViewBuilder
     private func questionView(for question: Question) -> some View {
         switch question.questionType.rawValue {
@@ -58,7 +63,6 @@ struct QuizDetailView: View {
         }
     }
 
-    /// Separate function for multiple choice questions
     private func multipleChoiceView(for question: Question) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             if let options = question.options { // Safely unwrap optional array
@@ -66,12 +70,11 @@ struct QuizDetailView: View {
                     HStack {
                         Image(systemName: selectedAnswer[question.id] == answer ? "largecircle.fill.circle" : "circle")
                             .foregroundColor(.blue)
-                        
+
                         Text(answer)
                             .font(.body)
                             .lineLimit(nil)  // Allow multiple lines if necessary
 
-                        
                         Spacer()
                     }
                     .padding()
@@ -80,7 +83,7 @@ struct QuizDetailView: View {
                     .onTapGesture {
                         selectedAnswer[question.id] = answer
                         userAnswers[question.id] = answer  // Save the selected answer
-                        
+
                         // Update the answer incrementally
                         Task {
                             let result = await viewModel.updateAnswer(for: question.id, answer: answer)
@@ -102,7 +105,6 @@ struct QuizDetailView: View {
         .padding(.horizontal)
     }
 
-    /// Separate function for short answer questions
     private func shortAnswerView(for question: Question) -> some View {
         VStack(alignment: .leading) {
             TextField("Enter your answer", text: $shortAnswerText)
@@ -110,7 +112,7 @@ struct QuizDetailView: View {
                 .padding()
                 .onChange(of: shortAnswerText) { newText in
                     userAnswers[question.id] = newText
-                    
+
                     Task {
                         let result = await viewModel.updateAnswer(for: question.id, answer: newText)
                         switch result {
@@ -125,7 +127,6 @@ struct QuizDetailView: View {
         .padding()
     }
 
-    /// Separate function for practice task questions
     private func practiceTaskView(for question: Question) -> some View {
         VStack {
             Text("Complete the practice task:")
@@ -152,9 +153,8 @@ struct QuizDetailView: View {
         .padding()
     }
 
-    /// Navigation buttons extracted to a separate function
     private func navigationButtons() -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 20) {
             // Previous Question Button
             if currentQuestionIndex > 0 {
                 Button("Previous Question") {
@@ -193,8 +193,11 @@ struct QuizDetailView: View {
                                promptMessage = "Error: \(error.localizedDescription)"
                            }
                            showMessage = true
+                           
                        }
                    }
+                    // Navigate to LibraryView after quiz submission
+                   navigateToLibrary = true
                 }
                 .padding()
                 .background(Color.orange)
@@ -208,9 +211,10 @@ struct QuizDetailView: View {
             }
     }
 
-    /// Function to reset inputs when navigating between questions
+ 
     private func resetInputs() {
         shortAnswerText = ""
         practiceTaskResponse = ""
+        selectedAnswer = [:] // Reset selected answers
     }
 }

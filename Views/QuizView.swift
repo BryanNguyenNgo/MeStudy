@@ -2,80 +2,75 @@ import SwiftUI
 
 // QuizView
 struct QuizView: View {
-    @EnvironmentObject var userSession: UserSession // Access the user from the environment
+    @EnvironmentObject var userSession: UserSession // Access the user session
     @StateObject private var quizViewModel = QuizViewModel()  // ViewModel as a @StateObject
     @State private var goToQuizDetailView = false
     @State private var selectedQuiz: Quiz?  // Track the selected quiz
 
     var studyPlanId: String  // Pass the study plan ID
 
-    private func handleQuizAction(_ quiz: Quiz) async {
+    private func handleQuizAction(_ quiz: Quiz) {
         print("Starting quiz: \(quiz.id)")
         selectedQuiz = quiz  // Store the selected quiz
-        goToQuizDetailView = true  // Navigate to the quiz detail view
+        goToQuizDetailView = true  // Trigger navigation to QuizDetailView
     }
 
     var body: some View {
-        VStack {
-            if quizViewModel.isLoading {
-                ProgressView("Loading...")
-                    .progressViewStyle(CircularProgressViewStyle())
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 15) {
-                        ForEach(quizViewModel.quizzes, id: \.id) { quiz in
-                            QuizRow(quiz: quiz, handleQuizAction: handleQuizAction)
+        NavigationStack {
+            VStack {
+                if quizViewModel.isLoading {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 15) {
+                            ForEach(quizViewModel.quizzes, id: \.id) { quiz in
+                                QuizRow(quiz: quiz, handleQuizAction: handleQuizAction)
+                            }
                         }
+                        .padding(.bottom, 15)
                     }
-                    .padding(.bottom, 15)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-        }
-        .navigationDestination(isPresented: $goToQuizDetailView) {
-            if let quiz = selectedQuiz {
-                QuizDetailView(quiz: quiz)  // Navigate to the quiz detail view
+            .navigationDestination(isPresented: $goToQuizDetailView) {
+                if let quiz = selectedQuiz {
+                    QuizDetailView(quiz: quiz)  // Navigate to the quiz detail view
+                } else {
+                    EmptyView()
+                }
             }
-}
-        .onAppear {
-            Task {
-                await quizViewModel.getQuizzes(studyPlanId: studyPlanId)
+            .onAppear {
+                Task {
+                    await quizViewModel.getQuizzes(studyPlanId: studyPlanId)
+                }
             }
         }
     }
 }
 
+// MARK: - QuizRow View
 struct QuizRow: View {
     let quiz: Quiz
-    let handleQuizAction: (Quiz) async -> Void
+    let handleQuizAction: (Quiz) -> Void  // Closure with a Quiz argument
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Quiz Title: \(quiz.quizTitle)")
                     .font(.headline)
-               
-//                Text("Number of Questions: \(quiz.questionCount)")
-//                    .font(.subheadline)
-//                Text("Created at: \(quiz.createdAt, style: .date)")
-//                    .font(.subheadline)
             }
             .frame(maxWidth: .infinity)
 
-            VStack {
-                Button(action: {
-                    Task {
-                        await handleQuizAction(quiz)
-                    }
-                }) {
-                    Text("Start Quiz")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .frame(width: 120)
+            Button(action: {
+                handleQuizAction(quiz)  // Pass the quiz object
+            }) {
+                Text("Start Quiz")
+                    .frame(width: 120)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
             }
         }
         .background(RoundedRectangle(cornerRadius: 10)
