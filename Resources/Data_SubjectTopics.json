@@ -1,60 +1,13 @@
 [
   {
-    "grade": 9,
-    "subjects": [
-      {
-        "subject": "English",
-        "topics": [
-          "Grammar",
-          "Reading Comprehension",
-          "Writing Skills",
-          "Literary Devices",
-          "Poetry"
-        ]
-      },
-      {
-        "subject": "Math",
-        "topics": [
-          "Pre-Algebra",
-          "Geometry",
-          "Statistics",
-          "Integers",
-          "Fractions"
-        ]
-      },
-      {
-        "subject": "Science",
-        "topics": [
-          "Biology Basics",
-          "Chemistry Fundamentals",
-          "Physical Science",
-          "Human Anatomy",
-          "Earth Science"
-        ]
-      },
-      {
-        "subject": "History",
-        "topics": [
-          "Early Civilizations",
-          "Ancient Greece and Rome",
-          "Middle Ages",
-          "Renaissance",
-          "Exploration"
-        ]
-      }
-    ]
-  },
-  {
     "grade": 10,
     "subjects": [
       {
         "subject": "English",
         "topics": [
           "Grammar",
-          "Literature",
           "Writing",
-          "Comprehension",
-          "Poetry"
+          "Comprehension"
         ]
       },
       {
@@ -62,9 +15,7 @@
         "topics": [
           "Algebra",
           "Geometry",
-          "Trigonometry",
           "Calculus",
-          "Statistics"
         ]
       },
       {
@@ -73,8 +24,6 @@
           "Physics",
           "Chemistry",
           "Biology",
-          "Earth Science",
-          "Environmental Science"
         ]
       },
       {
@@ -82,9 +31,7 @@
         "topics": [
           "Ancient Civilizations",
           "World Wars",
-          "Modern History",
-          "Political Systems",
-          "Cultural History"
+          "Modern History"
         ]
       }
     ]
@@ -98,18 +45,14 @@
           "Advanced Grammar",
           "Literary Analysis",
           "Creative Writing",
-          "Essay Writing",
-          "Shakespeare"
         ]
       },
       {
         "subject": "Math",
         "topics": [
-          "Algebra II",
           "Calculus",
           "Statistics",
           "Probability",
-          "Linear Algebra"
         ]
       },
       {
@@ -117,9 +60,7 @@
         "topics": [
           "Mechanics",
           "Electromagnetism",
-          "Thermodynamics",
           "Quantum Physics",
-          "Optics"
         ]
       }
     ]

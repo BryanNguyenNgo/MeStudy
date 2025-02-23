@@ -94,7 +94,7 @@ class StudyPlanViewModel: ObservableObject {
         guard let selectedGrade = selectedGrade else { return [] }
         return topics["\(selectedGrade)-\(subject)"] ?? []
     }
-
+    
     // Method to create a new StudyPlan object and save it to the database
     func generateStudyPlan(
         userId: String,
@@ -117,8 +117,12 @@ class StudyPlanViewModel: ObservableObject {
             }
         }
         
-            print("UserId at generateStudyPlan: \(userId)")
-            // Create StudyPlan object
+        print("UserId at generateStudyPlan: \(userId)")
+        
+        var generatedPlanResult: Result<String, NSError> // Corrected the type of generatedPlanResult
+        
+        do {
+            // 1. Create StudyPlan object
             let id = UUID().uuidString
             print("Prepared StudyPlan at generateStudyPlan id: \(id)")
             let studyPlan = StudyPlan(
@@ -132,26 +136,37 @@ class StudyPlanViewModel: ObservableObject {
                 status: StudyPlanStatusType.notStarted.rawValue,
                 scorePercentage: 0
             )
-            
-            // 1. Save study plan to database
+
+            // 2. Save study plan to database
             let saveResult = await studyPlan.saveToDatabase()
             switch saveResult {
             case .success(let studyPlanInsertedId):
-                print("StudyPlan saved successful \(studyPlanInsertedId)")
-                
-                
-                // 2. Generate study plan
-                let generatedPlanResult = await studyPlan.generatePlan()
-                
+                print("StudyPlan saved successfully: \(studyPlanInsertedId)")
+
+                let isOfflineMode = await AppConfig.shared.loadOfflineMode() ?? false
+
+                if isOfflineMode {
+                    // 3. Construct a valid file name
+                    let fileName = LocalJSONDataManager.shared.generateValidFileName( moduleName: "lessonplan", grade: grade, subject: subject, topic: topic)
+                    if let offlineTips = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: fileName, fileExtension: "json") {
+                        print("✅ Loaded Lesson Plan from offline JSON")
+                        generatedPlanResult = .success(offlineTips)
+                    } else {
+                        let error = NSError(domain: "StudyPlanViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Offline mode enabled, but no saved data found."])
+                        generatedPlanResult = .failure(error)
+                    }
+                } else {
+                    // 4. Generate study plan
+                    generatedPlanResult = await studyPlan.generatePlan()
+                }
+
                 switch generatedPlanResult {
-                case .success(var generatedPlanJson): // Make it mutable
+                case .success(var generatedPlanJson):
                     print("Generated Plan JSON: \(generatedPlanJson)")
-                    
-                   
-                    
-                    // 3. Convert response to LessonPlan object
+
+                    // 5. Convert response to LessonPlan object
                     let lessonPlanResult = await LessonPlan.shared.decodeLessonPlan(from: generatedPlanJson)
-                    
+
                     switch lessonPlanResult {
                     case .success(let lessonPlanOptional):
                         guard let lessonPlan = lessonPlanOptional else {
@@ -159,39 +174,56 @@ class StudyPlanViewModel: ObservableObject {
                             return .failure(error)
                         }
 
-                        // 4. Save the generated lesson plan to the database
+                        // 6. Save the generated lesson plan to the database
                         print("decodeLessonPlan success")
                         print("lessonPlan.studyPlanId: \(lessonPlan.studyPlanId)")
                         let saveLessonResult = await LessonPlan.shared.saveToDatabase(from: lessonPlan)
                         switch saveLessonResult {
                         case .success(let studyPlanId):
-                            // 5. Update UI and return success
-                            
-//                            DispatchQueue.main.async {
-//                                self.generatedPlan = "Study Plan: \(grade), \(subject), \(duration) hours, \(commitment) times per week"
-//                            }
+                            // 7. Update UI and return success
                             print("saveToDatabase success: \(studyPlanId)")
                             return .success(studyPlanId)
-                            
+
                         case .failure(let error):
                             return .failure(error)
                         }
-                        
+
                     case .failure(let error):
                         return .failure(error)
                     }
-                    
+
                 case .failure(let error):
-                    return .failure(error)
+                    if let nsError = error as? NSError {
+                        return .failure(nsError)
+                    } else {
+                        let customNSError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
+                        return .failure(customNSError)
+                    }
+
                 }
-                
+
             case .failure(let error):
                 print("Failed to save study plan: \(error.localizedDescription)")
-                return .failure(error)
+                if let nsError = error as? NSError {
+                    return .failure(nsError)
+                } else {
+                    let customNSError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
+                    return .failure(customNSError)
+                }
             }
-            
-        
+
+        } catch {
+            // Handle any errors that might have been thrown during the process
+            print("Error during study plan generation: \(error.localizedDescription)")
+            if let nsError = error as? NSError {
+                return .failure(nsError)
+            } else {
+                let customNSError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
+                return .failure(customNSError)
+            }
+        }
     }
+
 
     @MainActor
     func getStudyPlans(userId: String) async {

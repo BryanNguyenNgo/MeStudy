@@ -3,6 +3,16 @@ import Foundation
 class LocalJSONDataManager {
     static let shared = LocalJSONDataManager()
     private init() {} // Prevents initialization outside of the class
+    
+    // Method to populateFileName
+    func generateValidFileName(moduleName: String, grade: String, subject: String, topic: String) -> String {
+        // Construct a valid file name, removing invalid characters
+        let fileName = "\(moduleName)_\(grade)_\(subject)_\(topic)"
+            .replacingOccurrences(of: "[^a-zA-Z0-9_]", with: "", options: .regularExpression) // Remove invalid characters
+        
+        return fileName
+    }
+
     // Load data from JSON for grades, subjects and topics
     func loadDataFromJSONFile(fileName: String, fileExtension: String) async -> String? {
         // Load JSON data from a file
