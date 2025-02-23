@@ -56,7 +56,12 @@ class StudyTipsViewModel: ObservableObject {
     }
     // Method to generate study tips
     func generateStudyTips() async -> Result<String, NSError> {
-        print("Generate tips: ")
+        let isOfflineMode = await AppConfig.shared.loadOfflineMode()
+        
+//        print("Offline Mode: \(isOfflineMode). Generate tips: ")
+//        if(isOfflineMode){
+//            retrieveFromLocalJSONFile()
+//        }
         
         // Ensure that selectedGrade and selectedSubject are not nil
         guard let grade = selectedGrade, let subject = selectedSubject else {

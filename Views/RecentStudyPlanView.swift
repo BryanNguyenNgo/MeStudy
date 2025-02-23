@@ -59,7 +59,8 @@ struct RecentStudyPlanView: View {
                     ScrollView {
                         NavigationStack{
                             LazyVStack(spacing: 15) {
-                                ForEach(viewModel.studyPlans, id: \.id) { plan in
+                                // Modify the ForEach loop to display only the top 5 records by using .prefix(5). Here's the updated code:
+                                ForEach(viewModel.studyPlans.prefix(5), id: \.id) { plan in
                                     RecentStudyPlanRow(plan: plan) { selectedPlan in
                                         // Call the asynchronous action from the parent.
                                         Task {
@@ -71,7 +72,7 @@ struct RecentStudyPlanView: View {
                             .padding(.bottom, 15)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .navigationTitle("Library")
+                        .navigationTitle("Recent Study Plan")
                     }
                 }
             }
@@ -125,14 +126,6 @@ struct RecentStudyPlanRow: View {
                 Text("Score: \(plan.scorePercentage)")
                     .font(.subheadline)
                
-//                Text("Duration: \(plan.studyDuration) hours")
-//                    .font(.subheadline)
-//                Text("Frequency: \(plan.studyFrequency) times per week")
-//                    .font(.subheadline)
-//                Text("Status: \(plan.status ?? "status")")
-//                    .font(.subheadline)
-//                Text("Created at: \(plan.createdAt, style: .date)")
-//                    .font(.subheadline)
             }
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)

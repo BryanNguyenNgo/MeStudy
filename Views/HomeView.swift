@@ -51,19 +51,19 @@ struct HomeView: View {
                 }
                 
                 // Recent Study Plans (Placeholder)
-                Text("Recent Study Plans")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(.top)
-                
-
-                    VStack(alignment: .leading) {
-                        Text("📘 Math - 2 hours daily")
-                        Text("📗 Science - 1.5 hours weekly")
-                        Text("📙 History - 1 hour weekly")
-                    }
-                    .padding()
-
+//                Text("Recent Study Plans")
+//                    .font(.title2)
+//                    .fontWeight(.semibold)
+//                    .padding(.top)
+//                
+//
+//                    VStack(alignment: .leading) {
+//                        Text("📘 Math - 2 hours daily")
+//                        Text("📗 Science - 1.5 hours weekly")
+//                        Text("📙 History - 1 hour weekly")
+//                    }
+//                    .padding()
+                RecentStudyPlanView()
                 
                 // Study Tips Section
                 Text("Study Tips")

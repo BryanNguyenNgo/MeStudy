@@ -65,19 +65,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         case status
         case createdAt
     }
-    // Function to load the API key securely from a config file
-    
-    
-    func loadApiKey() async -> String? {
-        guard let url = Bundle.main.url(forResource: "config", withExtension: "plist"),
-              let data = try? Data(contentsOf: url),
-              let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
-              let apiKey = plist["OpenAI_API_Key"] as? String else {
-            return nil
-        }
-        return apiKey
-    }
-    
+
     // Function to generate the study plan
     func generatePlan() async -> Result<String, NSError> {
         print("Starting generatePlan()...")  // Debug start
@@ -201,9 +189,12 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
             return apiResult
         
     }
+  
     // Decode from JSON string
     func decodeStudyPlanExtracted(from data: String) async -> Result<StudyPlanExtracted?, NSError> {
-        guard let jsonData = data.data(using: .utf8) else {
+        // To move "json" word in JSON string
+        let cleanedData = StringUtils.cleanJSONString(from: data)
+        guard let jsonData = cleanedData.data(using: .utf8) else {
             let error = NSError(domain: "DecodeLessonPlanError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
             print(error.localizedDescription)
             return .failure(error)

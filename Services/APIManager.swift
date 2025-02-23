@@ -59,6 +59,6 @@ class APIManager {
             return .failure(NSError(domain: "NetworkError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
         }
     }
-
+   
 }
 
