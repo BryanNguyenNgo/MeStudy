@@ -119,14 +119,49 @@ class StudyPlanViewModel: ObservableObject {
             }
         }
         
-        print("UserId at generateStudyPlan: \(userId)")
-        let fileName = LocalJSONDataManager.shared.generateValidFileName( moduleName: "lessonplan", grade: grade, subject: subject, topic: topic)
+        let fileName = LocalJSONDataManager.shared.generateValidFileName(moduleName: "lessonplan", grade: grade, subject: subject, topic: topic)
         
-        var generatedPlanResult: Result<String, NSError> // Corrected the type of generatedPlanResult
+        var generatedPlanResult: Result<String, NSError> = .failure(NSError()) // Initialize with failure by default
+        var id: String = UUID().uuidString // Initialize id here
+        
+        print("UserId at generateStudyPlan: \(userId)")
         
         do {
-            // 1. Create StudyPlan object
-            let id = UUID().uuidString
+            if offlineMode {
+                // Retrieve from JSON file
+                if let result = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: fileName, fileExtension: "json") {
+                    print("✅ Loaded Lesson Plan from offline JSON")
+                    
+                    // Assuming `result` is a string, you need to convert it into Data
+                    if let data = result.data(using: .utf8) {
+                        let decoder = JSONDecoder()
+                        do {
+                            // Decode the data into a LessonPlan object
+                            let lessonPlan = try decoder.decode(LessonPlan.self, from: data)
+                            
+                            // Print out the decoded values
+                            print("Study Plan for: \(lessonPlan.studyPlanId)")
+                            id = lessonPlan.studyPlanId // Use the id from the decoded object
+                            generatedPlanResult = .success(result) // Pass the success result to generatedPlanResult
+                        } catch {
+                            // Handle decoding error
+                            print("Error decoding lesson plan: \(error.localizedDescription)")
+                            let decodingError = NSError(domain: "StudyPlanViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to decode lesson plan."])
+                            generatedPlanResult = .failure(decodingError)
+                        }
+                    } else {
+                        let error = NSError(domain: "StudyPlanViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data."])
+                        generatedPlanResult = .failure(error)
+                    }
+                } else {
+                    let error = NSError(domain: "StudyPlanViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Offline mode enabled, but no saved data found."])
+                    generatedPlanResult = .failure(error)
+                }
+            } else {
+                // 1. Create StudyPlan object
+                print("Preparing new StudyPlan for generation.")
+            }
+            
             print("Prepared StudyPlan at generateStudyPlan id: \(id)")
             let studyPlan = StudyPlan(
                 id: id,
@@ -146,18 +181,7 @@ class StudyPlanViewModel: ObservableObject {
             case .success(let studyPlanInsertedId):
                 print("StudyPlan saved successfully: \(studyPlanInsertedId)")
 
-                let isOfflineMode = offlineMode
-
-                if isOfflineMode {
-                    // Retrieve from JSON file
-                    if let result = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: fileName, fileExtension: "json") {
-                        print("✅ Loaded Lesson Plan from offline JSON")
-                        generatedPlanResult = .success(result)
-                    } else {
-                        let error = NSError(domain: "StudyPlanViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Offline mode enabled, but no saved data found."])
-                        generatedPlanResult = .failure(error)
-                    }
-                } else {
+                if !offlineMode {
                     // 4. Generate study plan
                     generatedPlanResult = await studyPlan.generatePlan()
                 }
@@ -165,13 +189,7 @@ class StudyPlanViewModel: ObservableObject {
                 switch generatedPlanResult {
                 case .success(var generatedPlanJson):
                     print("Generated Plan JSON: \(generatedPlanJson)")
-                    
-                    if !isOfflineMode {
-                        // Save for offline use
-                        try await LocalJSONDataManager.shared.saveJSON(data: generatedPlanJson, fileName: fileName)
-                        print("✅ Tips saved for offline mode: \(fileName)")
-                    }
-                   
+
                     // 5. Convert response to LessonPlan object
                     let lessonPlanResult = await LessonPlan.shared.decodeLessonPlan(from: generatedPlanJson)
 
@@ -231,7 +249,6 @@ class StudyPlanViewModel: ObservableObject {
             }
         }
     }
-
 
     @MainActor
     func getStudyPlans(userId: String) async {

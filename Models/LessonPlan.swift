@@ -178,7 +178,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     // Simulate saving to a database asynchronously
     func saveToDatabase(from lessonPlan: LessonPlan) async -> Result<String, NSError> {
         print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
-        print("Grade: \(lessonPlan.studyPlanId)")
+        print("studyPlanId: \(lessonPlan.studyPlanId)")
         print("Grade: \(lessonPlan.grade)")
         print("Subject: \(lessonPlan.subject)")
         print("Topic: \(lessonPlan.topic)")

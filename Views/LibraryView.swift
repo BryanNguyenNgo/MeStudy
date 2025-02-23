@@ -52,7 +52,7 @@ struct LibraryView: View {
         NavigationStack {
             VStack {
                 if viewModel.isLoading {
-                    ProgressView("Loading...")
+                    ProgressView("Generating... please hang tight.")
                         .progressViewStyle(CircularProgressViewStyle())
                 } else {
                     ScrollView {
