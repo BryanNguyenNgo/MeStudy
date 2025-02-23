@@ -1,0 +1,38 @@
+{
+    "id": "44CF14EE-EC15-44A1-AD5C-B3476FA21042",
+    "studyPlanId": "B5F165A3-7C42-4EA9-ADC0-C51EAE69D411",
+    "grade": "Grade 11",
+    "subject": "Physics",
+    "topic": "Mechanics",
+    "week": "1",
+    "goals": "Understand basic concepts of kinematics, including displacement, velocity, and acceleration.",
+    "milestones": "1. Complete the reading on kinematics. 2. Solve initial kinematic equations. 3. Conduct a quick online quiz on basic kinematics concepts.",
+    "timetable": {
+        "session": "2-hour weekly study session",
+        "learning_tasks": [
+            {
+                "task": "Read textbook chapter on Kinematics.",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Watch an online video explaining the concepts of displacement, velocity, and acceleration.",
+                "duration": "20 minutes"
+            },
+            {
+                "task": "Summarize the definitions and equations of displacement, velocity, and acceleration in your own words.",
+                "duration": "10 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Solve 5 basic kinematic problems from the textbook.",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Complete an online quiz on kinematics concepts.",
+                "duration": "30 minutes"
+            }
+        ]
+    },
+    "resources": "1. Physics textbook (Chapter on Kinematics). 2. Online video tutorial from Khan Academy on Kinematics. 3. Kinematic problem sets from school-assigned workbook. 4. Free online quiz on kinematics from a reputable physics education website."
+}

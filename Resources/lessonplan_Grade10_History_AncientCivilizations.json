@@ -1,0 +1,24 @@
+{
+    "id": "6D5496CD-C95E-42AF-8CEA-EE4450AEFFE4",
+    "studyPlanId": "3D681919-E286-4ED4-B5F4-5DA58BB08B32",
+    "grade": "Grade 10",
+    "subject": "History",
+    "topic": "Ancient Civilizations",
+    "week": "1",
+    "goals": "Introduce and understand the key characteristics and contributions of early ancient civilizations, particularly focusing on Mesopotamia and Ancient Egypt.",
+    "milestones": "By the end of the week, be able to identify and explain the significance of the geographic location, government structures, and cultural achievements of Mesopotamia and Ancient Egypt.",
+    "timetable": {
+        "session": "Two 1-hour study sessions",
+        "learning_tasks": [
+            {"task": "Read an overview of Ancient Civilizations and focus specifically on Mesopotamia.", "duration": "30 minutes"},
+            {"task": "Watch a documentary or educational video on Mesopotamia's contributions to culture, law, and technology.", "duration": "30 minutes"},
+            {"task": "Read about the development of Egyptian civilization with a focus on the Nile's influence.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Create a comparative chart of Mesopotamian and Egyptian government structures.", "duration": "15 minutes"},
+            {"task": "Write a short summary on the importance of the Tigris and Euphrates Rivers to Mesopotamian society.", "duration": "15 minutes"},
+            {"task": "Draw a simple map highlighting the key cities and geographical features of Ancient Egypt.", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "Textbook chapters on Mesopotamia and Ancient Egypt, documentary on Mesopotamia from a platform like BBC or History Channel, online articles from a history education website such as Khan Academy or National Geographic."
+}

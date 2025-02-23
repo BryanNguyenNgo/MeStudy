@@ -1,0 +1,22 @@
+{
+    "id": "29B09197-9179-4CEC-BE0B-21631026BA61",
+    "studyPlanId": "F55043DA-4508-4F97-A769-7BC9A3A618D4",
+    "grade": "Grade 11",
+    "subject": "Math",
+    "topic": "Calculus",
+    "week": "1",
+    "goals": "Understand the concept of limits and the fundamental principles of differential calculus.",
+    "milestones": "By the end of the week, students should be able to define and calculate limits and understand the concept of a derivative.",
+    "timetable": {
+        "session": "2 sessions, 1 hour each",
+        "learning_tasks": [
+            {"task": "Introduction to limits - Watch a video on limits and continuity.", "duration": "30 minutes"},
+            {"task": "Read textbook section on limits and introduction to derivatives.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Solve problems involving calculating limits from the textbook or online resources.", "duration": "30 minutes"},
+            {"task": "Complete exercises on identifying derivatives from a set of simple functions.", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Khan Academy: Calculus for understanding limits, Textbook: Chapter on Limits and Derivatives, any calculus online exercises platform."
+}

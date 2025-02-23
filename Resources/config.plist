@@ -5,6 +5,6 @@
 	<key>OPENAI_API_KEY</key>
 	<string>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</string>
 	<key>OFFLINE_MODE</key>
-	<false/>
+	<true/>
 </dict>
 </plist>

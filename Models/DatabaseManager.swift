@@ -685,7 +685,19 @@ actor DatabaseManager {
             print("LessonPlan status for \(studyPlanId) updated successfully.")
 
             // Calculate score percentage
-            let scorePercentage = Int((Double(correctAnswerCount) / Double(totalQuestions)) * 100)
+            let scorePercentage: Int
+
+            if totalQuestions > 0 {
+                let percentage = (Double(correctAnswerCount) / Double(totalQuestions)) * 100
+                if percentage.isFinite { // Ensure it's not NaN or infinity
+                    scorePercentage = Int(percentage)
+                } else {
+                    scorePercentage = 0 // Default value if the result is not a valid number
+                }
+            } else {
+                scorePercentage = 0 // Avoid division by zero
+            }
+
 
             // Update studyPlan status and completion percentage
             let studyPlanQuery = studyPlanTable.filter(self.studyPlanId == studyPlanId)

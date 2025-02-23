@@ -1,0 +1,22 @@
+{
+    "id": "0DFC54AF-C448-41A6-AB54-EAB6C175D555",
+    "studyPlanId": "0B10A421-3777-406D-BA4C-937E475E3E17",
+    "grade": "Grade 11",
+    "subject": "Math",
+    "topic": "Probability",
+    "week": "1",
+    "goals": "Understand the basic concepts of probability including definitions and simple probability calculations; differentiate between theoretical and experimental probability.",
+    "milestones": "By the end of the week, be able to define key probability terms, calculate simple probabilities, and illustrate the difference between theoretical and experimental probability with examples.",
+    "timetable": {
+        "session": "Tuesday and Thursday",
+        "learning_tasks": [
+            {"task": "Read introduction to probability including definitions and examples", "duration": "30 minutes"},
+            {"task": "Watch video on basic probability concepts", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Solve probability exercises on simple probability calculations", "duration": "30 minutes"},
+            {"task": "Complete worksheet on theoretical vs. experimental probability", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Textbook chapter on probability, Khan Academy videos on probability concepts, online worksheets from reputable math education websites."
+}

@@ -1,0 +1,22 @@
+{
+    "id": "F9966A8D-7EB7-4900-982E-DCE35C76B265",
+    "studyPlanId": "E475742B-02D0-457B-9C6A-7387D981034E",
+    "grade": "Grade 10",
+    "subject": "English",
+    "topic": "Comprehension",
+    "week": "1",
+    "goals": "Understand the fundamental techniques of reading comprehension and identify key themes, main ideas, and supporting details in a text.",
+    "milestones": "Finish the initial exercises that introduce identifying main ideas and supporting details; understand how these elements build the text's meaning.",
+    "timetable": {
+        "session": "Two 1-hour study sessions on Monday and Thursday",
+        "learning_tasks": [
+            {"task": "Read an introductory article on comprehension strategies.", "duration": "30 minutes"},
+            {"task": "Watch a short educational video on identifying main ideas and supporting details.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Complete a worksheet that contains short paragraphs to practice identifying the main idea.", "duration": "30 minutes"},
+            {"task": "Engage in a critical reading exercise by summarizing a paragraph and noting key points.", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "1. 'Reading Comprehension Strategies' by Jennifer Serravallo. 2. Online platform such as Khan Academy for videos on comprehension. 3. Worksheets available from education.com."
+}

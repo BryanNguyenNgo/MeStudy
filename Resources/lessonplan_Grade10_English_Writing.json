@@ -1,0 +1,34 @@
+{
+    "id": "6F305748-3F8E-4E6B-8291-A1A826EB4E3C",
+    "studyPlanId": "15C531D5-8642-48F6-90FE-6E3F372A26BC",
+    "grade": "Grade 10",
+    "subject": "English",
+    "topic": "Writing",
+    "week": "1",
+    "goals": "Develop an understanding of different types of essays and practice writing a basic narrative essay.",
+    "milestones": "Complete a draft of a narrative essay by the end of the week.",
+    "timetable": {
+        "session": "2 hours per week, divided into two 1-hour sessions on Tuesday and Thursday",
+        "learning_tasks": [
+            {
+                "task": "Research and take notes on the structure and elements of a narrative essay.",
+                "duration": "30 minutes on Tuesday"
+            },
+            {
+                "task": "Read examples of narrative essays to understand style and format.",
+                "duration": "30 minutes on Tuesday"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Draft an outline of a narrative essay including introduction, body, and conclusion sections.",
+                "duration": "30 minutes on Thursday"
+            },
+            {
+                "task": "Write the introduction and first paragraph of the narrative essay.",
+                "duration": "30 minutes on Thursday"
+            }
+        ]
+    },
+    "resources": "Use the Purdue OWL website for guidelines on essay writing. Refer to 'Elements of Style' by William Strunk Jr. and E.B. White for additional writing techniques. Review narrative essays from the textbook or online sources."
+}

@@ -8,7 +8,7 @@ struct MeStudy: App {
     @StateObject private var appViewModel = AppViewModel()
     @StateObject private var userViewModel = UserViewModel()
     @AppStorage("selectedtab") var selectedTab = 0
-    @AppStorage("offlineMode") private var offlineMode: Bool = false
+    @AppStorage("offlineMode") private var offlineMode: Bool = true
     
     // Initialize userViewModel with userSession
     init() {
@@ -26,6 +26,7 @@ struct MeStudy: App {
                     do {
                         // Load offline mode
                         let offlineMode = await AppConfig.shared.loadOfflineMode()
+                        var userFound: Bool = false
                         
                         // Ensure database is initialized
                         await appViewModel.initializeDatabase()
@@ -38,23 +39,31 @@ struct MeStudy: App {
                             // If user exists, set it to the session
                             DispatchQueue.main.async {
                                 userSession.currentUser = existingUser
+                                userFound = true
                             }
                         case .failure(let error):
                             // Handle failure case (user not found or any other issue)
                             print("Error: \(error.localizedDescription)")
                             // Optionally, show an alert to the user
+                            userFound = false
                         }
                         
                         // If no user found, insert a default user
-                        if userSession.currentUser == nil {
+                        if userSession.currentUser == nil || userFound == false {
                             let defaultUser = User(id: UUID().uuidString, name: "usertest", email: "usertest@gmail.com", grade: "10")
-                            let insertedUser = try await defaultUser.saveToDatabase()
-                            
-                            DispatchQueue.main.async {
-                                userSession.currentUser = insertedUser
-                                selectedTab = 0
+
+                            do {
+                                let insertedUser = try await defaultUser.saveToDatabase()
+
+                                DispatchQueue.main.async {
+                                    userSession.currentUser = insertedUser
+                                    selectedTab = 0
+                                }
+                            } catch {
+                                print("Error saving default user to database: \(error)")
                             }
                         }
+
                     } catch {
                         print("Error during initialization: \(error)")
                     }

@@ -1,0 +1,22 @@
+{
+    "id": "7F9B3084-700F-400A-84D7-31566FAA800E",
+    "studyPlanId": "47E02920-C141-4C6E-BCB0-F9773F9116F3",
+    "grade": "Grade 10",
+    "subject": "History",
+    "topic": "Modern History",
+    "week": "1",
+    "goals": "Understand the key events and figures that led to the start of the 20th century and the conditions that contributed to the onset of World War I.",
+    "milestones": "By the end of the week, the student should be able to identify the main causes of World War I, including political, economic, and social factors, and recognize at least three significant figures or events leading to the war.",
+    "timetable": {
+        "session": "Sunday",
+        "learning_tasks": [
+            {"task": "Read an overview of the factors leading to World War I.", "duration": "20 minutes"},
+            {"task": "Watch a documentary or online video summary about the origins of World War I.", "duration": "20 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Create a timeline of events leading up to World War I.", "duration": "10 minutes"},
+            {"task": "Summarize the causes of World War I in a paragraph.", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "1. Textbook: 'Modern World History' chapters on pre-World War I era. 2. Online video: 'World War I: The Great War' on a reputable educational platform like YouTube or Khan Academy."
+}

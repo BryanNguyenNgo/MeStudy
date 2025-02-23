@@ -1,0 +1,22 @@
+{
+    "id": "79772911-31E1-4518-9DCD-52652F2C5525",
+    "studyPlanId": "EA15E878-9EBF-4FAB-9501-E4A7AB151F1B",
+    "grade": "Grade 10",
+    "subject": "History",
+    "topic": "World Wars",
+    "week": "1",
+    "goals": "Gain an overview of the causes and the key events leading to the outbreak of World War I.",
+    "milestones": "Understand the major alliances and political tensions in the early 20th century leading to WWI.",
+    "timetable": {
+        "session": "Thursday, 4:00 PM - 5:00 PM",
+        "learning_tasks": [
+            {"task": "Read an overview of the late 19th and early 20th-century European alliances and tensions.", "duration": "20 minutes"},
+            {"task": "Watch a documentary or short video summarizing the causes of World War I.", "duration": "20 minutes"},
+            {"task": "Review key terms and definitions related to World War I alliances.", "duration": "10 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Create a timeline of events leading up to the outbreak of World War I.", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "1. Textbook: 'Modern World History' - Chapter on World War I. 2. Video: 'The Road to World War I' on YouTube or other educational platforms. 3. Online resource: BBC History - Causes of World War I."
+}

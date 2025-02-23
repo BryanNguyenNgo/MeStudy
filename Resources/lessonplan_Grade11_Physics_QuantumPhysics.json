@@ -1,0 +1,30 @@
+{
+    "id": "AE8C36A8-48DC-4DDC-9569-D01E9F7ECDA4",
+    "studyPlanId": "CD2DF52C-8391-4423-939A-A4898D23DF41",
+    "grade": "Grade 11",
+    "subject": "Physics",
+    "topic": "Quantum Physics",
+    "week": "1",
+    "goals": "Understand the basics of quantum physics, particularly the concept of wave-particle duality and its implications.",
+    "milestones": "By the end of the week, be able to explain the wave-particle duality and describe the significance of the double-slit experiment in demonstrating this concept.",
+    "timetable": {
+        "session": "Saturday, 3:00 PM - 4:00 PM",
+        "learning_tasks": [
+            {
+                "task": "Read introductory materials on quantum mechanics focusing on wave-particle duality.",
+                "duration": "20 minutes"
+            },
+            {
+                "task": "Watch a video explaining the double-slit experiment and wave-particle duality.",
+                "duration": "20 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Write a summary explaining wave-particle duality and the double-slit experiment.",
+                "duration": "20 minutes"
+            }
+        ]
+    },
+    "resources": "1. Textbook: 'Conceptual Physics' by Paul Hewitt - Chapter 27 on Quantum Theory. 2. Video: 'The Double-Slit Experiment' by Veritasium on YouTube. 3. Online resource: 'Quantum Physics for Beginners' on Khan Academy."
+}

@@ -1,0 +1,22 @@
+{
+    "id": "D5A998EE-E479-485D-869E-9DC2739348FD",
+    "studyPlanId": "6ED29775-D7A4-4C94-993D-0BAF6329843B",
+    "grade": "Grade 11",
+    "subject": "English",
+    "topic": "Advanced Grammar",
+    "week": "1",
+    "goals": "Understand the basic structure and function of advanced grammar topics such as complex sentence structures, modal verbs, and active vs. passive voice.",
+    "milestones": "Successfully identify and differentiate complex sentence structures from simple ones. Demonstrate understanding of modal verbs in phrases. Recognize and convert sentences between active and passive voice.",
+    "timetable": {
+        "session": "Saturday",
+        "learning_tasks": [
+            {"task": "Review basic grammar concepts to build a foundation for advanced topics.", "duration": "20 minutes"},
+            {"task": "Learn about complex sentence structures and their components.", "duration": "20 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Practice identifying complex sentences in short passages.", "duration": "10 minutes"},
+            {"task": "Complete exercises on recognizing and using modal verbs.", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "1. 'English Grammar in Use' by Raymond Murphy. 2. Khan Academy's resources on advanced grammar. 3. Online exercises from Grammarly's advanced grammar section."
+}

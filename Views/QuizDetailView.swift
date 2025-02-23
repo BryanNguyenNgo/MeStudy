@@ -37,7 +37,7 @@ struct QuizDetailView: View {
                 navigationButtons()
             }
             .padding()
-            .navigationTitle("Quiz Details")
+            //.navigationTitle("Quiz Details")
             .onAppear {
                 isQuizStarted = true
             }

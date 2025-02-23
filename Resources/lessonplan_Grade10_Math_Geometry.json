@@ -1,0 +1,22 @@
+{
+    "id": "1C2B1FAF-417C-4872-BF12-7C4C78C3387F",
+    "studyPlanId": "B1111600-1EED-4042-81FB-B0A939E861CB",
+    "grade": "Grade 10",
+    "subject": "Math",
+    "topic": "Geometry",
+    "week": "1",
+    "goals": "Understand the fundamental concepts of points, lines, and planes, and learn about angles and their measurements.",
+    "milestones": "By the end of the week, be able to define and differentiate between points, lines, and planes, and accurately measure and classify angles.",
+    "timetable": {
+        "session": "2 sessions, 1 hour each on Wednesday and Saturday",
+        "learning_tasks": [
+            {"task": "Review definitions and properties of points, lines, and planes.", "duration": "30 minutes"},
+            {"task": "Study different types of angles and learn to measure them.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Complete a worksheet on identifying and naming points, lines, and planes.", "duration": "30 minutes"},
+            {"task": "Solve practice problems on measuring angles and identifying their types.", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Chapter 1 of the geometry textbook, Khan Academy's Geometry basics: https://www.khanacademy.org/math/geometry/hs-geo-foundations"
+}

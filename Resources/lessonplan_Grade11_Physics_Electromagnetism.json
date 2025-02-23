@@ -1,0 +1,30 @@
+{
+    "id": "8EF7CD08-2E2B-4389-B633-CF4A638208DB",
+    "studyPlanId": "C3B1E382-B9D4-43E7-9018-91DCC943802D",
+    "grade": "Grade 11",
+    "subject": "Physics",
+    "topic": "Electromagnetism",
+    "week": "1",
+    "goals": "Understand the basic concepts of electromagnetism, including electric fields, magnetic fields, and the relationship between them. Familiarize with key terms and principles.",
+    "milestones": "Complete an introductory reading on electromagnetism. Be able to define and explain the concept of electric fields and magnetic fields. Solve basic problems involving these concepts.",
+    "timetable": {
+        "session": "Monday, 4:00 PM - 5:00 PM",
+        "learning_tasks": [
+            {
+                "task": "Read introductory chapter on Electromagnetism from a physics textbook or online resource.",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Watch a video explaining the concepts of electric fields and magnetic fields.",
+                "duration": "15 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Solve basic problems on electric and magnetic fields from the textbook or an online physics problem set.",
+                "duration": "15 minutes"
+            }
+        ]
+    },
+    "resources": "Physics textbook with a section on electromagnetism, Khan Academy's Electromagnetism playlist, 'Introduction to Electrodynamics' by David Griffiths, Online problem sets from HyperPhysics."
+}

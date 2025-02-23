@@ -1,0 +1,24 @@
+{
+    "id": "9A0C043B-597A-483F-8337-E9A8C4A11C36",
+    "studyPlanId": "71282D8A-80E7-4B08-9832-BC2DB76BDDA8",
+    "grade": "Grade 11",
+    "subject": "English",
+    "topic": "Literary Analysis",
+    "week": "1",
+    "goals": "Understand the basic concepts and components of literary analysis, such as theme, character, plot, and setting.",
+    "milestones": "Identify and explain the four key components of literary analysis: theme, character, plot, and setting.",
+    "timetable": {
+        "session": "Monday 4:00 PM - 5:00 PM",
+        "learning_tasks": [
+            {"task": "Introduction to literary analysis concepts", "duration": "15 minutes"},
+            {"task": "Discuss the importance of theme in literature", "duration": "15 minutes"},
+            {"task": "Examine the role of character development", "duration": "15 minutes"},
+            {"task": "Understand the structure of plot and the significance of setting", "duration": "15 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Analyze a short passage for theme and character", "duration": "10 minutes"},
+            {"task": "Identify plot points and setting in a given excerpt", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "Recommended textbook chapter on literary analysis basics, online video lecture on introductory literary analysis from YouTube or educational platforms, practice passages from short stories or novels."
+}

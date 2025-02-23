@@ -1,0 +1,22 @@
+{
+    "id": "56035F6E-66B9-4248-9D8A-5194F386ED61",
+    "studyPlanId": "0786D41C-996A-4AF6-AA4D-015D109EE607",
+    "grade": "Grade 10",
+    "subject": "Math",
+    "topic": "Algebra",
+    "week": "1",
+    "goals": "Understand the basics of algebraic expressions, including terms, coefficients, and variables. Begin simplifying algebraic expressions using basic operations.",
+    "milestones": "1. Familiarity with terms and components of algebraic expressions. 2. Ability to simplify basic algebraic expressions.",
+    "timetable": {
+        "session": "Wednesday",
+        "learning_tasks": [
+            {"task": "Read about algebraic expressions and identify terms, coefficients, and variables.", "duration": "30 minutes"},
+            {"task": "Watch an introductory video on simplifying algebraic expressions.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Simplify 10 basic algebraic expressions using addition and subtraction.", "duration": "30 minutes"},
+            {"task": "Complete a short quiz on identifying terms, coefficients, and variables.", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Recommended textbook: 'Algebra for Grade 10' pp. 15-25; Khan Academy videos on Algebra Basics; Online quizzes at MathIsFun.com"
+}

@@ -1,0 +1,34 @@
+{
+    "id": "EC989BCE-8466-477B-A875-9CA1C46D19AE",
+    "studyPlanId": "CAF3F5DF-9181-4E4D-85CD-0E69F830FB78",
+    "grade": "Grade 11",
+    "subject": "Math",
+    "topic": "Statistics",
+    "week": "1",
+    "goals": "Understand basic statistical concepts including mean, median, mode, and range; identify different types of data and their graphical representations.",
+    "milestones": "1. Grasp the definitions and calculations of mean, median, mode, and range by the end of the first session. 2. Be able to categorize data and represent it graphically by the conclusion of the week's study.",
+    "timetable": {
+        "session": "Thursday",
+        "learning_tasks": [
+            {
+                "task": "Read and take notes on the concepts of mean, median, mode, and range from the textbook.",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Watch an online video explaining types of data and their graphical representations.",
+                "duration": "30 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Solve problems calculating mean, median, mode, and range from a set of data (Textbook exercises 1-5).",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Draw and interpret bar charts and histograms using sample data.",
+                "duration": "30 minutes"
+            }
+        ]
+    },
+    "resources": "1. Textbook: 'Statistics for High School - Chapter 1'. 2. Online Video: 'Introduction to Statistical Graphs' by Khan Academy. 3. Online platforms: Khan Academy, IXL for additional practice problems."
+}

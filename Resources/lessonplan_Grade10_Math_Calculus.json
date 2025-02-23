@@ -1,0 +1,22 @@
+{
+    "id": "009D5114-6A6D-4E65-A62B-4A0162190291",
+    "studyPlanId": "BEB87282-141E-4E08-B531-0DA53EA3F0B3",
+    "grade": "Grade 10",
+    "subject": "Math",
+    "topic": "Calculus",
+    "week": "1",
+    "goals": "Understand the concept of limits and their application in calculus.",
+    "milestones": "Student can define limits, demonstrate understanding through examples, and solve basic limit problems.",
+    "timetable": {
+        "session": "Tuesday",
+        "learning_tasks": [
+            {"task": "Introduction to Limits: Watch a video lecture explaining the basic concept of limits and their significance in calculus.", "duration": "30 minutes"},
+            {"task": "Read textbook chapter on limits: Understand theoretical concepts in detail.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Solve basic problems on limits from the textbook: Solve exercises where limit values need to be calculated.", "duration": "30 minutes"},
+            {"task": "Take a short online quiz on limits to assess understanding.", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Khan Academy video on limits, Grade 10 calculus textbook, Online quiz from a math practice website such as Brilliant.org or IXL."
+}

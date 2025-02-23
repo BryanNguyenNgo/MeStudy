@@ -1,0 +1,30 @@
+{
+    "id": "2BCAEEBC-92DA-4241-B3CB-FDFEA67DA7C0",
+    "studyPlanId": "48A69F0C-98EC-4AEB-8CE9-A1719C52887A",
+    "grade": "Grade 11",
+    "subject": "English",
+    "topic": "Creative Writing",
+    "week": "1",
+    "goals": "Understand the basics of creative writing, including elements such as character development, setting, and plot structure.",
+    "milestones": "By the end of the week, the student should be able to identify and describe the basic elements of creative writing and draft a simple character sketch.",
+    "timetable": {
+        "session": "2 sessions of 1 hour each",
+        "learning_tasks": [
+            {
+                "task": "Introduction to Creative Writing: Read about the key elements that make up creative writing.",
+                "duration": "30 minutes"
+            },
+            {
+                "task": "Study character development: Learn how to create compelling characters.",
+                "duration": "30 minutes"
+            }
+        ],
+        "practice_tasks": [
+            {
+                "task": "Write a short character sketch focusing on a character's background, motivations, and development.",
+                "duration": "1 hour"
+            }
+        ]
+    },
+    "resources": "Read 'The Elements of Creative Writing' from a reputable online educational website or use a textbook that covers creative writing basics. Online platforms like Khan Academy or Coursera may also offer introductory videos."
+}
