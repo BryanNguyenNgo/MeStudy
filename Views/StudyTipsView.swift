@@ -8,11 +8,14 @@ struct StudyTipsView: View {
     @State private var isLoading = false // To track loading state
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Study Tips")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .padding(.top)
+        VStack(spacing: 10) {
+            HStack{
+                Text("Tips")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding(.top)
+                Spacer()
+            }
             
             // Grade Selection
             HStack {

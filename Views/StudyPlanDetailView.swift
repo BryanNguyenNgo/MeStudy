@@ -21,8 +21,8 @@ struct StudyPlanDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     infoRow(label: "Grade:", value: plan.grade)
                     infoRow(label: "Subject:", value: plan.subject)
-                    infoRow(label: "Study Frequency:", value: "\(plan.studyFrequency) per week")
-                    infoRow(label: "Study Duration:", value: "\(plan.studyDuration) weeks")
+                    infoRow(label: "Study Frequency:", value: "\(plan.studyFrequency) time(s) per week")
+                    infoRow(label: "Study Duration:", value: "\(plan.studyDuration) week(s)")
                     infoRow(label: "Status:", value: plan.status ?? "N/A")
                     infoRow(label: "Created At:", value: "\(plan.createdAt)")
                 }

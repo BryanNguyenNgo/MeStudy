@@ -13,7 +13,7 @@ struct HomeView: View {
                 
                 // Welcome Message (moved inside the condition)
                 if let user = userSession.currentUser {
-                    Text("Welcome back, \(user.name)!")
+                    Text("Greetings, \(user.name)!")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.top, 20)

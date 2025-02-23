@@ -28,7 +28,7 @@ struct MenuView: View {
             
             StudyTipsView()
                 .tabItem {
-                    Label("Tips", systemImage: "plus.circle")
+                    Label("Tips", systemImage: "lightbulb.fill")
                 }
                 .tag(3)
             

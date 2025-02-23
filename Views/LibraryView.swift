@@ -136,7 +136,7 @@ struct StudyPlanRow: View {
                     .font(.subheadline)
                 Text("\(plan.grade)")
                     .font(.subheadline)
-                Text("Score: \(plan.scorePercentage ?? 0)/4")
+                Text("Score: \(plan.scorePercentage ?? 0)%")
                     .font(.subheadline)
                
             }

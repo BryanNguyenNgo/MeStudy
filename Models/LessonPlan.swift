@@ -283,7 +283,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
                     "quizId": "\(self.id)", // Do not change this value
                     "questionType": "multiple_choice",
                     "questionText": "Which of the following best aligns with \(self.goals)?",
-                    "options": "Option A", "Option B", "Option C", "Option D",
+                    "options": "Option A", "Option B", "Option C", "Option D", 
                     "correctAnswer": "Option A"
                 },
                 {
@@ -297,7 +297,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
                     "quizId": "\(self.id)", // Do not change this value
                     "questionType": "multiple_choice",
                     "questionText": "What is the key takeaway from \(self.timetable.learning_tasks[safe: 1]?.task ?? "N/A")?",
-                    "options": "Option A", "Option B", "Option C", "Option D",
+                    "options": "Option A", "Option B", "Option C", "Option D" ,
                     "correctAnswer": "Option B"
                 },
                 {

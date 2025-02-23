@@ -634,8 +634,18 @@ actor DatabaseManager {
                     return -1  // Indicate failure if the question is not found
                 }
 
-                let correctAnswer = question[self.questionCorrectAnswer]
-                let isCorrect = (userAnswer == correctAnswer)
+
+
+                // Retrieve the correct answer
+                let correctAnswer = question[self.questionCorrectAnswer] as? String ?? ""
+
+                // Convert both answers to lowercase for case-insensitive comparison
+                let userAnswer = userAnswer.lowercased()
+
+                // Check if the user's answer contains the correct answer (case-insensitive)
+                let isCorrect = userAnswer.contains(correctAnswer.lowercased())
+
+              
 
                 let questionUpdateCount = try db.run(questionQuery.update(
                     self.questionUserAnswer <- userAnswer,
