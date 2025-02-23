@@ -40,7 +40,9 @@ class StudyPlanViewModel: ObservableObject {
     func loadDataSubjectTopics() async {
         do {
             // Load JSON data from a file
-            if let data = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json") {
+            if let dataString = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json"),
+               let data = dataString.data(using: .utf8) { // Convert String to Data
+               
                 let decoder = JSONDecoder()
                 
                 // Decode the data into the appropriate model
@@ -67,6 +69,7 @@ class StudyPlanViewModel: ObservableObject {
             print("Error decoding JSON: \(error.localizedDescription)")
         }
     }
+
         
     func selectGrade(_ grade: String) {
         self.selectedGrade = grade
@@ -223,7 +226,7 @@ class StudyPlanViewModel: ObservableObject {
             self.errorMessage = nil
         }
 
-        do {
+     
             // Generate study plan
             let generatedResult = await StudyPlan.shared.extractStudyPlan(recognizedText: recognizedText)
             
@@ -256,15 +259,7 @@ class StudyPlanViewModel: ObservableObject {
                 }
                 return .failure(error)
             }
-        } catch {
-            DispatchQueue.main.async {
-                self.isLoading = false
-                self.errorMessage = "Error: \(error.localizedDescription)"
-            }
-            
-            let nsError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
-            return .failure(nsError)
-        }
+        
     }
 
 
