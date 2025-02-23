@@ -51,17 +51,13 @@ class StudyTips: Identifiable, ObservableObject, Equatable {
             Ensure that the tips are practical and motivational to help the student succeed.
         """
         
-        do {
+        
             // Call the API and await the result
-            let apiResult = try await APIManager.shared.callOpenAIAPI(prompt: prompt)
+            let apiResult = await APIManager.shared.callOpenAIAPI(prompt: prompt)
             
             // Return success with result
             return apiResult
-        } catch {
-            // Handle any errors and return failure with NSError
-            print("Error generating study tips: \(error.localizedDescription)")
-            return .failure(error as NSError)
-        }
+        
     }
 }
 

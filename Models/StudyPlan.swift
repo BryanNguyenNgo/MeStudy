@@ -111,7 +111,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         
        
             // Call the API and await the result
-            let apiResult = try await APIManager.shared.callOpenAIAPI(prompt: prompt)
+            let apiResult = await APIManager.shared.callOpenAIAPI(prompt: prompt)
             
             // Return success with result
             return apiResult
@@ -120,7 +120,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
 
     // Function to save study plan to database
     func saveToDatabase() async -> Result<String, NSError> {
-        do {
+        
             guard let insertedId: String = await DatabaseManager.shared.insertStudyPlan(
                 id: self.id,
                 userId: self.userId,
@@ -135,43 +135,36 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
             }
             
             return .success(insertedId) // ✅ Return UUID
-        } catch {
-            return .failure(NSError(domain: "SaveError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
-        }
+        
     }
     // Method to retrieve study plans from the database for a specific userId
     func getStudyPlans(userId: String) async -> [StudyPlan] {
-            do {
+        
                 let studyPlans = await DatabaseManager.shared.getStudyPlans(userId: userId)
                 
                 // Return the mapped StudyPlans to the main actor
                 return studyPlans.map { studyPlan in
                     StudyPlan( id: studyPlan.id, userId: studyPlan.userId, grade: studyPlan.grade, subject: studyPlan.subject, topic: studyPlan.topic, studyDuration: studyPlan.studyDuration, studyFrequency: studyPlan.studyFrequency, status: studyPlan.status ?? StudyPlanStatusType.notStarted.rawValue, scorePercentage: studyPlan.scorePercentage ?? 0)
                 }
-            } catch {
-                print("Error retrieving study plans: \(error)")
-                return []
-            }
+            
         }
     
     // Function to update StutyPlan and LessonPlan status from the database
     func updateStudyPlan(studyPlanId: String, status: String) async -> Result<StudyPlan, NSError> {
-        do {
+       
             if let studyPlan = await DatabaseManager.shared.updateStudyPlan(studyPlanId: studyPlanId, status: status) {
                 return .success(studyPlan)
             } else {
                 let error = NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "Study Plan and Lesson plan are not updated."])
                 return .failure(error)
             }
-        } catch {
-            return .failure(error as NSError)
-        }
+        
     }
     func extractStudyPlan(recognizedText: String) async -> Result<String, NSError> {
         print("Starting generatePlan()...")  // Debug start
         
         // Prepare the prompt for the API call
-        let lessonPlanId = UUID().uuidString
+
         let prompt = """
         Extract the **Grade**, **Subject**, and **Topic** from the following problem statement:\n\n'\(recognizedText)'\n\n
         - **grade**: Identify the educational level or grade appropriate for this problem. Provide it in Grade followed by the number \n
@@ -183,7 +176,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         """
        
             // Call the API and await the result
-            let apiResult = try await APIManager.shared.callOpenAIAPI(prompt: prompt)
+            let apiResult = await APIManager.shared.callOpenAIAPI(prompt: prompt)
             
             // Return success with result
             return apiResult
@@ -192,15 +185,9 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
   
     // Decode from JSON string
     func decodeStudyPlanExtracted(from data: String) async -> Result<StudyPlanExtracted?, NSError> {
-        // To move "json" word in JSON string
-        let cleanedData = StringUtils.cleanJSONString(from: data)
-        guard let jsonData = cleanedData.data(using: .utf8) else {
-            let error = NSError(domain: "DecodeLessonPlanError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
-            print(error.localizedDescription)
-            return .failure(error)
-        }
         
         do {
+            let jsonData = try await StringUtils.shared.cleanJSONString(from: data)
             // Parse JSON response using JSONDecoder to decode into LessonPlan
             let decoder = JSONDecoder()
             let studyPlanExtracted = try decoder.decode(StudyPlanExtracted.self, from: jsonData)

@@ -4,7 +4,7 @@ import Foundation
 class LibraryViewModel: ObservableObject {
     
     // Method to create lesson quiz
-    func createLessonQuiz(planID: String) async -> Result<String, NSError> {
+    func createLessonQuiz(planID: String) async -> Result<String, Error> {
         print("Creating quiz for plan ID: \(planID)")
 
         // 1. Fetch the lesson plan
@@ -30,43 +30,48 @@ class LibraryViewModel: ObservableObject {
                     
                     // 4. Save the generated quiz to the database
                     let saveQuizResult = await Quiz.shared.saveToDatabase(from: quiz)
-                    // 5. Update StudyPlan and LessonPlan status to In Progress
-                    let updateStudyPlanResult = await StudyPlan.shared.updateStudyPlan(studyPlanId: planID, status: StudyPlanStatusType.inProgress.rawValue)
-                    
                     
                     switch saveQuizResult {
                     case .success:
-                        return .success(quizJson)
+                        // 5. Update StudyPlan and LessonPlan status to In Progress
+                        let updateStudyPlanResult = await StudyPlan.shared.updateStudyPlan(studyPlanId: planID, status: StudyPlanStatusType.inProgress.rawValue)
+                        
+                        switch updateStudyPlanResult {
+                        case .success:
+                            return .success(quizJson)
+                        case .failure(let error):
+                            print("Failed to update study plan: \(error.localizedDescription)")
+                            return .failure(error)
+                        }
+                        
                     case .failure(let error):
                         print("Failed to save the quiz: \(error.localizedDescription)")
-                        return .failure(error as NSError)
+                        return .failure(error)
                     }
                     
                 case .failure(let error):
                     print("Failed to decode quiz: \(error.localizedDescription)")
-                    return .failure(error as NSError)
+                    return .failure(error)
                 }
                 
             case .failure(let error):
                 print("Failed to create quiz: \(error.localizedDescription)")
-                return .failure(error as NSError)
+                return .failure(error)
             }
             
         case .failure(let error):
             print("Failed to fetch lesson plan: \(error.localizedDescription)")
-            return .failure(error as NSError)
+            return .failure(error)
         }
     }
 
-    func processQuizResults(from quizResults: String) {
-        // Implementation here
-    }
-
-    // Method to update the status of a study plan
-    func updateStudyPlanStatus(plan: StudyPlan, newStatus: StudyPlanStatusType) -> StudyPlan {
-        var updatedPlan = plan
-        updatedPlan.status = newStatus.rawValue
-        print("Updated study plan ID: \(plan.id) to status: \(newStatus.rawValue)")
-        return updatedPlan
-    }
+//
+//
+//    // Method to update the status of a study plan
+//    func updateStudyPlanStatus(plan: StudyPlan, newStatus: StudyPlanStatusType) -> StudyPlan {
+//        var updatedPlan = plan
+//        updatedPlan.status = newStatus.rawValue
+//        print("Updated study plan ID: \(plan.id) to status: \(newStatus.rawValue)")
+//        return updatedPlan
+//    }
 }

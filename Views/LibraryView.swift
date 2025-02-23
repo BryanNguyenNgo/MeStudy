@@ -28,8 +28,8 @@ struct LibraryView: View {
 
     /// Starts a new study plan by creating a quiz.
     private func startStudyPlan(_ plan: StudyPlan) async {
-        do {
-            let result = try await libraryViewModel.createLessonQuiz(planID: plan.id)
+        
+            let result = await libraryViewModel.createLessonQuiz(planID: plan.id)
             switch result {
             case .success(let quiz):
                 print("Quiz created successfully: \(quiz)")
@@ -37,9 +37,7 @@ struct LibraryView: View {
             case .failure(let error):
                 print("Failed to create quiz: \(error.localizedDescription)")
             }
-        } catch {
-            print("Error calling createLessonQuiz: \(error.localizedDescription)")
-        }
+        
     }
 
     private func resumeStudyPlan(_ plan: StudyPlan) async {

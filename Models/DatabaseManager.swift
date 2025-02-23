@@ -166,8 +166,6 @@ actor DatabaseManager {
             print("Error creating tables: \(error)")
         }
     }
-    // Insert User and return Result with userId or NSError (Async)
-    // Insert User and return userId (Async, with error handling)
     func insertUser(id: String, name: String, email: String, grade: String) async throws -> String {
         do {
             let insert = userTable.insert(userId <- id, userName <- name, userEmail <- email, userGrade <- grade)
@@ -205,7 +203,7 @@ actor DatabaseManager {
                 studyPlanStatus <- status
             )
             
-            let rowId = try db.run(insert) // `db.run(insert)` returns an `Int64`
+            try db.run(insert) // `db.run(insert)` returns an `Int64`
             return id
             
         } catch {
@@ -216,7 +214,9 @@ actor DatabaseManager {
     func getStudyPlans(userId: String) async -> [StudyPlan] {
         var studyPlans: [StudyPlan] = []
         do {
-            let query = studyPlanTable.filter(studyPlanUserId == userId)
+            let query = studyPlanTable
+                .filter(studyPlanUserId == userId)
+                .order(studyPlanCreatedAt.desc) // Sort by studyPlanCreatedAt in descending order
             for row in try db!.prepare(query) {
                 let id = row[studyPlanId]
                 let grade = row[studyPlanGrade]
@@ -273,7 +273,7 @@ actor DatabaseManager {
                 lessonPlanCreatedAt <- currentDate
             )
             
-            let lessonPlanRowId = try db.run(insertLessonPlan)
+            try db.run(insertLessonPlan)
             
             for task in timetable.learning_tasks {
                 let insertLearningTask = lessonPlanTaskTable.insert(
@@ -282,7 +282,7 @@ actor DatabaseManager {
                     duration <- task.duration,
                     lessonPlanTaskLessonPlanId <- id
                 )
-                try await db.run(insertLearningTask)
+                try db.run(insertLearningTask)
             }
             
             for task in timetable.practice_tasks {
@@ -301,7 +301,7 @@ actor DatabaseManager {
                 timetableLessonPlanId <- id
             )
             
-            try await db.run(insertTimetable)
+            try db.run(insertTimetable)
             
             return id
             
@@ -321,7 +321,7 @@ actor DatabaseManager {
             
             // Update StudyPlan status
             let studyPlanQuery = self.studyPlanTable.filter(self.studyPlanId == studyPlanId)
-            if try await db.run(studyPlanQuery.update(self.studyPlanStatus <- status)) > 0 {
+            if try db.run(studyPlanQuery.update(self.studyPlanStatus <- status)) > 0 {
                 print("StudyPlan status updated successfully.")
             } else {
                 print("StudyPlan update failed or no changes were made.")
@@ -371,7 +371,7 @@ actor DatabaseManager {
                 }
                 
                 let practiceTaskQuery = lessonPlanTaskTable.filter(lessonPlanTaskLessonPlanId == lessonPlanRow[lessonPlanId])
-                let practiceTasks = try await db.prepare(practiceTaskQuery).map { row in
+                let practiceTasks = try db.prepare(practiceTaskQuery).map { row in
                     LessonPlanTask(id: row[taskId], task: row[task], duration: row[duration])
                 }
                 
@@ -418,7 +418,7 @@ actor DatabaseManager {
                 quizCreatedAt <- currentDate
             )
             
-            let quizRowId = try await db.run(insertQuiz)
+            try db.run(insertQuiz)
             
             // Insert the questions
             for question in questions {
@@ -439,7 +439,7 @@ actor DatabaseManager {
                     questionUserAnswer <- "" // default value is blank
                     
                 )
-                try await db.run(insertQuestion)
+                try db.run(insertQuestion)
             }
             
             // Return the quiz ID after insertion

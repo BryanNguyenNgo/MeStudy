@@ -38,11 +38,12 @@ class StudyPlanViewModel: ObservableObject {
     
     // Load data from JSON for grades, subjects and topics
     func loadDataSubjectTopics() async {
-        // Load JSON data from a file
-        if let data = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json") {
-            let decoder = JSONDecoder()
-            
-            do {
+        do {
+            // Load JSON data from a file
+            if let data = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json") {
+                let decoder = JSONDecoder()
+                
+                // Decode the data into the appropriate model
                 let decodedData = try decoder.decode([GradeData].self, from: data)
                 
                 // Ensure UI updates happen on the main thread
@@ -59,14 +60,13 @@ class StudyPlanViewModel: ObservableObject {
                         }
                     }
                 }
-            } catch {
-                print("Error decoding JSON: \(error.localizedDescription)")
+            } else {
+                print("Failed to load JSON file: Data_SubjectTopics.json")
             }
-        } else {
-            print("Failed to load JSON file: Data_SubjectTopics.json")
+        } catch {
+            print("Error decoding JSON: \(error.localizedDescription)")
         }
     }
-
         
     func selectGrade(_ grade: String) {
         self.selectedGrade = grade
@@ -114,7 +114,6 @@ class StudyPlanViewModel: ObservableObject {
             }
         }
         
-        do {
             print("UserId at generateStudyPlan: \(userId)")
             // Create StudyPlan object
             let id = UUID().uuidString
@@ -188,15 +187,7 @@ class StudyPlanViewModel: ObservableObject {
                 return .failure(error)
             }
             
-        } catch {
-            let nsError = NSError(domain: "StudyPlanError", code: 500, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
-            
-            DispatchQueue.main.async {
-                self.errorMessage = "Error: \(error.localizedDescription)"
-            }
-            
-            return .failure(nsError)
-        }
+        
     }
 
     @MainActor
@@ -217,7 +208,7 @@ class StudyPlanViewModel: ObservableObject {
         let studyPlan = StudyPlan(id: "", userId: userId, grade: "", subject: "", topic: "", studyDuration: 0, studyFrequency: 0, status: "", scorePercentage:0)
         
         // Assuming you are fetching real study plans here
-        let studyPlans = try await studyPlan.getStudyPlans(userId: userId)
+        let studyPlans = await studyPlan.getStudyPlans(userId: userId)
         print("Fetched studyPlans: \(studyPlans)")
         
         return studyPlans

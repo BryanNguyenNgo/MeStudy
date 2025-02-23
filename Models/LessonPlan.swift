@@ -148,13 +148,10 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     }
     // Decode from JSON string
     func decodeLessonPlan(from data: String) async -> Result<LessonPlan?, NSError> {
-        guard let jsonData = data.data(using: .utf8) else {
-            let error = NSError(domain: "DecodeLessonPlanError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
-            print(error.localizedDescription)
-            return .failure(error)
-        }
         
         do {
+            let jsonData = try await StringUtils.shared.cleanJSONString(from: data)
+            
             // Parse JSON response using JSONDecoder to decode into LessonPlan
             let decoder = JSONDecoder()
             let lessonPlan = try decoder.decode(LessonPlan.self, from: jsonData)
@@ -221,17 +218,14 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     
     // Function to get lesson plan from the database
     func getLessonPlan(studyPlanId: String) async -> Result<LessonPlan, NSError> {
-        do {
-            if let lessonPlan = await DatabaseManager.shared.getLessonPlan(studyPlanId: studyPlanId) {
-                return .success(lessonPlan)
-            } else {
-                let error = NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "Lesson plan not found."])
-                return .failure(error)
-            }
-        } catch {
-            return .failure(error as NSError)
+        if let lessonPlan = await DatabaseManager.shared.getLessonPlan(studyPlanId: studyPlanId) {
+            return .success(lessonPlan)
+        } else {
+            let error = NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "Lesson plan not found."])
+            return .failure(error)
         }
     }
+
     
     // Function to create a lesson quiz
     func createLessonQuiz() async -> Result<String, NSError> {
@@ -262,7 +256,7 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
         - **Goal**: \(self.goals)  
         - **Milestones**: \(self.milestones)  
         - **Timetable**:
-          - **Session**: \(self.timetable.session ?? "")  
+          - **Session**: \(self.timetable.session)  
           - **Learning Tasks**:
             - Task 1: \(self.timetable.learning_tasks[safe: 0]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 0]?.duration ?? "N/A"))  
             - Task 2: \(self.timetable.learning_tasks[safe: 1]?.task ?? "N/A") (\(self.timetable.learning_tasks[safe: 1]?.duration ?? "N/A"))  

@@ -28,7 +28,7 @@ class QuizViewModel: ObservableObject {
     @MainActor
     private func fetchQuizzes(studyPlanId: String) async throws -> [Quiz] {
         
-        let quizzes = try await Quiz.shared.getQuizzes(studyPlanId: studyPlanId)
+        let quizzes = await Quiz.shared.getQuizzes(studyPlanId: studyPlanId)
         print("Fetched quizzes: \(quizzes)")
         
         return quizzes

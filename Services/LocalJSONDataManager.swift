@@ -2,6 +2,7 @@ import Foundation
 
 class LocalJSONDataManager {
     static let shared = LocalJSONDataManager()
+    private init() {} // Prevents initialization outside of the class
     // Load data from JSON for grades, subjects and topics
     func loadDataFromJSONFile(fileName: String, fileExtension: String) async -> Data? {
         // Load JSON data from a file

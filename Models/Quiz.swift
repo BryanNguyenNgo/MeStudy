@@ -101,13 +101,9 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
 
     // Decode from JSON string
     func decodeQuiz(from data: String) async -> Result<Quiz, NSError> {
-        guard let jsonData = data.data(using: .utf8) else {
-            let error = NSError(domain: "DecodeQuizError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
-            print(error.localizedDescription)
-            return .failure(error)
-        }
         
         do {
+            let jsonData = try await StringUtils.shared.cleanJSONString(from: data)
             print("data: \(data)")
             let decoder = JSONDecoder()
             // error below //
@@ -141,20 +137,16 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
     }
     // Method to retrieve study plans from the database for a specific userId
     func getQuizzes(studyPlanId: String) async -> [Quiz] {
-        do {
+      
             let quizzes = await DatabaseManager.shared.getQuizzes(studyPlanId: studyPlanId)
-            
             // Return the retrieved quizzes
             return quizzes
-        } catch {
-            print("Error retrieving quizzes: \(error)")
-            return []
-        }
+       
     }
     
     // Method to update question's user answer
     func updateAnswer(for questionId: String, answer: String) async -> Result<String, NSError> {
-        do {
+        
             let isSuccess = await DatabaseManager.shared.updateAnswer(for: questionId, answer: answer)
             
             if isSuccess {
@@ -162,14 +154,11 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
             } else {
                 return .failure(NSError(domain: "Quiz", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to update answer"]))
             }
-        } catch {
-            print("Error updating answer: \(error)")
-            return .failure(error as NSError) // Convert Swift error to NSError
-        }
+        
     }
     // Method to update all question's user answers
     func submitQuiz(studyPlanId: String, quizId: String, answers: [String: String]) async -> Result<String, NSError> {
-        do {
+        
             // Call DatabaseManager to update answers and get the correct answer count
             guard let correctAnswerCount = await DatabaseManager.shared.submitQuiz(studyPlanId: studyPlanId, quizId: quizId, answers: answers) else {
                 return .failure(NSError(domain: "Quiz", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to update answer for quiz \(quizId)"]))
@@ -177,10 +166,7 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
             
             // Return success message with the number of correct answers
             return .success("All answers updated successfully. Correct answers: \(correctAnswerCount)")
-        } catch {
-            print("Error updating answers: \(error)")
-            return .failure(error as NSError) // Convert Swift error to NSError
-        }
+        
     }
 
 

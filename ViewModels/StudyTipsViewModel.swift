@@ -13,23 +13,33 @@ class StudyTipsViewModel: ObservableObject {
     // Load data from JSON for subjects and topics
     func loadDataSubjectTopics() async {
         // Load JSON data from a file
-        if let url = Bundle.main.url(forResource: "Data_SubjectTopics", withExtension: "json"),
-           let data = try? Data(contentsOf: url) {
-            let decoder = JSONDecoder()
-            if let decodedData = try? decoder.decode([GradeData].self, from: data) {
-                grades = decodedData.map { "Grade \($0.grade)" }
+        guard let data = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json") else {
+            print("Failed to load data from file.")
+            return
+        }
+        
+        let decoder = JSONDecoder()
+        
+        do {
+            // Attempt to decode the data
+            let decodedData = try decoder.decode([GradeData].self, from: data)
+            
+            grades = decodedData.map { "Grade \($0.grade)" }
+            
+            // Populate subjects and topics
+            for gradeData in decodedData {
+                let gradeKey = "Grade \(gradeData.grade)"
+                subjects[gradeKey] = gradeData.subjects.map { $0.subject }
                 
-                // Populate subjects and topics
-                for gradeData in decodedData {
-                    let gradeKey = "Grade \(gradeData.grade)"
-                    subjects[gradeKey] = gradeData.subjects.map { $0.subject }
-                    for subject in gradeData.subjects {
-                        topics["\(gradeKey)-\(subject.subject)"] = subject.topics
-                    }
+                for subject in gradeData.subjects {
+                    topics["\(gradeKey)-\(subject.subject)"] = subject.topics
                 }
             }
+        } catch {
+            print("Failed to decode data: \(error)")
         }
     }
+
         
     func selectGrade(_ grade: String) {
         self.selectedGrade = grade
