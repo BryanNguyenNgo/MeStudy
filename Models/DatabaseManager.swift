@@ -171,7 +171,7 @@ actor DatabaseManager {
     func insertUser(id: String, name: String, email: String, grade: String) async throws -> String {
         do {
             let insert = userTable.insert(userId <- id, userName <- name, userEmail <- email, userGrade <- grade)
-            try await db?.run(insert)
+            try db?.run(insert)
             
             print("User inserted successfully with id: \(id)")
             return id  // Corrected return statement without extra parentheses
@@ -205,7 +205,7 @@ actor DatabaseManager {
                 studyPlanStatus <- status
             )
             
-            let rowId = try await db.run(insert) // `db.run(insert)` returns an `Int64`
+            let rowId = try db.run(insert) // `db.run(insert)` returns an `Int64`
             return id
             
         } catch {
@@ -273,7 +273,7 @@ actor DatabaseManager {
                 lessonPlanCreatedAt <- currentDate
             )
             
-            let lessonPlanRowId = try await db.run(insertLessonPlan)
+            let lessonPlanRowId = try db.run(insertLessonPlan)
             
             for task in timetable.learning_tasks {
                 let insertLearningTask = lessonPlanTaskTable.insert(
@@ -292,7 +292,7 @@ actor DatabaseManager {
                     duration <- task.duration,
                     lessonPlanTaskLessonPlanId <- id
                 )
-                try await db.run(insertPracticeTask)
+                try db.run(insertPracticeTask)
             }
             
             let insertTimetable = timetableTable.insert(
@@ -328,7 +328,7 @@ actor DatabaseManager {
             }
             
             // Fetch and return the updated StudyPlan
-            if let row = try await db.pluck(studyPlanQuery) {
+            if let row = try db.pluck(studyPlanQuery) {
                 return StudyPlan(
                     id: row[self.studyPlanId],
                     userId: row[self.userId],  // Fixed missing bracket
@@ -361,12 +361,12 @@ actor DatabaseManager {
             
             let query = lessonPlanTable.filter(self.lessonPlanStudyPlanId == studyPlanId)
             
-            if let lessonPlanRow = try await db.pluck(query) {
+            if let lessonPlanRow = try db.pluck(query) {
                 let timetableQuery = timetableTable.filter(timetableLessonPlanId == lessonPlanRow[lessonPlanId])
-                let timetableRow = try await db.pluck(timetableQuery)
+                let timetableRow = try db.pluck(timetableQuery)
                 
                 let learningTaskQuery = lessonPlanTaskTable.filter(lessonPlanTaskLessonPlanId == lessonPlanRow[lessonPlanId])
-                let learningTasks = try await db.prepare(learningTaskQuery).map { row in
+                let learningTasks = try db.prepare(learningTaskQuery).map { row in
                     LessonPlanTask(id: row[taskId], task: row[task], duration: row[duration])
                 }
                 
@@ -462,7 +462,7 @@ actor DatabaseManager {
             print("Fetching quizzes for study plan \(studyPlanId)")
             let query = quizTable.filter(self.quizStudyPlanId == studyPlanId)
             
-            for row in try await db.prepare(query) {
+            for row in try db.prepare(query) {
                 print("quiz row: \(row)")
                 let quiz = Quiz(
                     id: row[quizId],
@@ -492,7 +492,7 @@ actor DatabaseManager {
             print("Getting questions for quiz \(quizId)")
             let query = questionTable.filter(self.questionQuizId == quizId)
             
-            for row in try await db.prepare(query) {
+            for row in try db.prepare(query) {
                 // Directly accessing values (assuming they are non-optional)
                 let questionId = row[questionId]
                 let questionQuizId = row[questionQuizId]
@@ -542,7 +542,7 @@ actor DatabaseManager {
             // Update StudyPlan status
             let questionQuery = self.questionTable.filter(self.questionId == questionId)
             print(questionQuery)
-            let updateCount = try await db.run(questionQuery.update(self.questionUserAnswer <- answer))
+            let updateCount = try db.run(questionQuery.update(self.questionUserAnswer <- answer))
             
             if updateCount > 0 {
                 print("Question user answer is updated successfully.")

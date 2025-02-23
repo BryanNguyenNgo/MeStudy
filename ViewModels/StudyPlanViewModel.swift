@@ -39,23 +39,34 @@ class StudyPlanViewModel: ObservableObject {
     // Load data from JSON for grades, subjects and topics
     func loadDataSubjectTopics() async {
         // Load JSON data from a file
-        if let url = Bundle.main.url(forResource: "Data_SubjectTopics", withExtension: "json"),
-           let data = try? Data(contentsOf: url) {
+        if let data = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: "Data_SubjectTopics", fileExtension: "json") {
             let decoder = JSONDecoder()
-            if let decodedData = try? decoder.decode([GradeData].self, from: data) {
-                grades = decodedData.map { "Grade \($0.grade)" }
+            
+            do {
+                let decodedData = try decoder.decode([GradeData].self, from: data)
                 
-                // Populate subjects and topics
-                for gradeData in decodedData {
-                    let gradeKey = "Grade \(gradeData.grade)"
-                    subjects[gradeKey] = gradeData.subjects.map { $0.subject }
-                    for subject in gradeData.subjects {
-                        topics["\(gradeKey)-\(subject.subject)"] = subject.topics
+                // Ensure UI updates happen on the main thread
+                DispatchQueue.main.async {
+                    self.grades = decodedData.map { "Grade \($0.grade)" }
+                    
+                    // Populate subjects and topics
+                    for gradeData in decodedData {
+                        let gradeKey = "Grade \(gradeData.grade)"
+                        self.subjects[gradeKey] = gradeData.subjects.map { $0.subject }
+                        
+                        for subject in gradeData.subjects {
+                            self.topics["\(gradeKey)-\(subject.subject)"] = subject.topics
+                        }
                     }
                 }
+            } catch {
+                print("Error decoding JSON: \(error.localizedDescription)")
             }
+        } else {
+            print("Failed to load JSON file: Data_SubjectTopics.json")
         }
     }
+
         
     func selectGrade(_ grade: String) {
         self.selectedGrade = grade
