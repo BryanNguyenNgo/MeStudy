@@ -24,7 +24,7 @@ struct HomeView: View {
                 
                 // Welcome Message (moved inside the condition)
                 if let user = userSession.currentUser {
-                    Text("Welcome back, \(user.name)!")
+                    Text("Greetings, \(user.name)!")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.top, 20)
@@ -87,17 +87,16 @@ struct HomeView: View {
                     showingCreateUserView = true
                 }
             }
-            .navigationBarTitle("Home", displayMode: .inline)
-            .navigationBarItems(trailing: Button(action: {
-                // Clear the session and log the user out
-                userSession.clearSession()
-                isLoggedOut = true
-                // Optionally, navigate to a login screen here
-            }) {
-                Text("Logout")
-                    .font(.headline)
-                    .foregroundColor(.blue)
-            })
+//            .navigationBarItems(trailing: Button(action: {
+//                // Clear the session and log the user out
+//                userSession.clearSession()
+//                isLoggedOut = true
+//                // Optionally, navigate to a login screen here
+//            }) {
+//                Text("Logout")
+//                    .font(.headline)
+//                    .foregroundColor(.blue)
+//            })
         }
         
     }

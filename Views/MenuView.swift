@@ -22,7 +22,7 @@ struct MenuView: View {
                 .tag(2)
             StudyTipsView()
                 .tabItem {
-                    Label("Tips", systemImage: "plus.circle")
+                    Label("Tips", systemImage: "lightbulb.fill")
                 }
                 .tag(3)
             UserView(userSession: userSession)

@@ -9,10 +9,13 @@ struct StudyTipsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Study Tips")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .padding(.top)
+            HStack{
+                Text("Tips")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding(.top)
+                Spacer()
+            }
             
             // Grade Selection
             HStack {

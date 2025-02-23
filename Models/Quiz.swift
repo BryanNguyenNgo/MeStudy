@@ -165,7 +165,7 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
             }
             
             // Return success message with the number of correct answers
-            return .success("All answers updated successfully. Correct answers: \(correctAnswerCount)")
+            return .success("All answers updated successfully. Correct answers: \(correctAnswerCount)/4")
         
     }
 

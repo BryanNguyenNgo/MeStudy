@@ -69,6 +69,8 @@ struct QuizDetailView: View {
                         
                         Text(answer)
                             .font(.body)
+                            .lineLimit(nil)  // Allow multiple lines if necessary
+
                         
                         Spacer()
                     }
@@ -152,7 +154,7 @@ struct QuizDetailView: View {
 
     /// Navigation buttons extracted to a separate function
     private func navigationButtons() -> some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 10) {
             // Previous Question Button
             if currentQuestionIndex > 0 {
                 Button("Previous Question") {

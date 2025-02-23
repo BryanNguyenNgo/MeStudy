@@ -165,51 +165,54 @@ struct CreateStudyPlanView: View {
                 
                 // Ensure user has an ID, fallback to empty string if nil
                 let userId = userSession.currentUser?.id ?? ""
+                let duration = Int(viewModel.selectedDuration.prefix(1)) ?? 0
+                let commitment = Int(viewModel.selectedCommitment.prefix(1)) ?? 0
                 
                 // Loading Indicator
                 if viewModel.isLoading {
                     ProgressView("Generating Study Plan...")
                         .progressViewStyle(CircularProgressViewStyle())
                         .padding()
+                } else{
+                    Button(action: {
+                        Task {
+                            let result = await viewModel.generateStudyPlan(
+                                userId: userId,
+                                grade: viewModel.selectedGrade ?? "",
+                                subject: viewModel.selectedSubject ?? "",
+                                topic: viewModel.selectedTopic ?? "",
+                                duration: duration,
+                                commitment: commitment
+                            )
+                            
+                            switch result {
+                            case .success(let message):
+                                alertMessage = message // Display success message
+                                showAlert = true
+                            case .failure(let error):
+                                alertMessage = "Failed to create study plan: \(error.localizedDescription)"
+                                showAlert = true
+                            }
+                        }
+                    }) {
+                        Text("Generate Study Plan")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(15)
+                    }
+                    .alert(isPresented: $showAlert) {
+                        Alert(title: Text("Success!"), message: Text("Created plan successfully!"), dismissButton: .default(Text("OK")))
+                    }
+                    .disabled(viewModel.isLoading)
                 }
                 
                 // Extract numeric value safely from string
-                let duration = Int(viewModel.selectedDuration.prefix(1)) ?? 0
-                let commitment = Int(viewModel.selectedCommitment.prefix(1)) ?? 0
                 
-                Button(action: {
-                    Task {
-                        let result = await viewModel.generateStudyPlan(
-                            userId: userId,
-                            grade: viewModel.selectedGrade ?? "",
-                            subject: viewModel.selectedSubject ?? "",
-                            topic: viewModel.selectedTopic ?? "",
-                            duration: duration,
-                            commitment: commitment
-                        )
-                        
-                        switch result {
-                        case .success(let message):
-                            alertMessage = message // Display success message
-                            showAlert = true
-                        case .failure(let error):
-                            alertMessage = "Failed to create study plan: \(error.localizedDescription)"
-                            showAlert = true
-                        }
-                    }
-                }) {
-                    Text("Generate Study Plan")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(15)
-                }
                 
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Study Plan Status"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                }
-                .disabled(viewModel.isLoading)
+                
+               
                 
                 // Display ScannerView
                 // Pass bindings to ScannerView to allow automatic updates

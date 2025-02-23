@@ -18,7 +18,7 @@ struct QuizView: View {
     var body: some View {
         VStack {
             if quizViewModel.isLoading {
-                ProgressView("Loading2...")
+                ProgressView("Loading...")
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
                 ScrollView {
