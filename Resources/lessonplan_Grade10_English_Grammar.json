@@ -1,22 +1,21 @@
 {
-    "id": "7A69291A-6D75-48F3-947D-DB7A565A8DC3",
-    "studyPlanId": "0572E1DA-A05C-4CF5-AE7E-46B044C1F4F3",
+    "id": "A76E48AD-AED7-4540-A0EF-1CC381CDFDA2",
+    "studyPlanId": "C9BFB6E9-32BD-4686-8564-74BFB138E4D9",
     "grade": "Grade 10",
     "subject": "English",
     "topic": "Grammar",
     "week": "1",
-    "goals": "Understand and use various sentence structures including simple, compound, and complex sentences.",
-    "milestones": "Be able to identify and construct simple, compound, and complex sentences by the end of the week.",
+    "goals": "Understand the basic parts of speech in English grammar and their usages, including nouns, pronouns, verbs, adjectives, and adverbs.",
+    "milestones": "Be able to identify and utilize each part of speech in simple sentences. Complete a quiz on parts of speech with a passing score by the end of the week.",
     "timetable": {
-        "session": "1 hour on Monday",
+        "session": "Wednesday, 4:00 PM - 5:00 PM",
         "learning_tasks": [
-            {"task": "Read about the different types of sentence structures: simple, compound, and complex sentences.", "duration": "20 minutes"},
-            {"task": "Watch a video on sentence structures for visual understanding.", "duration": "10 minutes"}
+            {"task": "Review the definitions and examples of nouns, pronouns, verbs, adjectives, and adverbs.", "duration": "30 minutes"}
         ],
         "practice_tasks": [
-            {"task": "Identify sentence structures in a provided paragraph.", "duration": "10 minutes"},
-            {"task": "Write three examples of each sentence structure type.", "duration": "20 minutes"}
+            {"task": "Complete a worksheet identifying parts of speech in given sentences.", "duration": "20 minutes"},
+            {"task": "Take a short online quiz on parts of speech.", "duration": "10 minutes"}
         ]
     },
-    "resources": "Use an English grammar textbook, a recommended online grammar resource like Grammarly Blog, and search for educational videos on YouTube like 'Sentence Structure by Khan Academy'."
+    "resources": "Recommended grammar textbook chapter on parts of speech, online resources such as Grammarly for practice quizzes, and Khan Academy's videos on parts of speech."
 }
