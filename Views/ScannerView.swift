@@ -47,29 +47,21 @@ struct ScannerView: View {
                     }
                 }
                 
-                if !viewModel.recognizedText.isEmpty {
-                    Text("Extracted Text:")
-                        .font(.headline)
-                        .padding(.top)
+//                if !viewModel.recognizedText.isEmpty {
+//                    Text("Extracted Text:")
+//                        .font(.headline)
+//                        .padding(.top)
+//                    
+//                    ScrollView {
+//                        Text(viewModel.recognizedText)
+//                            .padding()
+//                            .background(Color.gray.opacity(0.2))
+//                            .cornerRadius(10)
+//                    }
+//                    .frame(height: 100)
+//                    
+//                    }
                     
-                    ScrollView {
-                        Text(viewModel.recognizedText)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                    }
-                    .frame(height: 100)
-                    
-                        Button("Create Study Plan for This Topic") {
-                            Task {
-                                await createStudyPlan()
-                            }
-                        }
-                        .padding()
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                    }
                 
             }
             .padding()
@@ -91,6 +83,11 @@ struct ScannerView: View {
                 let extractedText = results.compactMap { $0.topCandidates(1).first?.string }.joined(separator: " ")
                 DispatchQueue.main.async {
                     viewModel.recognizedText = extractedText
+                    if !extractedText.isEmpty {
+                                    Task {
+                                        await createStudyPlan()
+                                    }
+                                }
                 }
             }
             

@@ -56,24 +56,33 @@ struct RecentStudyPlanView: View {
                     ProgressView("Loading...")
                         .progressViewStyle(CircularProgressViewStyle())
                 } else {
-                    ScrollView {
                         NavigationStack{
-                            LazyVStack(spacing: 15) {
-                                // Modify the ForEach loop to display only the top 5 records by using .prefix(5). Here's the updated code:
-                                ForEach(viewModel.studyPlans.prefix(5), id: \.id) { plan in
-                                    RecentStudyPlanRow(plan: plan) { selectedPlan in
-                                        // Call the asynchronous action from the parent.
-                                        Task {
-                                            await handleStudyPlanAction(selectedPlan)
+                            VStack{
+                                HStack{
+                                    Text("Recent Study Plan")
+                                        .font(.title)
+                                        .bold()
+                                    Spacer()
+                                }
+                                    
+                                ScrollView{
+                                    LazyVStack() {
+                                        // Modify the ForEach loop to display only the top 5 records by using .prefix(5). Here's the updated code:
+                                        ForEach(viewModel.studyPlans.prefix(5), id: \.id) { plan in
+                                            RecentStudyPlanRow(plan: plan) { selectedPlan in
+                                                // Call the asynchronous action from the parent.
+                                                Task {
+                                                    await handleStudyPlanAction(selectedPlan)
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
-                            .padding(.bottom, 15)
+                            
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .navigationTitle("Recent Study Plan")
-                    }
+//
                 }
             }
             
@@ -106,38 +115,61 @@ struct RecentStudyPlanView: View {
 struct RecentStudyPlanRow: View {
     let plan: StudyPlan
     let action: (StudyPlan) async -> Void
+    
+    private var image: String {
+        switch plan.subject {
+        case "Mathematics":
+            return "📘"
+        case "History":
+            return "📙"
+        case "English":
+            return "📕"
+        default:
+            return "📖"
+        }
+    }
+
+
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 5) {
-               
-                NavigationLink {
-                    StudyPlanDetailView(plan: plan, studyPlanId: plan.id)
-                } label: {
-                    Text("\(plan.topic)")
-                        .font(.headline)
-                        .foregroundColor(Color.blue)
+            HStack {
+                Text(image)
+                    .font(.title)
+                
+                VStack(alignment: .leading, spacing: 5) {
+//                    NavigationLink {
+//                        StudyPlanDetailView(plan: plan, studyPlanId: plan.id)
+//                    } label: {
+//                        EmptyView()
+                        Text(plan.topic)
+                            .font(.headline)
+//                    }
+                    
+                    Text("\(plan.studyFrequency) hour(s) per week")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    //                Text(plan.grade)
+                    //                    .font(.subheadline)
+                    //                    .foregroundColor(.secondary)
+                    //
+                    //                Text("Score: \(plan.scorePercentage ?? 0)%")
+                    //                    .font(.subheadline)
+                    //                    .foregroundColor(.secondary)
                 }
-
-                Text("\(plan.subject)")
-                    .font(.subheadline)
-                Text("\(plan.grade)")
-                    .font(.subheadline)
-                Text("Score: \(plan.scorePercentage)")
-                    .font(.subheadline)
-               
+                .frame(maxWidth: .infinity, alignment: .leading)
+//                
+//                RecentStudyPlanButton(plan: plan, action: action)
             }
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity)
-
-            RecentStudyPlanButton(plan: plan, action: action)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray, lineWidth: 1)
+            )
+            .padding(.horizontal)
         }
-        .navigationBarBackButtonHidden()
-        .background(RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 1))
-        .padding(.horizontal)
     }
-}
+
 
 // StudyPlanButton shows a button for the study plan, calling the action when tapped.
 struct RecentStudyPlanButton: View {

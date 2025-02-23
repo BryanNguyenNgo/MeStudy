@@ -64,23 +64,24 @@ struct HomeView: View {
 //                    }
 //                    .padding()
                 RecentStudyPlanView()
-                
-                // Study Tips Section
-                Text("Study Tips")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(.top)
-                
-
-                    VStack(alignment: .leading) {
-                        Text("📚 Break study into smaller, manageable sessions.")
-                        Text("💡 Take regular breaks to keep your mind fresh.")
-                        Text("📝 Use active recall and spaced repetition.")
-                        Text("🌟 Stay organized and plan ahead.")
-                    .padding()
-                }
-                
-                Spacer()
+//                HStack{
+//                    // Study Tips Section
+//                    Text("Study Tips")
+//                        .font(.title2)
+//                        .fontWeight(.semibold)
+//                        .padding(.top)
+//                    Spacer()
+//                }
+//                
+//
+//                    VStack(alignment: .leading) {
+//                        Text("📚 Break study into smaller, manageable sessions.")
+//                        Text("💡 Take regular breaks to keep your mind fresh.")
+//                        Text("📝 Use active recall and spaced repetition.")
+//                        Text("🌟 Stay organized and plan ahead.")
+//                }
+//                
+//                Spacer()
             }
             .padding()
             .onAppear {
