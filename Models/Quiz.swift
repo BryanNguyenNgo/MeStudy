@@ -104,14 +104,14 @@ class Quiz: Identifiable, ObservableObject, Codable, Equatable {
         
         do {
             let jsonData = try await StringUtils.shared.cleanJSONString(from: data)
-            print("data: \(data)")
+            //print("data: \(data)")
             let decoder = JSONDecoder()
             // error below //
             let quiz = try decoder.decode(Quiz.self, from: jsonData)
             
-            print("Quiz Title: \(quiz.quizTitle)")
-            print("Study Plan ID: \(quiz.studyPlanId)")
-            print("Number of Questions: \(quiz.questions.count)")
+//            print("Quiz Title: \(quiz.quizTitle)")
+//            print("Study Plan ID: \(quiz.studyPlanId)")
+//            print("Number of Questions: \(quiz.questions.count)")
             
             return .success(quiz)
         } catch let error as NSError {

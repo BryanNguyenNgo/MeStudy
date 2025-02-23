@@ -30,7 +30,7 @@ class StudyTips: Identifiable, ObservableObject, Equatable {
     }
     
     func generateStudyTips() async -> Result<String, NSError> {
-        print("Starting generateStudyTips()...")  // Debug start
+        //print("Starting generateStudyTips()...")  // Debug start
         
         // Prepare the prompt for the API call
         let prompt = """

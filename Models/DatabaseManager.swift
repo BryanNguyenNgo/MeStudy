@@ -529,7 +529,7 @@ actor DatabaseManager {
                     studyPlanId: row[quizStudyPlanId],
                     questions: try await getQuizQuestions(quizId: row[quizId]) // Fetch associated questions
                 )
-                print("quiz: \(quiz)")
+                //print("quiz: \(quiz)")
                 quizzes.append(quiz)
             }
             
@@ -548,7 +548,7 @@ actor DatabaseManager {
                 print("Database connection is nil")
                 throw NSError(domain: "DatabaseError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Database connection is nil"])
             }
-            print("Getting questions for quiz \(quizId)")
+            //print("Getting questions for quiz \(quizId)")
             let query = questionTable.filter(self.questionQuizId == quizId)
             
             for row in try db.prepare(query) {
@@ -600,14 +600,14 @@ actor DatabaseManager {
             
             // Update StudyPlan status
             let questionQuery = self.questionTable.filter(self.questionId == questionId)
-            print(questionQuery)
+            //print(questionQuery)
             let updateCount = try db.run(questionQuery.update(self.questionUserAnswer <- answer))
             
             if updateCount > 0 {
-                print("Question user answer is updated successfully.")
+                //print("Question user answer is updated successfully.")
                 return true  // Indicate success
             } else {
-                print("Question user answer failed or no changes were made.")
+                //print("Question user answer failed or no changes were made.")
                 return false  // Indicate failure
             }
         } catch {
@@ -682,7 +682,7 @@ actor DatabaseManager {
                 print("Failed to update LessonPlan status for \(studyPlanId) or no changes were made.")
                 return -1
             }
-            print("LessonPlan status for \(studyPlanId) updated successfully.")
+            //print("LessonPlan status for \(studyPlanId) updated successfully.")
 
             // Calculate score percentage
             let scorePercentage: Int
@@ -710,7 +710,7 @@ actor DatabaseManager {
                 print("Failed to update StudyPlan status for \(studyPlanId) or no changes were made.")
                 return -1
             }
-            print("StudyPlan status for \(studyPlanId) updated successfully.")
+            //print("StudyPlan status for \(studyPlanId) updated successfully.")
 
             return correctAnswerCount
 

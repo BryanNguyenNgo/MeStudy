@@ -68,7 +68,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
 
     // Function to generate the study plan
     func generatePlan() async -> Result<String, NSError> {
-        print("Starting generatePlan()...")  // Debug start
+        //print("Starting generatePlan()...")  // Debug start
         
         // Prepare the prompt for the API call
         let lessonPlanId = UUID().uuidString
@@ -161,7 +161,7 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
         
     }
     func extractStudyPlan(recognizedText: String) async -> Result<String, NSError> {
-        print("Starting generatePlan()...")  // Debug start
+        //print("Starting generatePlan()...")  // Debug start
         
         // Prepare the prompt for the API call
 
@@ -207,16 +207,16 @@ class StudyPlan: Identifiable, ObservableObject, Equatable {
     }
     // Simulate saving to a database asynchronously
     func saveToDatabase(from lessonPlan: LessonPlan) async -> Result<String, NSError> {
-        print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
-        print("Grade: \(lessonPlan.studyPlanId)")
-        print("Grade: \(lessonPlan.grade)")
-        print("Subject: \(lessonPlan.subject)")
-        print("Topic: \(lessonPlan.topic)")
-        print("Week: \(lessonPlan.week)")
-        print("Goals: \(lessonPlan.goals)")
-        print("Milestones: \(lessonPlan.milestones)")
-        print("Resources: \(lessonPlan.resources)")
-        print("Timetable: \(lessonPlan.timetable)")
+//        print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
+//        print("Grade: \(lessonPlan.studyPlanId)")
+//        print("Grade: \(lessonPlan.grade)")
+//        print("Subject: \(lessonPlan.subject)")
+//        print("Topic: \(lessonPlan.topic)")
+//        print("Week: \(lessonPlan.week)")
+//        print("Goals: \(lessonPlan.goals)")
+//        print("Milestones: \(lessonPlan.milestones)")
+//        print("Resources: \(lessonPlan.resources)")
+//        print("Timetable: \(lessonPlan.timetable)")
 
         // Call the database save logic
         guard let insertedId: String = await DatabaseManager.shared.insertLessonPlan(

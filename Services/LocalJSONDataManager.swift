@@ -42,7 +42,7 @@ class LocalJSONDataManager {
         // Convert String to Data and save
         if let jsonData = data.data(using: .utf8) {
             try jsonData.write(to: fileURL, options: .atomic)
-            print("✅ JSON saved: \(fileURL.path)")
+            //print("✅ JSON saved: \(fileURL.path)")
         } else {
             throw NSError(domain: "SaveJSONError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
         }
@@ -64,7 +64,7 @@ class LocalJSONDataManager {
                 let data = try Data(contentsOf: fileURL)
                 return String(data: data, encoding: .utf8)
             } catch {
-                print("❌ Error loading JSON: \(error.localizedDescription)")
+                //print("❌ Error loading JSON: \(error.localizedDescription)")
                 return nil
             }
         }
@@ -83,7 +83,7 @@ class LocalJSONDataManager {
 
                 if fileManager.fileExists(atPath: fileURL.path) {
                     try fileManager.removeItem(at: fileURL)
-                    print("✅ JSON deleted: \(fileURL.path)")
+                    //print("✅ JSON deleted: \(fileURL.path)")
                 }
             } catch {
                 print("❌ Error deleting JSON: \(error.localizedDescription)")

@@ -154,22 +154,22 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
             
             // Parse JSON response using JSONDecoder to decode into LessonPlan
             let decoder = JSONDecoder()
-            print("before decoder jsonData: \(jsonData)")
+            //("before decoder jsonData: \(jsonData)")
             let lessonPlan = try decoder.decode(LessonPlan.self, from: jsonData)
-            print("after decoder lessonPlan\(lessonPlan)")
+            //print("after decoder lessonPlan\(lessonPlan)")
             
             // Print out the decoded values
-            print("Study Plan for: \(lessonPlan.studyPlanId)")
-            print("Grade: \(lessonPlan.grade)")
-            print("subject: \(lessonPlan.subject)")
-            print("topic : \(lessonPlan.topic)")
-            print("week \(lessonPlan.week)")
-            print("Goals: \(lessonPlan.goals)")
-            print("Milestones: \(lessonPlan.milestones)")
-            print("Resources: \(lessonPlan.resources)")
-            print("Session: \(lessonPlan.timetable.session)")
-            print("Learning Tasks: \(lessonPlan.timetable.learning_tasks.map { $0.task }.joined(separator: ", "))")
-            print("Practice Tasks: \(lessonPlan.timetable.practice_tasks.map { $0.task }.joined(separator: ", "))")
+//            print("Study Plan for: \(lessonPlan.studyPlanId)")
+//            print("Grade: \(lessonPlan.grade)")
+//            print("subject: \(lessonPlan.subject)")
+//            print("topic : \(lessonPlan.topic)")
+//            print("week \(lessonPlan.week)")
+//            print("Goals: \(lessonPlan.goals)")
+//            print("Milestones: \(lessonPlan.milestones)")
+//            print("Resources: \(lessonPlan.resources)")
+//            print("Session: \(lessonPlan.timetable.session)")
+//            print("Learning Tasks: \(lessonPlan.timetable.learning_tasks.map { $0.task }.joined(separator: ", "))")
+//            print("Practice Tasks: \(lessonPlan.timetable.practice_tasks.map { $0.task }.joined(separator: ", "))")
             
             return .success(lessonPlan)
         } catch let error as NSError {
@@ -179,16 +179,16 @@ class LessonPlan: Identifiable, ObservableObject, Codable, Equatable {
     }
     // Simulate saving to a database asynchronously
     func saveToDatabase(from lessonPlan: LessonPlan) async -> Result<String, NSError> {
-        print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
-        print("studyPlanId: \(lessonPlan.studyPlanId)")
-        print("Grade: \(lessonPlan.grade)")
-        print("Subject: \(lessonPlan.subject)")
-        print("Topic: \(lessonPlan.topic)")
-        print("Week: \(lessonPlan.week)")
-        print("Goals: \(lessonPlan.goals)")
-        print("Milestones: \(lessonPlan.milestones)")
-        print("Resources: \(lessonPlan.resources)")
-        print("Timetable: \(lessonPlan.timetable)")
+//        print("Attempting to save lesson plan with ID: \(lessonPlan.id)")
+//        print("studyPlanId: \(lessonPlan.studyPlanId)")
+//        print("Grade: \(lessonPlan.grade)")
+//        print("Subject: \(lessonPlan.subject)")
+//        print("Topic: \(lessonPlan.topic)")
+//        print("Week: \(lessonPlan.week)")
+//        print("Goals: \(lessonPlan.goals)")
+//        print("Milestones: \(lessonPlan.milestones)")
+//        print("Resources: \(lessonPlan.resources)")
+//        print("Timetable: \(lessonPlan.timetable)")
 
         // Call the database save logic
         guard let insertedId: String = await DatabaseManager.shared.insertLessonPlan(
