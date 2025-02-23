@@ -8,7 +8,7 @@ struct StudyTipsView: View {
     @State private var isLoading = false // To track loading state
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(spacing: 10) {
             HStack{
                 Text("Tips")
                     .font(.largeTitle)
