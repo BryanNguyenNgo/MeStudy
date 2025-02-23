@@ -10,16 +10,19 @@ struct CreateStudyPlanView: View {
     
     var body: some View {
         ScrollView {  // Make the entire content scrollable
-            VStack {
+            VStack(spacing: 20) {
                 // Access user information from the userSession
-                if let user = userSession.currentUser, !user.name.isEmpty {
-                    Text("Welcome, \(user.name)")
-                } else {
-                    Text("No user logged in")
+//                if let user = userSession.currentUser, !user.name.isEmpty {
+//                    Text("Welcome, \(user.name)")
+//                } else {
+//                    Text("No user logged in")
+//                }
+                HStack{
+                    Text("Create")
+                        .font(.largeTitle)
+                        .bold()
+                    Spacer()
                 }
-                
-                Text("Study Plan")
-                    .font(.largeTitle)
                 VStack{
                     Picker("Create Study Plan", selection: $selectedView){
                         ForEach(Option.allCases, id: \.self){
@@ -32,7 +35,7 @@ struct CreateStudyPlanView: View {
                     case .picker:
                         HStack {
                             Text("What is your grade: ")
-                                .font(.headline)
+                                .font(.title3)
                             
                             Menu {
                                 ForEach(viewModel.grades, id: \.self) { grade in
@@ -49,7 +52,7 @@ struct CreateStudyPlanView: View {
                         if let selectedGrade = viewModel.selectedGrade {
                             HStack {
                                 Text("Choose subject:")
-                                    .font(.headline)
+                                    .font(.title3)
                                 
                                 Menu {
                                     ForEach(viewModel.subjects(for: selectedGrade), id: \.self) { subject in
@@ -58,7 +61,7 @@ struct CreateStudyPlanView: View {
                                 } label: {
                                     Label(viewModel.selectedSubject ?? "Select", systemImage: "chevron.down")
                                         .padding()
-                                        .background(Color.blue.opacity(0.2))
+                                        .background(Color.blue.opacity(0.1))
                                         .cornerRadius(8)
                                         .frame(minWidth: 120)
                                 }
@@ -69,7 +72,7 @@ struct CreateStudyPlanView: View {
                         if let selectedSubject = viewModel.selectedSubject {
                             HStack {
                                 Text("Choose topic: ")
-                                    .font(.headline)
+                                    .font(.title3)
                                 
                                 Menu {
                                     ForEach(viewModel.topics(for: selectedSubject), id: \.self) { topic in
@@ -78,8 +81,8 @@ struct CreateStudyPlanView: View {
                                 } label: {
                                     Label(viewModel.selectedTopic ?? "Select", systemImage: "chevron.down")
                                         .padding()
-                                        .background(Color.blue.opacity(0.2))
-                                        .cornerRadius(8)
+                                               .background(Color.blue.opacity(0.1))
+                                               .cornerRadius(8)
                                         .frame(minWidth: 120)
                                 }
                             }
@@ -90,9 +93,32 @@ struct CreateStudyPlanView: View {
                             selectedSubject: $viewModel.selectedSubject,
                             selectedTopic: $viewModel.selectedTopic
                         )
-                        Text("Grade: \(viewModel.selectedGrade ?? "Select")")
-                        Text("Subject: \(viewModel.selectedSubject ?? "Select")")
-                        Text("Topic: \(viewModel.selectedTopic ?? "Select")")
+                        VStack {
+                            HStack {
+                                Text("Extracted Grade:")
+                                    .font(.title3)
+                                Text(viewModel.selectedGrade ?? "Select")
+                                    .font(.headline)
+                            }
+                            
+                            HStack {
+                                Text("Extracted Subject:")
+                                    .font(.title3)
+
+                                Text(viewModel.selectedSubject ?? "Select")
+                                    .font(.headline)
+                            }
+                            
+                            HStack {
+                                Text("Extracted Topic:")
+                                    .font(.title3)
+
+                                Text(viewModel.selectedTopic ?? "Select")
+                                    .font(.headline)
+                            }
+                        }
+
+
                     }
                 }
                 // Grade Selection
@@ -104,7 +130,7 @@ struct CreateStudyPlanView: View {
                 // Duration Selection
                 HStack {
                     Text("How long do you plan to study: ")
-                        .font(.headline)
+                        .font(.title3)
                     
                     Menu {
                         Button("1 week", action: { viewModel.selectedDuration = "1 week" })
@@ -123,7 +149,7 @@ struct CreateStudyPlanView: View {
                 // Commitment Selection
                 HStack {
                     Text("How much time can you dedicate weekly: ")
-                        .font(.headline)
+                        .font(.title3)
                     
                     Menu {
                         Button("1 hour", action: { viewModel.selectedCommitment = "1 hour" })
@@ -173,10 +199,11 @@ struct CreateStudyPlanView: View {
                     }
                 }) {
                     Text("Generate Study Plan")
-                        .font(.title)
+                        .font(.title2)
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.blue)
+                        .cornerRadius(15)
                 }
                 
                 .alert(isPresented: $showAlert) {

@@ -104,9 +104,24 @@ struct LibraryView: View {
 struct StudyPlanRow: View {
     let plan: StudyPlan
     let action: (StudyPlan) async -> Void
-
+    private var image: String {
+        switch plan.subject {
+        case "Mathematics":
+            return "📘"
+        case "History":
+            return "📙"
+        case "English":
+            return "📕"
+        default:
+            return "📖"
+        }
+    }
     var body: some View {
         HStack {
+            Spacer()
+            Text(image)
+                .font(.largeTitle)
+            
             VStack(alignment: .leading, spacing: 5) {
                
                 NavigationLink {
@@ -116,27 +131,22 @@ struct StudyPlanRow: View {
                         .font(.headline)
                         .foregroundColor(Color.blue)
                 }
-
+                
                 Text("\(plan.subject)")
                     .font(.subheadline)
                 Text("\(plan.grade)")
                     .font(.subheadline)
-                Text("Score: \(plan.scorePercentage)")
+                Text("Score: \(plan.scorePercentage ?? 0)/4")
                     .font(.subheadline)
                
-//                Text("Duration: \(plan.studyDuration) hours")
-//                    .font(.subheadline)
-//                Text("Frequency: \(plan.studyFrequency) times per week")
-//                    .font(.subheadline)
-//                Text("Status: \(plan.status ?? "status")")
-//                    .font(.subheadline)
-//                Text("Created at: \(plan.createdAt, style: .date)")
-//                    .font(.subheadline)
             }
+            
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-
+            
+            
             StudyPlanButton(plan: plan, action: action)
+            Spacer()
         }
         .navigationBarBackButtonHidden()
         .background(RoundedRectangle(cornerRadius: 10)

@@ -24,8 +24,9 @@ struct ScannerView: View {
     var body: some View {
         ScrollView{
             VStack {
-                Text("Upload a Textbook Page")
+                Text("Upload a file")
                     .font(.title)
+//                    .bold()
                     .padding()
                 
                 if let image = selectedImage {
@@ -41,7 +42,7 @@ struct ScannerView: View {
                     }) {
                         Label("Choose an Image", systemImage: "photo.on.rectangle")
                             .padding()
-                            .background(Color.blue.opacity(0.8))
+                            .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
@@ -62,7 +63,7 @@ struct ScannerView: View {
 //                    
 //                    }
                     
-                
+                Spacer()
             }
             .padding()
             .sheet(isPresented: $showImagePicker) {
