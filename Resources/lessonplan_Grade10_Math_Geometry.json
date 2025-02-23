@@ -1,0 +1,22 @@
+{
+    "id": "607B6A20-6E6B-4F1A-9A0A-672EACE1BC6A",
+    "studyPlanId": "382192FE-C968-4AB2-9EC4-6D2F17C02B5F",
+    "grade": "Grade 10",
+    "subject": "Math",
+    "topic": "Geometry",
+    "week": "1",
+    "goals": "Understand the fundamental concepts of points, lines, and planes; Familiarize with basic geometric terms and tools.",
+    "milestones": "Be able to define and illustrate points, lines, and planes; Recognize and apply basic geometric terms in simple diagrams.",
+    "timetable": {
+        "session": "Saturday Morning, 10:00 AM - 12:00 PM",
+        "learning_tasks": [
+            {"task": "Introduction to Geometry concepts", "duration": "30 minutes"},
+            {"task": "Study definitions and properties of points, lines, and planes", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Draw and label points, lines, and planes on paper", "duration": "20 minutes"},
+            {"task": "Complete a worksheet on identifying geometric terms in diagrams", "duration": "40 minutes"}
+        ]
+    },
+    "resources": "Use 'Geometry for Dummies' textbook, Khan Academy introductory videos on Geometry, and online practice exercises from IXL."
+}

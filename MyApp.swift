@@ -1,27 +1,68 @@
 import SwiftUI
 
-@main  // ✅ This tells Swift that this is the app's entry point
+@main
 struct MeStudy: App {
-    @StateObject private var userSession = UserSession()  // Initialize the user session
+
+    // Initialize userSession and userViewModel correctly
+    @StateObject private var userSession = UserSession()
     @StateObject private var appViewModel = AppViewModel()
-    @AppStorage("selectedtab")var selectedTab = 0
+    @StateObject private var userViewModel = UserViewModel()
+    @AppStorage("selectedtab") var selectedTab = 0
+    @AppStorage("offlineMode") private var offlineMode: Bool = false
+    
+    // Initialize userViewModel with userSession
+    init() {
+        // Perform any initialization if needed
+    }
 
     var body: some Scene {
         WindowGroup {
-            if let user = userSession.currentUser, user.name.isEmpty || user.email.isEmpty { // Check if user details are incomplete
-                UserView(userSession: userSession)
-            } else {
-                TabView {
-                    MenuView()
-                        .environmentObject(userSession)  // Pass the userSession to MenuView
-                }
-                .onAppear {
-                    Task {
-                        await appViewModel.initializeDatabase()
-                        selectedTab = 0
+            TabView(selection: $selectedTab) {
+                MenuView()
+                    .environmentObject(userSession)
+            }
+            .onAppear {
+                Task {
+                    do {
+                        // Load offline mode
+                        let offlineMode = await AppConfig.shared.loadOfflineMode()
                         
+                        // Ensure database is initialized
+                        await appViewModel.initializeDatabase()
+
+                        // Check if a user already exists in the database
+                        let result = try await userViewModel.getUserByUserName(name: "usertest")
+
+                        switch result {
+                        case .success(let existingUser):
+                            // If user exists, set it to the session
+                            DispatchQueue.main.async {
+                                userSession.currentUser = existingUser
+                            }
+                        case .failure(let error):
+                            // Handle failure case (user not found or any other issue)
+                            print("Error: \(error.localizedDescription)")
+                            // Optionally, show an alert to the user
+                        }
+                        
+                        // If no user found, insert a default user
+                        if userSession.currentUser == nil {
+                            let defaultUser = User(id: UUID().uuidString, name: "usertest", email: "usertest@gmail.com", grade: "10")
+                            let insertedUser = try await defaultUser.saveToDatabase()
+                            
+                            DispatchQueue.main.async {
+                                userSession.currentUser = insertedUser
+                                selectedTab = 0
+                            }
+                        }
+                    } catch {
+                        print("Error during initialization: \(error)")
                     }
                 }
+            }
+            .onDisappear {
+                // Clear session when app closes
+                userSession.currentUser = nil
             }
         }
     }

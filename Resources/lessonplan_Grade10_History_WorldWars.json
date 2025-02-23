@@ -1,0 +1,21 @@
+{
+    "id": "F36499D5-48B6-4CCA-8F41-D871A4E2A985",
+    "studyPlanId": "46EA055C-807F-463C-A5F6-A7FA84CD621A",
+    "grade": "Grade 10",
+    "subject": "History",
+    "topic": "World Wars",
+    "week": "1",
+    "goals": "Understand the causes and the global context leading up to World War I.",
+    "milestones": "By the end of the week, be able to identify at least three key events or factors that contributed to the onset of World War I.",
+    "timetable": {
+        "session": "Monday",
+        "learning_tasks": [
+            {"task": "Read a brief overview of the geopolitical landscape before World War I.", "duration": "20 minutes"},
+            {"task": "Watch a documentary segment on the assassination of Archduke Franz Ferdinand.", "duration": "20 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Create a timeline of key events leading up to World War I.", "duration": "20 minutes"}
+        ]
+    },
+    "resources": "Recommended textbook chapter on pre-World War I Europe, online video lecture from the History Channel on the causes of World War I."
+}

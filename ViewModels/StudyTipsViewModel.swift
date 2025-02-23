@@ -1,6 +1,8 @@
 import Foundation
+import SwiftUI
 
 class StudyTipsViewModel: ObservableObject {
+    @AppStorage("offlineMode") private var offlineMode: Bool = false
     @Published var selectedGrade: String? = nil  // Make this optional
     @Published var selectedSubject: String? = nil  // Make this optional
     @Published var selectedTopic: String? = nil  // Make this optional
@@ -67,31 +69,19 @@ class StudyTipsViewModel: ObservableObject {
         return topics["\(selectedGrade)-\(subject)"] ?? []
     }
     
-    func getFileName() -> String {
-        // Use a default value if `selectedTopic` is nil
-        let safeTopic = selectedTopic ?? "default_topic"
-        
-        // Ensure `selectedGrade` and `selectedSubject` are unwrapped (if optional)
-        guard let grade = selectedGrade, let subject = selectedSubject else {
-            // Handle error: either log or return a default file name
-            return "data_studytips_default.json"
-        }
-        
-        // Construct a valid file name, removing invalid characters
-        let fileName = "data_studytips_\(grade)_\(subject)_\(safeTopic)"
-            .replacingOccurrences(of: "[^a-zA-Z0-9_]", with: "", options: .regularExpression) // Remove invalid characters
-        
-        return fileName
-    }
 
     // Method to generate study tips
     func generateStudyTips() async -> Result<String, Error> {
-        let isOfflineMode = await AppConfig.shared.loadOfflineMode() ?? false
-
+        let isOfflineMode = offlineMode
+        // Ensure selectedGrade and selectedSubject are not nil
+        guard let grade = selectedGrade, let subject = selectedSubject, let topic = selectedTopic else {
+            let error = NSError(domain: "StudyTipsViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Grade or Subject is not selected"])
+            return .failure(error)
+        }
+        // Construct a valid file name
+        let fileName = LocalJSONDataManager.shared.generateValidFileName( moduleName: "studytips", grade: grade, subject: subject, topic: topic)
+        
         if isOfflineMode {
-            
-            // Construct a valid file name
-            let fileName = getFileName()
             if let offlineTips = await LocalJSONDataManager.shared.loadDataFromJSONFile(fileName: fileName, fileExtension: "json") {
                 print("✅ Loaded study tips from offline JSON")
                 return .success(offlineTips)
@@ -99,12 +89,6 @@ class StudyTipsViewModel: ObservableObject {
                 let error = NSError(domain: "StudyTipsViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Offline mode enabled, but no saved data found."])
                 return .failure(error)
             }
-        }
-
-        // Ensure selectedGrade and selectedSubject are not nil
-        guard let grade = selectedGrade, let subject = selectedSubject else {
-            let error = NSError(domain: "StudyTipsViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Grade or Subject is not selected"])
-            return .failure(error)
         }
 
         // Instantiate StudyTips
@@ -120,11 +104,9 @@ class StudyTipsViewModel: ObservableObject {
 
         switch tipsResult {
         case .success(let tips):
-            // Construct a valid file name
-            let fileName = getFileName()
             // Save for offline use
             do {
-                try LocalJSONDataManager.shared.saveJSON(data: tips, fileName: fileName)
+                try await LocalJSONDataManager.shared.saveJSON(data: tips, fileName: fileName)
                 print("✅ Tips saved for offline mode: \(fileName)")
             } catch {
                 print("❌ Failed to save study tips: \(error.localizedDescription)")

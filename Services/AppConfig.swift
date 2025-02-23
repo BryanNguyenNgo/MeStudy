@@ -1,6 +1,12 @@
 
 import Foundation
 
+import SwiftUI
+
+class OfflineMode: ObservableObject {
+    @Published var mode: Bool = false // Use a boolean for offline mode
+}
+
 class AppConfig {
     static let shared = AppConfig()
     
@@ -17,20 +23,21 @@ class AppConfig {
         }
         return apiKey
     }
-    func loadOfflineMode() async -> Bool? {
+    func loadOfflineMode() async -> Bool {
         guard let url = Bundle.main.url(forResource: "config", withExtension: "plist"),
               let data = try? Data(contentsOf: url),
               let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
-            return nil
+            return false // Return false if plist is not found or parsing fails
         }
 
-        if let isOfflineMode = plist["OFFLINE_MODE"] as? Bool {
-            return isOfflineMode // Directly return if it's a Boolean
-        } else if let isOfflineModeString = plist["OFFLINE_MODE"] as? String {
-            return isOfflineModeString.uppercased() == "YES" // Convert "YES"/"NO" to Boolean
+        if let isOfflineModeString = plist["OFFLINE_MODE"] as? String {
+            // Convert the string to Bool based on the value
+            return isOfflineModeString.uppercased() == "YES"
         }
 
-        return false // Return false if key is missing or invalid
+        return false // Return false if the key is missing or invalid
     }
+
+
 
 }

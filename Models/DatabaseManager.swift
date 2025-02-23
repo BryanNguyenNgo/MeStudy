@@ -69,7 +69,7 @@ actor DatabaseManager {
     
     private init() { }
     
-    func initializeDatabase() {
+    func initializeDatabase() async {
         do {
             let fileManager = FileManager.default
             let path = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
@@ -78,6 +78,7 @@ actor DatabaseManager {
             
             try db?.execute("PRAGMA foreign_keys = ON;")
             createTables()
+            
         } catch {
             db = nil
             print("Error initializing database: \(error)")
@@ -166,19 +167,70 @@ actor DatabaseManager {
             print("Error creating tables: \(error)")
         }
     }
-    func insertUser(id: String, name: String, email: String, grade: String) async throws -> String {
+    func insertUser(id: String, name: String, email: String, grade: String) async throws -> User {
         do {
             let insert = userTable.insert(userId <- id, userName <- name, userEmail <- email, userGrade <- grade)
-            try db?.run(insert)
-            
-            print("User inserted successfully with id: \(id)")
-            return id  // Corrected return statement without extra parentheses
-            
+            let rowId = try db?.run(insert) ?? 0  // Get the number of affected rows
+
+            if rowId > 0 {
+                // Retrieve the inserted user using getUser
+                if let insertedUser = try await getUser(id: id) {
+                    print("User inserted and retrieved successfully: \(insertedUser)")
+                    return insertedUser
+                } else {
+                    throw NSError(domain: "DatabaseError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Inserted user not found"])
+                }
+            } else {
+                throw NSError(domain: "DatabaseError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to insert user"])
+            }
         } catch let error as NSError {
             print("Error inserting user: \(error)")
-            throw error  // Re-throw the error after logging it
+            throw error
         }
     }
+
+    func getUser(id: String) async throws -> User? {
+        do {
+            if let userRow = try db?.pluck(userTable.filter(userId == id)) {
+                let user = User(
+                    id: userRow[userId],
+                    name: userRow[userName],
+                    email: userRow[userEmail],
+                    grade: userRow[userGrade]
+                )
+                print("User retrieved successfully: \(user)")
+                return user
+            } else {
+                print("User not found with id: \(id)")
+                return nil
+            }
+        } catch let error as NSError {
+            print("Error retrieving user: \(error)")
+            throw error
+        }
+    }
+    
+    func getUserByUserName(name: String) async throws -> User? {
+        do {
+            if let userRow = try db?.pluck(userTable.filter(userName == name)) {
+                let user = User(
+                    id: userRow[userId],
+                    name: userRow[userName],
+                    email: userRow[userEmail],
+                    grade: userRow[userGrade]
+                )
+                print("User retrieved successfully: \(user)")
+                return user
+            } else {
+                print("User not found with name: \(name)")
+                return nil
+            }
+        } catch let error as NSError {
+            print("Error retrieving user: \(error)")
+            throw error
+        }
+    }
+
     
     
     func insertStudyPlan(id: String, userId: String, grade: String, subject: String, topic: String, studyDuration: Int, studyFrequency: Int, status: String) async -> String? {
@@ -213,16 +265,23 @@ actor DatabaseManager {
     }
     func getStudyPlans(userId: String) async -> [StudyPlan] {
         var studyPlans: [StudyPlan] = []
+        
+        // Safeguard to ensure db is not nil
+        guard let database = db else {
+            print("Error: Database connection is nil")
+            return studyPlans
+        }
+        
         do {
             let query = studyPlanTable
                 .filter(studyPlanUserId == userId)
                 .order(studyPlanCreatedAt.desc) // Sort by studyPlanCreatedAt in descending order
-            for row in try db!.prepare(query) {
+            
+            for row in try database.prepare(query) {
                 let id = row[studyPlanId]
                 let grade = row[studyPlanGrade]
                 let subject = row[studyPlanSubject]
                 let topic = row[studyPlanTopic]
-                
                 let studyDuration = row[studyPlanDuration]
                 let studyFrequency = row[studyPlanFrequency]
                 let status = row[studyPlanStatus]
@@ -238,16 +297,16 @@ actor DatabaseManager {
                     studyFrequency: studyFrequency,
                     status: status,
                     scorePercentage: scorePercentage
-                    
                 )
                 studyPlans.append(studyPlan)
-                
             }
         } catch {
             print("Error fetching study plans: \(error)")
         }
+        
         return studyPlans
     }
+
     
     func insertLessonPlan(id: String, studyPlanId: String, grade: String, subject: String, topic: String,
                           week: String, goals: String, milestones: String, resources: String, timetable: Timetable) async -> String? {

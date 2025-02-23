@@ -1,0 +1,22 @@
+{
+    "id": "307CC7B7-9FF6-4A7A-B250-485EE87CABE8",
+    "studyPlanId": "3F2408DE-3CD2-4C5A-B509-09B83FAF40F7",
+    "grade": "Grade 11",
+    "subject": "Math",
+    "topic": "Statistics",
+    "week": "1",
+    "goals": "Understand basic statistical concepts and terminology, including mean, median, mode, and range.",
+    "milestones": "By the end of the week, successfully calculate mean, median, mode, and range for a given set of data.",
+    "timetable": {
+        "session": "Two 1-hour sessions",
+        "learning_tasks": [
+            {"task": "Introduction to basic statistical concepts", "duration": "30 minutes"},
+            {"task": "Learn how to calculate mean, median, mode, and range", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Calculate mean, median, mode, and range from a sample data set", "duration": "30 minutes"},
+            {"task": "Review practice problems and identify errors", "duration": "30 minutes"}
+        ]
+    },
+    "resources": "Textbook: 'Statistics for Grade 11', Online tutorial video: 'Basic Statistics Concepts', Practice worksheets from educational websites like Khan Academy"
+}

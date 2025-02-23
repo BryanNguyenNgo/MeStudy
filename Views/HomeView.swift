@@ -5,22 +5,11 @@ struct HomeView: View {
     @State private var showingCreateUserView = false
     @State private var isLoggedOut = false  // State to manage the logout action
     @AppStorage("selectedtab")var selectedTab = 0
+    @AppStorage("offlineMode") private var offlineMode: Bool = false
     var body: some View {
         
         NavigationView {
             VStack(spacing: 20) {
-                if let user = userSession.currentUser {
-                    // Show the Home content if the user exists
-                    // Other home content
-                } else {
-                    // Show a prompt to create the user profile
-                    Button("Create User Profile") {
-                        showingCreateUserView.toggle()
-                    }
-                    .sheet(isPresented: $showingCreateUserView) {
-                        UserView(userSession: userSession)  // Pass the session to UserView
-                    }
-                }
                 
                 // Welcome Message (moved inside the condition)
                 if let user = userSession.currentUser {
@@ -48,37 +37,14 @@ struct HomeView: View {
                 }
                 
                 // Recent Study Plans (Placeholder)
-//                Text("Recent Study Plans")
-//                    .font(.title2)
-//                    .fontWeight(.semibold)
-//                    .padding(.top)
-//                
-//
-//                    VStack(alignment: .leading) {
-//                        Text("📘 Math - 2 hours daily")
-//                        Text("📗 Science - 1.5 hours weekly")
-//                        Text("📙 History - 1 hour weekly")
-//                    }
-//                    .padding()
+
                 RecentStudyPlanView()
-//                HStack{
-//                    // Study Tips Section
-//                    Text("Study Tips")
-//                        .font(.title2)
-//                        .fontWeight(.semibold)
-//                        .padding(.top)
-//                    Spacer()
-//                }
-//                
-//
-//                    VStack(alignment: .leading) {
-//                        Text("📚 Break study into smaller, manageable sessions.")
-//                        Text("💡 Take regular breaks to keep your mind fresh.")
-//                        Text("📝 Use active recall and spaced repetition.")
-//                        Text("🌟 Stay organized and plan ahead.")
-//                }
-//                
-//                Spacer()
+                // Display app in offline mode
+                Toggle("Offline Mode", isOn: $offlineMode)
+                                .padding()
+                Text("Offline Mode is \(offlineMode ? "Enabled" : "Disabled")")
+                               .padding()
+
             }
             .padding()
             .onAppear {
@@ -88,16 +54,16 @@ struct HomeView: View {
                 }
             }
             .navigationBarTitle("Home", displayMode: .inline)
-            .navigationBarItems(trailing: Button(action: {
-                // Clear the session and log the user out
-                userSession.clearSession()
-                isLoggedOut = true
-                // Optionally, navigate to a login screen here
-            }) {
-                Text("Logout")
-                    .font(.headline)
-                    .foregroundColor(.blue)
-            })
+//            .navigationBarItems(trailing: Button(action: {
+//                // Clear the session and log the user out
+//                userSession.clearSession()
+//                isLoggedOut = true
+//                // Optionally, navigate to a login screen here
+//            }) {
+//                Text("Logout")
+//                    .font(.headline)
+//                    .foregroundColor(.blue)
+//            })
         }
         
     }

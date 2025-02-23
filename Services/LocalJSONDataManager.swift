@@ -29,26 +29,25 @@ class LocalJSONDataManager {
     }
 
     /// Save JSON data to a file in the Documents directory
-        func saveJSON(data: String, fileName: String) {
-            let fileManager = FileManager.default
-            do {
-                let documentsURL = try fileManager.url(
-                    for: .documentDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: nil,
-                    create: false
-                )
-                let fileURL = documentsURL.appendingPathComponent("\(fileName).json")
+    func saveJSON(data: String, fileName: String) async throws {
+        let fileManager = FileManager.default
+        let documentsURL = try fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
+        let fileURL = documentsURL.appendingPathComponent("\(fileName).json")
 
-                // Convert String to Data and save
-                if let jsonData = data.data(using: .utf8) {
-                    try jsonData.write(to: fileURL, options: .atomic)
-                    print("✅ JSON saved: \(fileURL.path)")
-                }
-            } catch {
-                print("❌ Error saving JSON: \(error.localizedDescription)")
-            }
+        // Convert String to Data and save
+        if let jsonData = data.data(using: .utf8) {
+            try jsonData.write(to: fileURL, options: .atomic)
+            print("✅ JSON saved: \(fileURL.path)")
+        } else {
+            throw NSError(domain: "SaveJSONError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to data"])
         }
+    }
+
         
         /// Load JSON data from a file in the Documents directory
         func loadJSON(fileName: String) -> String? {

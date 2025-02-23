@@ -1,0 +1,21 @@
+{
+    "id": "296FC2F1-5DA8-4451-B016-72FE9F15E944",
+    "studyPlanId": "8FCBF61C-B413-40CF-A1A1-5B6E33908D95",
+    "grade": "Grade 11",
+    "subject": "English",
+    "topic": "Literary Analysis",
+    "week": "1",
+    "goals": "Understand the basic components of literary analysis, including theme, character, setting, and plot.",
+    "milestones": "By the end of the week, students should be able to identify and explain the elements of a literary work such as theme and setting.",
+    "timetable": {
+        "session": "Two 1-hour sessions per week",
+        "learning_tasks": [
+            {"task": "Introduction to Literary Elements: Read a basic guide on literary elements.", "duration": "30 minutes"},
+            {"task": "Examine a short story: Identify its theme, characters, setting, and plot.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Write a brief paragraph analyzing the theme and setting of the chosen short story.", "duration": "1 hour"}
+        ]
+    },
+    "resources": "Use online resources such as SparkNotes for guides on literary elements. Read 'The Lottery' by Shirley Jackson or use a short story provided by your textbook."
+}

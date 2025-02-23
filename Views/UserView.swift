@@ -2,20 +2,14 @@ import SwiftUI
 
 struct UserView: View {
     @EnvironmentObject var userSession: UserSession
-    @State private var name: String = "user1"
-    @State private var email: String = "user1@gmail.com"
-    @State private var grade: String = ""
-    
+    @State private var name: String = "usertest"
+    @State private var email: String = "usertest@gmail.com"
+    @State private var grade: String = "10"  // Ensure this reflects the grade
+
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
-    @StateObject private var viewModel: UserViewModel
-    
-    init(userSession: UserSession) {
-        // Ensure viewModel is initialized correctly with userSession
-        _viewModel = StateObject(wrappedValue: UserViewModel(userSession: userSession))
-    }
-    
+    @ObservedObject var viewModel: UserViewModel
     var body: some View {
         VStack(spacing: 20) {
             // Display user information if available
@@ -43,14 +37,14 @@ struct UserView: View {
             
             // Grade Selection
             HStack {
-                Text("What is your grade: \(viewModel.selectedGrade ?? "Not selected")")
+                Text("What is your grade: \(grade)")
                     .font(.headline)
                 
                 Menu {
-                    ForEach(viewModel.grades, id: \.self) { grade in
-                        Button(grade, action: {
-                            viewModel.selectGrade(grade)
-                            self.grade = grade // Update `grade` when a selection is made
+                    ForEach(viewModel.grades, id: \.self) { gradeOption in
+                        Button(gradeOption, action: {
+                            grade = gradeOption // Directly update the state variable
+                            viewModel.selectGrade(gradeOption)  // Update ViewModel's grade
                         })
                     }
                 } label: {
@@ -65,7 +59,7 @@ struct UserView: View {
             // Save button to submit user data
             Button(action: {
                 Task {
-                    let result = await viewModel.createUser(name: name, email: email, grade: grade)
+                    let result = await viewModel.createUser(id: UUID().uuidString, name: name, email: email, grade: grade)
 
                     switch result {
                     case .success(let id):
@@ -78,7 +72,7 @@ struct UserView: View {
                         showAlert = true
                     }
                 }
-            })  {
+            }) {
                 Text("Save")
                     .font(.title)
                     .foregroundColor(.white)
@@ -86,11 +80,10 @@ struct UserView: View {
                     .background(Color.blue)
                     .cornerRadius(10)
             }
-            
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Success"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
-            
+
             Spacer()
         }
         .padding()
@@ -99,12 +92,5 @@ struct UserView: View {
                 await viewModel.loadDataSubjectTopics()
             }
         }
-    }
-}
-
-struct UserView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserView(userSession: UserSession()) // Pass in a dummy UserSession
-            .environmentObject(UserSession()) // Make sure the environment object is provided
     }
 }

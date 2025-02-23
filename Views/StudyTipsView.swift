@@ -115,7 +115,7 @@ struct StudyTipsView: View {
                            let selectedSubject = viewModel.selectedSubject,
                            let selectedTopic = viewModel.selectedTopic {
                             Text("Here are tips for Grade: \(selectedGrade), Subject: \(selectedSubject), Topic: \(selectedTopic)")
-                                .font(.subheadline)
+                                .font(.headline)
                                 .foregroundColor(.gray)
                                 .padding(.top)
                         }

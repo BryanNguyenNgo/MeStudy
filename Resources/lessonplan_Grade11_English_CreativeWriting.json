@@ -1,0 +1,21 @@
+{
+    "id": "6F7F35F6-4A44-42BA-94F1-D67D43E1BAAC",
+    "studyPlanId": "AE5CF47E-7182-4242-AF3D-AF54773391F0",
+    "grade": "Grade 11",
+    "subject": "English",
+    "topic": "Creative Writing",
+    "week": "1",
+    "goals": "Understand the basics of creative writing and develop an initial idea for a short story.",
+    "milestones": "Complete a brainstorming session to generate story ideas and select one idea to develop further.",
+    "timetable": {
+        "session": "2 hours on Saturday",
+        "learning_tasks": [
+            {"task": "Read an introduction to creative writing, focusing on narrative structure and genre.", "duration": "30 minutes"},
+            {"task": "Brainstorm a list of potential story ideas.", "duration": "30 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Select one idea and create a basic outline for a short story including characters, setting, and plot.", "duration": "60 minutes"}
+        ]
+    },
+    "resources": "Suggested reading: 'The Elements of Story: Field Notes on Nonfiction Writing' by Francis Flaherty; online writing resources such as the Purdue OWL Creative Writing section."
+}

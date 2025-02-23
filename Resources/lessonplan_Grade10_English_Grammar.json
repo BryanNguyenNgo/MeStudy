@@ -1,0 +1,22 @@
+{
+    "id": "7A69291A-6D75-48F3-947D-DB7A565A8DC3",
+    "studyPlanId": "0572E1DA-A05C-4CF5-AE7E-46B044C1F4F3",
+    "grade": "Grade 10",
+    "subject": "English",
+    "topic": "Grammar",
+    "week": "1",
+    "goals": "Understand and use various sentence structures including simple, compound, and complex sentences.",
+    "milestones": "Be able to identify and construct simple, compound, and complex sentences by the end of the week.",
+    "timetable": {
+        "session": "1 hour on Monday",
+        "learning_tasks": [
+            {"task": "Read about the different types of sentence structures: simple, compound, and complex sentences.", "duration": "20 minutes"},
+            {"task": "Watch a video on sentence structures for visual understanding.", "duration": "10 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Identify sentence structures in a provided paragraph.", "duration": "10 minutes"},
+            {"task": "Write three examples of each sentence structure type.", "duration": "20 minutes"}
+        ]
+    },
+    "resources": "Use an English grammar textbook, a recommended online grammar resource like Grammarly Blog, and search for educational videos on YouTube like 'Sentence Structure by Khan Academy'."
+}

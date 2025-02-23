@@ -1,0 +1,23 @@
+{
+    "id": "BE097ED4-7394-450A-B379-2890615BC232",
+    "studyPlanId": "D9184F4E-A07E-4AEB-9DF9-8916857BE18D",
+    "grade": "Grade 10",
+    "subject": "History",
+    "topic": "Modern History",
+    "week": "1",
+    "goals": "Understand the key events and figures that shaped the beginning of the 20th century, focusing on World War I origins.",
+    "milestones": "Identify and describe at least three major causes of World War I and explain the roles of significant countries involved.",
+    "timetable": {
+        "session": "Tuesday Afternoon",
+        "learning_tasks": [
+            {"task": "Read an overview of the prelude to World War I, focusing on the geopolitical landscape of Europe in the early 1900s.", "duration": "20 minutes"},
+            {"task": "Watch a documentary or video summary explaining the alliances system before World War I.", "duration": "20 minutes"},
+            {"task": "Create a timeline of major events leading up to the outbreak of World War I.", "duration": "20 minutes"}
+        ],
+        "practice_tasks": [
+            {"task": "Write a brief essay on how the assassination of Archduke Franz Ferdinand led to the war.", "duration": "30 minutes"},
+            {"task": "Quiz yourself using online flashcards about key terms and figures from the period.", "duration": "10 minutes"}
+        ]
+    },
+    "resources": "1. 'World War I: The Definitive Visual History' by DK; 2. BBC Documentary: '1914-1918: The Great War'; 3. Khan Academy World War I videos."
+}
