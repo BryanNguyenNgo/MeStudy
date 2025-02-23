@@ -1,9 +1,10 @@
+
 import SwiftUI
 
 struct CreateStudyPlanView: View {
     @EnvironmentObject var userSession: UserSession // Access userSession from the environment
     @ObservedObject private var viewModel = StudyPlanViewModel()
-    
+    @State var selectedView: Option = .picker
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
@@ -19,64 +20,86 @@ struct CreateStudyPlanView: View {
                 
                 Text("Study Plan")
                     .font(.largeTitle)
-                
-                // Grade Selection
-                HStack {
-                    Text("What is your grade: ")
-                        .font(.headline)
-                    
-                    Menu {
-                        ForEach(viewModel.grades, id: \.self) { grade in
-                            Button(grade, action: { viewModel.selectGrade(grade) })
+                VStack{
+                    Picker("Create Study Plan", selection: $selectedView){
+                        ForEach(Option.allCases, id: \.self){
+                            Text("\($0.rawValue)")
                         }
-                    } label: {
-                        Label(viewModel.selectedGrade ?? "Select", systemImage: "chevron.down")
-                            .padding()
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(8)
-                            .frame(minWidth: 120)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+
+                    switch selectedView {
+                    case .picker:
+                        HStack {
+                            Text("What is your grade: ")
+                                .font(.headline)
+                            
+                            Menu {
+                                ForEach(viewModel.grades, id: \.self) { grade in
+                                    Button(grade, action: { viewModel.selectGrade(grade) })
+                                }
+                            } label: {
+                                Label(viewModel.selectedGrade ?? "Select", systemImage: "chevron.down")
+                                    .padding()
+                                    .background(Color.blue.opacity(0.2))
+                                    .cornerRadius(8)
+                                    .frame(minWidth: 120)
+                            }
+                        }
+                        if let selectedGrade = viewModel.selectedGrade {
+                            HStack {
+                                Text("Choose subject:")
+                                    .font(.headline)
+                                
+                                Menu {
+                                    ForEach(viewModel.subjects(for: selectedGrade), id: \.self) { subject in
+                                        Button(subject, action: { viewModel.selectSubject(subject) })
+                                    }
+                                } label: {
+                                    Label(viewModel.selectedSubject ?? "Select", systemImage: "chevron.down")
+                                        .padding()
+                                        .background(Color.blue.opacity(0.2))
+                                        .cornerRadius(8)
+                                        .frame(minWidth: 120)
+                                }
+                            }
+                        }
+                        
+                        // Topic Selection
+                        if let selectedSubject = viewModel.selectedSubject {
+                            HStack {
+                                Text("Choose topic: ")
+                                    .font(.headline)
+                                
+                                Menu {
+                                    ForEach(viewModel.topics(for: selectedSubject), id: \.self) { topic in
+                                        Button(topic, action: { viewModel.selectTopic(topic) })
+                                    }
+                                } label: {
+                                    Label(viewModel.selectedTopic ?? "Select", systemImage: "chevron.down")
+                                        .padding()
+                                        .background(Color.blue.opacity(0.2))
+                                        .cornerRadius(8)
+                                        .frame(minWidth: 120)
+                                }
+                            }
+                        }
+                    case .scanner:
+                        ScannerView(
+                            selectedGrade: $viewModel.selectedGrade,
+                            selectedSubject: $viewModel.selectedSubject,
+                            selectedTopic: $viewModel.selectedTopic
+                        )
+                        Text("Grade: \(viewModel.selectedGrade ?? "Select")")
+                        Text("Subject: \(viewModel.selectedSubject ?? "Select")")
+                        Text("Topic: \(viewModel.selectedTopic ?? "Select")")
                     }
                 }
+                // Grade Selection
+                
                 
                 // Subject Selection
-                if let selectedGrade = viewModel.selectedGrade {
-                    HStack {
-                        Text("Choose subject:")
-                            .font(.headline)
-                        
-                        Menu {
-                            ForEach(viewModel.subjects(for: selectedGrade), id: \.self) { subject in
-                                Button(subject, action: { viewModel.selectSubject(subject) })
-                            }
-                        } label: {
-                            Label(viewModel.selectedSubject ?? "Select", systemImage: "chevron.down")
-                                .padding()
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(8)
-                                .frame(minWidth: 120)
-                        }
-                    }
-                }
-                
-                // Topic Selection
-                if let selectedSubject = viewModel.selectedSubject {
-                    HStack {
-                        Text("Choose topic: ")
-                            .font(.headline)
-                        
-                        Menu {
-                            ForEach(viewModel.topics(for: selectedSubject), id: \.self) { topic in
-                                Button(topic, action: { viewModel.selectTopic(topic) })
-                            }
-                        } label: {
-                            Label(viewModel.selectedTopic ?? "Select", systemImage: "chevron.down")
-                                .padding()
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(8)
-                                .frame(minWidth: 120)
-                        }
-                    }
-                }
+//
                 
                 // Duration Selection
                 HStack {
@@ -163,16 +186,6 @@ struct CreateStudyPlanView: View {
                 
                 // Display ScannerView
                 // Pass bindings to ScannerView to allow automatic updates
-                                ScannerView(
-                                    selectedGrade: $viewModel.selectedGrade,
-                                    selectedSubject: $viewModel.selectedSubject,
-                                    selectedTopic: $viewModel.selectedTopic
-                                )
-                                
-                                // Use viewModel values for dropdowns
-                                Text("Grade: \(viewModel.selectedGrade ?? "Select")")
-                                Text("Subject: \(viewModel.selectedSubject ?? "Select")")
-                                Text("Topic: \(viewModel.selectedTopic ?? "Select")")
             }
             .padding()
             .onAppear {
@@ -182,5 +195,9 @@ struct CreateStudyPlanView: View {
             }
         }
         .padding(.bottom, 50)  // Add extra padding at the bottom to make space for the keyboard
+    }
+    enum Option: String, CaseIterable{
+        case picker = "Create Study Plan"
+        case scanner = "Scan Notes"
     }
 }
